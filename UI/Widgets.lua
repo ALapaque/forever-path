@@ -49,22 +49,28 @@ ns.FONTS = {
 }
 
 local FONT_OBJECTS = {
-    -- nom                         modèle Blizzard            couleur
-    { "ForeverPathFontNormal",     "ForeverPathFontNormal",          "accent" },
-    { "ForeverPathFontHighlight",  "ForeverPathFontHighlight",       "text" },
-    { "ForeverPathFontSmall",      "ForeverPathFontSmall",  "text" },
-    { "ForeverPathFontSmallDim",   "ForeverPathFontSmallDim",    "dim" },
-    { "ForeverPathFontSmallGold",  "ForeverPathFontSmallGold",     "accent" },
-    { "ForeverPathFontLarge",      "ForeverPathFontLarge",     "accent" },
-    { "ForeverPathFontHuge",       "ForeverPathFontHuge",      "accent" },
+    -- nom                         modèle Blizzard             couleur   taille par défaut
+    { "ForeverPathFontNormal",     "GameFontNormal",           "accent", 12 },
+    { "ForeverPathFontHighlight",  "GameFontHighlight",        "text",   12 },
+    { "ForeverPathFontSmall",      "GameFontHighlightSmall",   "text",   10 },
+    { "ForeverPathFontSmallDim",   "GameFontDisableSmall",     "dim",    10 },
+    { "ForeverPathFontSmallGold",  "GameFontNormalSmall",      "accent", 10 },
+    { "ForeverPathFontLarge",      "GameFontNormalLarge",      "accent", 16 },
+    { "ForeverPathFontHuge",       "GameFontNormalHuge",       "accent", 20 },
 }
 local baseSize = {}
 for _, def in ipairs(FONT_OBJECTS) do
-    local fo = CreateFont(def[1])
+    local fo = _G[def[1]] or CreateFont(def[1])
     local model = _G[def[2]]
-    if model then fo:CopyFontObject(model) end
-    local _, size, flags = fo:GetFont()
-    baseSize[def[1]] = { size = size or 12, flags = flags or "" }
+    local size, flags
+    if model and model.GetFont then
+        local ok, _, s, f = pcall(model.GetFont, model)
+        if ok then size, flags = s, f end
+    end
+    -- certaines interfaces (ou un modèle pas encore chargé) renvoient 0 : on garde une taille sûre
+    if type(size) ~= "number" or size < 6 then size = def[4] end
+    baseSize[def[1]] = { size = size, flags = flags or "" }
+    fo:SetFont(ns.FONTS[1].path, size, flags or "")
 end
 
 local function lsm() return LibStub and LibStub("LibSharedMedia-3.0", true) end
@@ -103,7 +109,8 @@ function ns.ApplyFonts()
     for _, def in ipairs(FONT_OBJECTS) do
         local fo = _G[def[1]]
         local b = baseSize[def[1]]
-        fo:SetFont(path, math.floor(b.size * scale + 0.5), b.flags)
+        local size = math.max(6, math.floor(b.size * scale + 0.5))
+        if not fo:SetFont(path, size, b.flags) then fo:SetFont(ns.FONTS[1].path, size, b.flags) end
         local c = def[3] == "accent" and t.accent or def[3] == "text" and t.text or { 0.55, 0.55, 0.58 }
         fo:SetTextColor(c[1], c[2], c[3])
     end

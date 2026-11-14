@@ -1,5 +1,9 @@
 # ForeverPath
 
+## v0.2.0-beta6
+
+- **Correctif** : la fenêtre du guide pouvait s'afficher sans aucun texte (erreur « Invalid font height »). Les polices de l'addon partent maintenant des polices Blizzard, avec une taille de secours si une interface renvoie une taille nulle.
+
 ## v0.2.0-beta5
 
 - **Terrain (moteur)** : les itinéraires savent contourner les falaises, trous et lacs grâce à une grille des zones praticables, chargée à la demande depuis l'addon `ForeverPath_Terrain`. Le calcul est étalé sur plusieurs images pour ne jamais figer le jeu. Les données des continents arrivent dans une prochaine version : d'ici là, rien ne change en jeu (lignes droites en orange, chemins appris en vert). Voir TERRAIN.md.

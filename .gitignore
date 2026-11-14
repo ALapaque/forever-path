@@ -1,0 +1,11 @@
+# Générés
+tools/db.pkl
+__pycache__/
+*.pyc
+.release/
+*.zip
+# Éditeurs / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Luacheck
+        uses: nebularg/actions-luacheck@v1
+        with:
+          args: --no-color -q
+          annotate: warning
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installer lupa (Lua 5.1)
+        run: pip install lupa
+      - name: Tests de l'addon (API WoW simulée)
+        run: python3 tests/harness.py

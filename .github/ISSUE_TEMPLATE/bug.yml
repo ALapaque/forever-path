@@ -1,0 +1,31 @@
+name: Bug
+description: Une erreur Lua, une fonction qui ne marche pas, une étape bloquée
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Que s'est-il passé ?
+      description: Ce que tu faisais, ce que tu attendais, ce qui s'est passé.
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Erreur Lua
+      description: Copie l'erreur complète (BugSack + BugGrabber recommandés).
+      render: text
+  - type: input
+    id: where
+    attributes:
+      label: Résultat de /fp where
+  - type: input
+    id: step
+    attributes:
+      label: Segment et étape
+      description: "Ex. : Forêt d'Elwynn 1-13, étape 12/120"
+  - type: input
+    id: char
+    attributes:
+      label: Personnage
+      description: "Race, classe, niveau, faction, langue du client"

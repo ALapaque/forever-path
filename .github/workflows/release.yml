@@ -1,0 +1,23 @@
+name: Release
+
+# Pousser un tag (ex. v0.3.0, ou v0.3.0-beta1 pour une bêta) publie l'addon.
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Empaqueter et publier
+        uses: BigWigsMods/packager@v2

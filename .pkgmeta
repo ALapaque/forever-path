@@ -1,0 +1,16 @@
+# Empaquetage par BigWigsMods/packager (CurseForge, Wago, GitHub Releases)
+package-as: ForeverPath
+
+enable-nolib-creation: no
+
+ignore:
+  - tests
+  - tools
+  - .github
+  - .luacheckrc
+  - .gitignore
+  - CONTRIBUTING.md
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown

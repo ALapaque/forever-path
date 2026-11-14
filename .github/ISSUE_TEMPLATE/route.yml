@@ -1,0 +1,21 @@
+name: Route
+description: Proposer une route (nouvelle zone) ou signaler une étape fausse
+labels: [route]
+body:
+  - type: input
+    id: zone
+    attributes:
+      label: Zone et niveaux
+      description: "Ex. : Rives Claires 36-40, Horde"
+    validations:
+      required: true
+  - type: textarea
+    id: export
+    attributes:
+      label: Export de l'enregistreur (/fp export)
+      render: text
+  - type: textarea
+    id: notes
+    attributes:
+      label: Remarques
+      description: Étape fausse, PNJ déplacé, ordre à améliorer…

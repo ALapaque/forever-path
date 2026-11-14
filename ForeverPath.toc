@@ -1,0 +1,55 @@
+## Interface: 16001
+## Title: |cffd4af37ForeverPath|r
+## Notes: Guide de leveling 1-60 gratuit et modulaire pour WoW Forever
+## Notes-frFR: Guide de leveling 1-60 gratuit et modulaire pour WoW Forever
+## Author: Arlioz
+## Version: @project-version@
+## X-License: GPL-3.0
+## Category: Quests
+## Category-frFR: Quêtes
+## SavedVariables: ForeverPathDB
+## SavedVariablesPerCharacter: ForeverPathCharDB
+## OptionalDeps: TomTom
+## IconTexture: Interface\Icons\INV_Misc_Map_01
+
+# Si l'addon apparaît « périmé », vérifie le numéro avec  /dump (select(4, GetBuildInfo()))
+
+Locale.lua
+Core.lua
+UI\Widgets.lua
+Data\Zones.lua
+Parser.lua
+Geo.lua
+Engine.lua
+Guides\_NpcNames.lua
+
+Modules\Guide.lua
+Modules\Objectives.lua
+Modules\Zones.lua
+Modules\Waypoint.lua
+Modules\Arrow.lua
+Modules\Nameplates.lua
+Modules\Marker.lua
+Modules\TargetButton.lua
+Modules\NpcModel.lua
+Modules\QuestItem.lua
+Modules\Automation.lua
+Modules\Rewards.lua
+Modules\XPTracker.lua
+Modules\Reminders.lua
+Modules\GroupSync.lua
+Modules\Danger.lua
+Modules\Recorder.lua
+
+UI\ExportFrame.lua
+UI\Options.lua
+
+Guides\Skyborne.lua
+Guides\Route_alliance_human.lua
+Guides\Route_alliance_dwarf.lua
+Guides\Route_alliance_nightelf.lua
+Guides\Route_horde_orc.lua
+Guides\Route_horde_tauren.lua
+Guides\Route_horde_undead.lua
+
+Slash.lua

@@ -1,0 +1,7 @@
+<Bindings>
+    <Binding name="FOREVERPATH_NEXT" header="FOREVERPATH" category="ADDONS">ForeverPath_Next()</Binding>
+    <Binding name="FOREVERPATH_PREV" category="ADDONS">ForeverPath_Prev()</Binding>
+    <Binding name="FOREVERPATH_TOGGLE" category="ADDONS">ForeverPath_Toggle()</Binding>
+    <Binding name="CLICK ForeverPathTargetButton:LeftButton" category="ADDONS"/>
+    <Binding name="CLICK ForeverPathQuestItemButton:LeftButton" category="ADDONS"/>
+</Bindings>

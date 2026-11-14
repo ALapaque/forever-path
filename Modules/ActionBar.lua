@@ -6,12 +6,12 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "actionbar", category = "look", default = true, locked = true,
     name = "Barre d'actions",
-    desc = "Regroupe les boutons « Cibler » et « Objet de quête » dans un même cadre. Glisse la poignée pour la déplacer.",
+    desc = ns.Tr("Regroupe les boutons « Cibler » et « Objet de quête » dans un même cadre. Glisse la poignée pour la déplacer."),
     options = {
         { key = "vertical", label = "Disposition verticale", type = "check", default = false },
-        { key = "size", label = "Taille des boutons", type = "slider", min = 24, max = 56, step = 2, default = 36 },
-        { key = "spacing", label = "Espacement", type = "slider", min = 0, max = 16, step = 1, default = 4 },
-        { key = "handle", label = "Toujours afficher la poignée", type = "check", default = false },
+        { key = "size", label = ns.Tr("Taille des boutons"), type = "slider", min = 24, max = 56, step = 2, default = 36 },
+        { key = "spacing", label = ns.Tr("Espacement"), type = "slider", min = 0, max = 16, step = 1, default = 4 },
+        { key = "handle", label = ns.Tr("Toujours afficher la poignée"), type = "check", default = false },
     },
 })
 ns.ActionBar = M
@@ -43,9 +43,9 @@ end)
 handle:SetScript("OnEnter", function(self)
     self:SetAlpha(1)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText("Barre d'actions ForeverPath", 1, 1, 1)
-    GameTooltip:AddLine("Glisser pour déplacer (hors combat)", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Réglages : /fp config > Barre d'actions", 0.7, 0.7, 0.7)
+    GameTooltip:SetText(ns.Tr("Barre d'actions ForeverPath"), 1, 1, 1)
+    GameTooltip:AddLine(ns.Tr("Glisser pour déplacer (hors combat)"), 0.7, 0.7, 0.7)
+    GameTooltip:AddLine(ns.Tr("Réglages : /fp config > Barre d'actions"), 0.7, 0.7, 0.7)
     GameTooltip:Show()
 end)
 handle:SetScript("OnLeave", function(self)
@@ -121,5 +121,5 @@ function M.preview(p)
     h:SetColorTexture(1, 1, 1, 0.3)
     local k = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
     k:SetPoint("BOTTOM", 0, 6)
-    k:SetText("Un seul cadre, déplaçable")
+    k:SetText(ns.Tr("Un seul cadre, déplaçable"))
 end

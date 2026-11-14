@@ -3,11 +3,11 @@ local L = ns.L
 
 local M = ns.RegisterModule({
     id = "arrow", category = "nav", default = true,
-    name = "Flèche de direction",
-    desc = "Une flèche à l'écran qui pointe vers l'étape, avec la distance. Verte quand tu es dans la bonne direction.",
+    name = ns.Tr("Flèche de direction"),
+    desc = ns.Tr("Une flèche à l'écran qui pointe vers l'étape, avec la distance. Verte quand tu es dans la bonne direction."),
     options = {
-        { key = "size", label = "Taille", type = "slider", min = 32, max = 96, step = 4, default = 56 },
-        { key = "hideClose", label = "Masquer à l'arrivée", type = "check", default = true },
+        { key = "size", label = ns.Tr("Taille"), type = "slider", min = 32, max = 96, step = 4, default = 56 },
+        { key = "hideClose", label = ns.Tr("Masquer à l'arrivée"), type = "check", default = true },
     },
 })
 
@@ -53,7 +53,7 @@ f:SetScript("OnUpdate", function(self, dt)
         self.tex:Show()
         self.tex:SetRotation(0)
         self.tex:SetVertexColor(0.3, 1, 0.3)
-        self.dist:SetText(L.ARRIVED or "Arrivé")
+        self.dist:SetText(L.ARRIVED or ns.Tr("Arrivé"))
         return
     end
     local rel = ns.Geo.RelativeAngle(bearing)

@@ -42,6 +42,9 @@ local fr = {
         "/fp config — panneau d'options (modules, aperçus)",
         "/fp lock — verrouiller les fenêtres",
         "/fp paths [export|import|reset] — chemins appris (itinéraires)",
+        "/fp session [minutes|stop] — session de jeu",
+        "/fp chrono — temps par niveau",
+        "/fp rapport — rapport de parcours anonyme",
         "/fp where — infos de position (debug)",
     },
 }
@@ -60,13 +63,95 @@ local en = {
     REC_OFF = "Recorder off.", REC_CLEARED = "Recording cleared.",
     EXPORT_TITLE = "Guide export (Ctrl+A, Ctrl+C)",
     LOADED = "Guide loaded: %s", UNKNOWN_GUIDE = "Unknown guide: %s",
-    NEXT_SEGMENT = "Next segment: %s", ARRIVED = "Arrived", FLIGHTPATH = "Flight path",
+    NEXT_SEGMENT = "Next segment: %s", ARRIVED = "Arrived", FLIGHTPATH = "Flight path", ACCEPT_VERB = "Accept",
+    HELP = {
+        "/fp — show/hide",
+        "/fp next | prev | skip — navigate",
+        "/fp zones — recommended zones",
+        "/fp guides — list guides",
+        "/fp load <id> — load a guide",
+        "/fp rec on|off|clear — quest recorder",
+        "/fp export — export the recording",
+        "/fp auto — toggle auto accept/turn-in",
+        "/fp config — options panel (modules, previews)",
+        "/fp lock — lock windows",
+        "/fp paths [export|import|reset] — learned paths (journeys)",
+        "/fp session [minutes|stop] — play session",
+        "/fp chrono — time per level",
+        "/fp rapport — anonymous run report",
+        "/fp where — position info (debug)",
+    },
 }
 
-local locale = GetLocale and GetLocale() or "frFR"
+local locale = GetLocale and GetLocale()
+if type(locale) ~= "string" then locale = "frFR" end
 local L = setmetatable({}, { __index = function(_, k) return fr[k] or k end })
-if locale == "enUS" or locale == "enGB" then
+-- Français pour frFR, anglais pour toutes les autres langues
+ns.isFrench = (locale == "frFR")
+ns.isEnglish = not ns.isFrench
+if ns.isEnglish then
     for k, v in pairs(en) do rawset(L, k, v) end
 end
 ns.L = L
-ns.isFrench = (locale == "frFR")
+
+---------------------------------------------------------------------------
+-- ns.Tr(texte) : traduction des textes de l'interface (dictionnaire ns.EN, Locale_enUS.lua).
+-- 1) correspondance exacte ; 2) texte déjà formaté : on le reconnaît grâce aux modèles
+--    (« Session de %d min lancée. ») et on recompose la phrase anglaise avec les mêmes valeurs.
+---------------------------------------------------------------------------
+local patterns
+local function toPattern(fmt)
+    local out, i, n = { "^" }, 1, #fmt
+    while i <= n do
+        local c = fmt:sub(i, i)
+        if c == "%" then
+            if fmt:sub(i + 1, i + 1) == "%" then
+                out[#out + 1] = "%%"; i = i + 2
+            else
+                local spec = fmt:match("^%%[%-%d%.]*[dsfx]", i)
+                if spec then out[#out + 1] = "(.-)"; i = i + #spec
+                else out[#out + 1] = "%%"; i = i + 1 end
+            end
+        elseif c:find("[%^%$%(%)%.%[%]%*%+%-%?]") then
+            out[#out + 1] = "%" .. c; i = i + 1
+        else
+            out[#out + 1] = c; i = i + 1
+        end
+    end
+    out[#out + 1] = "$"
+    return table.concat(out)
+end
+ns.ToPattern = toPattern
+
+-- remplit le modèle anglais avec les valeurs capturées (dans l'ordre)
+local function fill(tpl, caps)
+    local k = 0
+    return (tpl:gsub("%%([%%%-%d%.]*[dsfx%%]?)", function(spec)
+        if spec == "%" then return "%" end
+        k = k + 1
+        return caps[k] or ""
+    end))
+end
+
+function ns.Tr(s)
+    if ns.isFrench or type(s) ~= "string" or s == "" or not ns.EN then return s end
+    local e = ns.EN[s]
+    if e then return e end
+    if not s:find("%d") and not s:find(" ", 1, true) then return s end
+    if not patterns then
+        patterns = {}
+        for frText, enText in pairs(ns.EN) do
+            if frText:find("%%[%-%d%.]*[dsfx]") then patterns[#patterns + 1] = { toPattern(frText), enText } end
+        end
+        table.sort(patterns, function(a, b) return #a[1] > #b[1] end)   -- le plus précis d'abord
+    end
+    for _, p in ipairs(patterns) do
+        local caps = { s:match(p[1]) }
+        if caps[1] then
+            -- les valeurs capturées peuvent elles-mêmes être des textes à traduire
+            for i, c in ipairs(caps) do caps[i] = ns.EN[c] or c end
+            return fill(p[2], caps)
+        end
+    end
+    return s
+end

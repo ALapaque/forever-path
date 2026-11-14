@@ -9,13 +9,13 @@ end
 
 local M = ns.RegisterModule({
     id = "appearance", category = "look", default = true, locked = true,
-    name = "Apparence",
-    desc = "Le style des fenêtres et la police. Avec Daylight UI installé, le thème « Daylight UI » reprend ses couleurs et sa police en direct. Les polices LibSharedMedia sont proposées aussi.",
+    name = ns.Tr("Apparence"),
+    desc = ns.Tr("Le style des fenêtres et la police. Avec Daylight UI installé, le thème « Daylight UI » reprend ses couleurs et sa police en direct. Les polices LibSharedMedia sont proposées aussi."),
     options = {
-        { key = "theme", label = "Thème", type = "select", values = themeNames, store = "value", width = 150 },
-        { key = "font", label = "Police", type = "select", values = function() return ns.FontList() end, store = "value", width = 150 },
-        { key = "fontScale", label = "Taille du texte", type = "slider", min = 0.8, max = 1.4, step = 0.05, default = 1 },
-        { key = "locked", label = "Verrouiller les fenêtres (pas de déplacement)", type = "check", default = false },
+        { key = "theme", label = ns.Tr("Thème"), type = "select", values = themeNames, store = "value", width = 150 },
+        { key = "font", label = ns.Tr("Police"), type = "select", values = function() return ns.FontList() end, store = "value", width = 150 },
+        { key = "fontScale", label = ns.Tr("Taille du texte"), type = "slider", min = 0.8, max = 1.4, step = 0.05, default = 1 },
+        { key = "locked", label = ns.Tr("Verrouiller les fenêtres (pas de déplacement)"), type = "check", default = false },
     },
 })
 
@@ -59,5 +59,5 @@ function M.preview(p)
     end
     local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("BOTTOM", 0, 6)
-    fs:SetText("Aa — police au choix")
+    fs:SetText(ns.Tr("Aa — police au choix"))
 end

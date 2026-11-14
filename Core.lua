@@ -42,7 +42,7 @@ end
 ns.SlashExt = {}
 
 function ns.Print(fmt, ...)
-    local msg = select("#", ...) > 0 and fmt:format(...) or fmt
+    local msg = select("#", ...) > 0 and ns.Tr(fmt):format(...) or ns.Tr(fmt)
     DEFAULT_CHAT_FRAME:AddMessage("|cffd4af37ForeverPath|r " .. msg)
 end
 
@@ -107,6 +107,14 @@ end
 
 function ns.RegisterModule(m)
     assert(m.id, "module sans id")
+    -- textes de la fiche du module (nom, description, réglages) dans la langue du client
+    m.name, m.desc = ns.Tr(m.name), ns.Tr(m.desc)
+    for _, o in ipairs(m.options or {}) do
+        o.label = ns.Tr(o.label)
+        if type(o.values) == "table" then
+            for _, v in ipairs(o.values) do if type(v) == "table" then v[2] = ns.Tr(v[2]) end end
+        end
+    end
     setmetatable(m, ModuleProto)
     if m.default == nil then m.default = true end
     m.enabled = false

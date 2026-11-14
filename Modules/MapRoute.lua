@@ -4,11 +4,11 @@ local _, ns = ...
 -- suivantes numérotées (prendre / faire / rendre), uniquement sur la carte affichée.
 local M = ns.RegisterModule({
     id = "maproute", category = "nav", default = true,
-    name = "Tracé de la route sur la carte",
-    desc = "Sur la carte du monde : un tracé en pointillés depuis ta position et les prochaines étapes numérotées, pour voir le chemin d'un coup d'œil.",
+    name = ns.Tr("Tracé de la route sur la carte"),
+    desc = ns.Tr("Sur la carte du monde : un tracé en pointillés depuis ta position et les prochaines étapes numérotées, pour voir le chemin d'un coup d'œil."),
     options = {
-        { key = "count", label = "Étapes tracées", type = "slider", min = 2, max = 12, step = 1, default = 6 },
-        { key = "fromPlayer", label = "Partir de ma position", type = "check", default = true },
+        { key = "count", label = ns.Tr("Étapes tracées"), type = "slider", min = 2, max = 12, step = 1, default = 6 },
+        { key = "fromPlayer", label = ns.Tr("Partir de ma position"), type = "check", default = true },
     },
 })
 

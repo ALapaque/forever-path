@@ -6,18 +6,18 @@ local Nav = ns.Nav
 -- est déplacé de virage en virage, donc la flèche et le guidage 3D suivent le chemin.
 local M = ns.RegisterModule({
     id = "journeys", category = "nav", default = true,
-    name = "Itinéraires (chemin le plus rapide)",
-    desc = "Calcule le trajet le plus rapide vers l'étape : chemins déjà parcourus, vols, bateaux, zeppelins, tram, pierre de foyer. Guidage virage par virage (la flèche et la 3D suivent), tracé sur la carte et la minimap.",
+    name = ns.Tr("Itinéraires (chemin le plus rapide)"),
+    desc = ns.Tr("Calcule le trajet le plus rapide vers l'étape : chemins déjà parcourus, vols, bateaux, zeppelins, tram, pierre de foyer. Guidage virage par virage (la flèche et la 3D suivent), tracé sur la carte et la minimap."),
     options = {
-        { key = "learn", label = "Apprendre les chemins en jouant", type = "check", default = true },
+        { key = "learn", label = ns.Tr("Apprendre les chemins en jouant"), type = "check", default = true },
         { key = "corners", label = "Guider virage par virage", type = "check", default = true },
-        { key = "terrain", label = "Contourner falaises et lacs (données de terrain)", type = "check", default = true },
-        { key = "flights", label = "Utiliser les vols connus", type = "check", default = true },
-        { key = "boats", label = "Utiliser bateaux, zeppelins et tram", type = "check", default = true },
-        { key = "hearth", label = "Utiliser la pierre de foyer", type = "check", default = true },
-        { key = "card", label = "Détail du trajet dans le guide", type = "check", default = true },
-        { key = "minimap", label = "Tracé sur la minimap", type = "check", default = true },
-        { key = "yield", label = "Laisser un autre addon guider s'il pose son point (Naowh...)", type = "check", default = true },
+        { key = "terrain", label = ns.Tr("Contourner falaises et lacs (données de terrain)"), type = "check", default = true },
+        { key = "flights", label = ns.Tr("Utiliser les vols connus"), type = "check", default = true },
+        { key = "boats", label = ns.Tr("Utiliser bateaux, zeppelins et tram"), type = "check", default = true },
+        { key = "hearth", label = ns.Tr("Utiliser la pierre de foyer"), type = "check", default = true },
+        { key = "card", label = ns.Tr("Détail du trajet dans le guide"), type = "check", default = true },
+        { key = "minimap", label = ns.Tr("Tracé sur la minimap"), type = "check", default = true },
+        { key = "yield", label = ns.Tr("Laisser un autre addon guider s'il pose son point (Naowh...)"), type = "check", default = true },
     },
 })
 ns.Journeys = M
@@ -31,7 +31,7 @@ M.COLORS = {
     boat = { 0.3, 0.9, 0.9 }, zeppelin = { 0.85, 0.45, 1 }, tram = { 0.8, 0.8, 0.8 }, hearth = { 1, 0.5, 0.8 },
 }
 local LABEL = {
-    walk = "Marcher", flight = "Vol", boat = "Bateau", zeppelin = "Zeppelin", tram = "Tram", hearth = "Pierre de foyer",
+    walk = ns.Tr("Marcher"), flight = ns.Tr("Vol"), boat = ns.Tr("Bateau"), zeppelin = "Zeppelin", tram = "Tram", hearth = ns.Tr("Pierre de foyer"),
 }
 
 local journey, leg, corner, target
@@ -205,7 +205,7 @@ local function advance(p)
         -- trop loin du segment en cours : on recalcule
         local a = l.pts[corner - 1]
         if a and a.c == p.c and Nav.SegDist(p, a, c) > DEVIATE and GetTime() - lastPlan > 4 then
-            M:Replan("écart")
+            M:Replan(ns.Tr("écart"))
         end
     else
         -- transport : arrivé à destination (ou changement de continent) -> étape suivante
@@ -246,9 +246,9 @@ function M:Render()
         ns.Guide:SetSection("journey", 5, nil)
         return
     end
-    local lines = { ("|cffffd100Itinéraire|r  ~%s"):format(fmtTime(journey.total)) }
+    local lines = { (ns.Tr("|cffffd100Itinéraire|r  ~%s")):format(fmtTime(journey.total)) }
     if external and self:Opt("yield") then
-        lines[#lines + 1] = "|cff888888Un autre addon guide le point (Naowh ?)|r"
+        lines[#lines + 1] = ns.Tr("|cff888888Un autre addon guide le point (Naowh ?)|r")
     end
     for i = leg, math.min(#journey.legs, leg + 3) do
         local l = journey.legs[i]
@@ -257,7 +257,7 @@ function M:Render()
             local risky = false
             for _, p in ipairs(l.pts) do if p.risky then risky = true end end
             col = risky and M.COLORS.risky or M.COLORS.known
-            text = LABEL.walk .. (risky and " |cff999999(en partie inconnu)|r" or "")
+            text = LABEL.walk .. (risky and ns.Tr(" |cff999999(en partie inconnu)|r") or "")
         else
             col = M.COLORS[l.mode] or M.COLORS.known
             text = LABEL[l.mode] .. (l.toName and (" vers " .. l.toName) or "")
@@ -377,7 +377,7 @@ end)
 
 function M:OnEnable()
     Nav.Net.learning = self:Opt("learn")
-    C_Timer.After(1, function() M:Replan("début") end)
+    C_Timer.After(1, function() M:Replan(ns.Tr("début")) end)
 end
 function M:OnDisable()
     journey = nil
@@ -397,16 +397,16 @@ M:On("FP_STEP_CHANGED", function()
     if key ~= lastTargetKey then
         lastTargetKey = key
         external = false
-        M:Replan("étape")
+        M:Replan(ns.Tr("étape"))
         fire("DestinationChanged", ForeverPathAPI.GetDestination())
     end
 end)
 M:On("FP_TICK", function() M:Tick() end)
 M:On("PLAYER_ENTERING_WORLD", function() Nav.Net.Break(); C_Timer.After(2, function() M:Replan("chargement") end) end)
-M:On("PLAYER_REGEN_ENABLED", function() if GetTime() - lastPlan > 3 then M:Replan("fin de combat") end end)
+M:On("PLAYER_REGEN_ENABLED", function() if GetTime() - lastPlan > 3 then M:Replan(ns.Tr("fin de combat")) end end)
 M:On("PLAYER_CONTROL_GAINED", function() Nav.Net.Break(); C_Timer.After(1, function() M:Replan("atterrissage") end) end)
 M:On("PLAYER_DEAD", function() Nav.Net.Break() end)
-M:On("FP_NAV_CHANGED", function() if GetTime() - lastPlan > 2 then M:Replan("nouveau transport") end end)
+M:On("FP_NAV_CHANGED", function() if GetTime() - lastPlan > 2 then M:Replan(ns.Tr("nouveau transport")) end end)
 M:On("USER_WAYPOINT_UPDATED", function()
     if ns.Waypoint and ns.Waypoint.placing then return end
     -- un autre addon a posé son propre point (ex. Naowh Journeys)

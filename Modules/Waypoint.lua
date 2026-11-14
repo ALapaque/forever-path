@@ -2,11 +2,11 @@ local _, ns = ...
 
 local M = ns.RegisterModule({
     id = "waypoint", category = "nav", default = true,
-    name = "Point sur la carte et la minimap",
-    desc = "Pose le point de Blizzard sur l'étape (carte, minimap, pilier lumineux) et le déplace tout seul à chaque étape. Bouton épingle dans le guide pour le replacer.",
+    name = ns.Tr("Point sur la carte et la minimap"),
+    desc = ns.Tr("Pose le point de Blizzard sur l'étape (carte, minimap, pilier lumineux) et le déplace tout seul à chaque étape. Bouton épingle dans le guide pour le replacer."),
     options = {
-        { key = "button", label = "Bouton épingle dans le guide", type = "check", default = true },
-        { key = "tomtom", label = "Utiliser aussi TomTom (si installé)", type = "check", default = true },
+        { key = "button", label = ns.Tr("Bouton épingle dans le guide"), type = "check", default = true },
+        { key = "tomtom", label = ns.Tr("Utiliser aussi TomTom (si installé)"), type = "check", default = true },
     },
 })
 ns.Waypoint = M
@@ -64,7 +64,7 @@ function M:Place(openMap, quiet)
         return true
     end
     if not quiet then
-        ns.Toast("Pas de position pour cette étape.", "Interface\\Icons\\INV_Misc_Map_01", 1, 0.8, 0.4, 2)
+        ns.Toast(ns.Tr("Pas de position pour cette étape."), "Interface\\Icons\\INV_Misc_Map_01", 1, 0.8, 0.4, 2)
     end
 end
 
@@ -74,10 +74,10 @@ local function updateButton()
     if not btn then
         btn = ns.Guide:AddButton("waypoint", nil, 22, function(_, mouse) M:Place(mouse == "RightButton") end,
             function(tt)
-                tt:SetText("Point sur la carte", 1, 1, 1)
-                tt:AddLine("Clic gauche : replacer le point (carte, minimap, pilier)", 0.8, 0.8, 0.8, true)
-                tt:AddLine("Clic droit : replacer et ouvrir la carte", 0.8, 0.8, 0.8, true)
-                tt:AddLine("Le point suit tout seul les étapes.", 0.6, 0.6, 0.6, true)
+                tt:SetText(ns.Tr("Point sur la carte"), 1, 1, 1)
+                tt:AddLine(ns.Tr("Clic gauche : replacer le point (carte, minimap, pilier)"), 0.8, 0.8, 0.8, true)
+                tt:AddLine(ns.Tr("Clic droit : replacer et ouvrir la carte"), 0.8, 0.8, 0.8, true)
+                tt:AddLine(ns.Tr("Le point suit tout seul les étapes."), 0.6, 0.6, 0.6, true)
             end, ns.MEDIA .. "pin")
         btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         btn.icon:SetVertexColor(1, 0.85, 0.3)

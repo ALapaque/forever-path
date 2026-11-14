@@ -4,8 +4,8 @@ local _, ns = ...
 -- Les attributs d'un bouton sécurisé ne peuvent changer qu'hors combat.
 local M = ns.RegisterModule({
     id = "questitem", category = "guide", default = true,
-    name = "Bouton d'objet de quête",
-    desc = "Un bouton cliquable (et un raccourci clavier) pour utiliser l'objet de la quête en cours.",
+    name = ns.Tr("Bouton d'objet de quête"),
+    desc = ns.Tr("Un bouton cliquable (et un raccourci clavier) pour utiliser l'objet de la quête en cours."),
     options = {},
 })
 
@@ -79,5 +79,5 @@ function M.preview(p)
     t:SetTexture("Interface\\Icons\\INV_Potion_51")
     local k = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
     k:SetPoint("TOP", t, "BOTTOM", 0, -3)
-    k:SetText("Raccourci : à définir")
+    k:SetText(ns.Tr("Raccourci : à définir"))
 end

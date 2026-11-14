@@ -178,7 +178,7 @@ function Net.Export()
 end
 
 function Net.Import(text)
-    if not text or not text:find("^FPN1") then return false, "format inconnu" end
+    if not text or not text:find("^FPN1") then return false, ns.Tr("format inconnu") end
     local added = 0
     for line in text:gmatch("[^\n]+") do
         local cont, nodes, edges = line:match("^C(%d+);([^;]*);(.*)$")

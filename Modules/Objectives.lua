@@ -2,10 +2,10 @@ local _, ns = ...
 
 local M = ns.RegisterModule({
     id = "objectives", category = "guide", default = true,
-    name = "Objectifs en direct",
-    desc = "Affiche la progression de la quête en cours dans la fenêtre du guide (ex. Vermine kobold 6/10).",
+    name = ns.Tr("Objectifs en direct"),
+    desc = ns.Tr("Affiche la progression de la quête en cours dans la fenêtre du guide (ex. Vermine kobold 6/10)."),
     options = {
-        { key = "allLog", label = "Afficher aussi les autres quêtes de la zone", type = "check", default = false },
+        { key = "allLog", label = ns.Tr("Afficher aussi les autres quêtes de la zone"), type = "check", default = false },
     },
 })
 
@@ -53,5 +53,5 @@ function M.preview(p)
     local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("LEFT", 10, 0)
     fs:SetJustifyH("LEFT")
-    fs:SetText("|cffff7f3fFaire|r : Nettoyer le camp\n|cffffffff• Vermine kobold 6/10|r\n|cff3fbf3f• Bougie ramassée 4/4|r")
+    fs:SetText(ns.Tr("|cffff7f3fFaire|r : Nettoyer le camp\n|cffffffff• Vermine kobold 6/10|r\n|cff3fbf3f• Bougie ramassée 4/4|r"))
 end

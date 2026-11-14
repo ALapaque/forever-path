@@ -3,7 +3,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "xp", category = "comfort", default = true,
     name = "Compteur d'XP",
-    desc = "XP par heure de la session et temps estimé avant le prochain niveau, affichés dans la fenêtre du guide.",
+    desc = ns.Tr("XP par heure de la session et temps estimé avant le prochain niveau, affichés dans la fenêtre du guide."),
     options = {},
 })
 
@@ -24,9 +24,9 @@ function M:Update()
     local rate = elapsed > 60 and gained / elapsed * 3600 or 0
     local text
     if rate > 0 then
-        text = ("|cffcc66ffXP|r %s/h  •  niveau dans %s  •  %d%%"):format(short(rate), fmtTime((max - xp) / rate * 3600), math.floor(xp / max * 100))
+        text = (ns.Tr("|cffcc66ffXP|r %s/h  •  niveau dans %s  •  %d%%")):format(short(rate), fmtTime((max - xp) / rate * 3600), math.floor(xp / max * 100))
     else
-        text = ("|cffcc66ffXP|r %d%% du niveau"):format(math.floor(xp / max * 100))
+        text = (ns.Tr("|cffcc66ffXP|r %d%% du niveau")):format(math.floor(xp / max * 100))
     end
     ns.Guide:SetSection("xp", 90, text)
 end
@@ -51,5 +51,5 @@ M:On("FP_STEP_CHANGED", function() M:Update() end)
 function M.preview(p)
     local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
-    fs:SetText("|cffcc66ffXP|r 18.4k/h\nniveau dans 23 min  •  61%")
+    fs:SetText(ns.Tr("|cffcc66ffXP|r 18.4k/h\nniveau dans 23 min  •  61%"))
 end

@@ -5,11 +5,11 @@ local Nav = ns.Nav
 -- d'arrêt sur un rendu de quête, puis l'auberge la plus proche pour finir reposé.
 local M = ns.RegisterModule({
     id = "session", category = "comfort", default = true,
-    name = "Session de jeu",
-    desc = "Indique le temps dont tu disposes (bouton horloge ou /fp session 45) : ForeverPath estime jusqu'où tu iras, propose de t'arrêter juste après un rendu de quête, puis te guide vers l'auberge la plus proche.",
+    name = ns.Tr("Session de jeu"),
+    desc = ns.Tr("Indique le temps dont tu disposes (bouton horloge ou /fp session 45) : ForeverPath estime jusqu'où tu iras, propose de t'arrêter juste après un rendu de quête, puis te guide vers l'auberge la plus proche."),
     options = {
-        { key = "minutes", label = "Durée par défaut (minutes)", type = "slider", min = 15, max = 240, step = 15, default = 60 },
-        { key = "inn", label = "Guider vers l'auberge à la fin", type = "check", default = true },
+        { key = "minutes", label = ns.Tr("Durée par défaut (minutes)"), type = "slider", min = 15, max = 240, step = 15, default = 60 },
+        { key = "inn", label = ns.Tr("Guider vers l'auberge à la fin"), type = "check", default = true },
     },
 })
 
@@ -75,17 +75,17 @@ function M:Start(minutes)
     ns.cdb.session = { endsAt = time() + minutes * 60, minutes = minutes, stopIdx = idx, guideId = gid }
     if idx then
         local g = ns.Guides[gid]
-        ns.Print(("Session de %d min : arrêt conseillé après « %s » (%d étapes, environ %s)."):format(minutes,
+        ns.Print((ns.Tr("Session de %d min : arrêt conseillé après « %s » (%d étapes, environ %s).")):format(minutes,
             ns.Guide and ns.Guide.StepLabel(g.steps[idx]):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "") or idx, count, fmt(cum)))
     else
-        ns.Print(("Session de %d min lancée."):format(minutes))
+        ns.Print((ns.Tr("Session de %d min lancée.")):format(minutes))
     end
     self:Update()
 end
 
 function M:Stop(silent)
     ns.cdb.session = nil
-    if not silent then ns.Print("Session terminée.") end
+    if not silent then ns.Print(ns.Tr("Session terminée.")) end
     self:Update()
 end
 
@@ -94,9 +94,9 @@ local function finish()
     if not s or s.finished then return end
     s.finished = true
     local inn = M:Opt("inn") and ns.Nav.Places.NearestInn()
-    ns.Toast(inn and ("Fin de session : auberge %s (%s)"):format(inn.name, ns.Nav.Places.ZoneName(inn.map)) or "Fin de session : bon moment pour t'arrêter",
+    ns.Toast(inn and (ns.Tr("Fin de session : auberge %s (%s)")):format(inn.name, ns.Nav.Places.ZoneName(inn.map)) or ns.Tr("Fin de session : bon moment pour t'arrêter"),
         "Interface\\Icons\\INV_Misc_PocketWatch_01", 0.4, 0.8, 1, 8)
-    if inn then ns.Nav.Places.Go(inn, ("Auberge : %s"):format(inn.name), "Interface\\Icons\\Spell_Nature_Sleep") end
+    if inn then ns.Nav.Places.Go(inn, ("Auberge : %s"):format(inn.name), "Interface\\Icons\\Spell_Nature_Sleep", "inn") end
 end
 
 function M:Update()
@@ -108,10 +108,10 @@ function M:Update()
             local s = ns.cdb.session
             if s then
                 tt:AddLine(("Session : %s restantes"):format(fmt(s.endsAt - time())))
-                tt:AddLine("Clic : terminer la session", 0.6, 0.6, 0.6)
+                tt:AddLine(ns.Tr("Clic : terminer la session"), 0.6, 0.6, 0.6)
             else
-                tt:AddLine("Session de jeu")
-                tt:AddLine(("Clic : démarrer une session de %d min\n/fp session 45 pour une autre durée"):format(M:Opt("minutes") or 60), 1, 1, 1, true)
+                tt:AddLine(ns.Tr("Session de jeu"))
+                tt:AddLine((ns.Tr("Clic : démarrer une session de %d min\n/fp session 45 pour une autre durée")):format(M:Opt("minutes") or 60), 1, 1, 1, true)
             end
         end, "Interface\\Icons\\INV_Misc_PocketWatch_01")
     end
@@ -122,10 +122,10 @@ function M:Update()
     local g, _, i = ns.Engine.Current()
     local text
     if left <= 0 or (s.stopIdx and g and g.id == s.guideId and i > s.stopIdx) then
-        text = "|cff66ccffSession|r terminée : c'est le bon moment pour t'arrêter."
+        text = ns.Tr("|cff66ccffSession|r terminée : c'est le bon moment pour t'arrêter.")
         finish()
     elseif s.stopIdx and g and g.id == s.guideId then
-        text = ("|cff66ccffSession|r %s restantes  •  arrêt après l'étape %d (encore %d)"):format(fmt(left), s.stopIdx, s.stopIdx - i + 1)
+        text = (ns.Tr("|cff66ccffSession|r %s restantes  •  arrêt après l'étape %d (encore %d)")):format(fmt(left), s.stopIdx, s.stopIdx - i + 1)
     else
         text = ("|cff66ccffSession|r %s restantes"):format(fmt(left))
     end
@@ -153,5 +153,5 @@ end
 function M.preview(p)
     local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
-    fs:SetText("|cff66ccffSession|r 42 min restantes\narrêt après l'étape 18\n\n|cff66ccffDétour :|r Auberge")
+    fs:SetText(ns.Tr("|cff66ccffSession|r 42 min restantes\narrêt après l'étape 18\n\n|cff66ccffDétour :|r Auberge"))
 end

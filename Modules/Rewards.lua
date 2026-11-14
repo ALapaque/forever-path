@@ -3,11 +3,11 @@ local _, ns = ...
 -- Récompenses de quête : flèche verte sur les améliorations utilisables, pièce sur la plus chère à revendre.
 local M = ns.RegisterModule({
     id = "rewards", category = "comfort", default = true,
-    name = "Conseil de récompense",
-    desc = "Au rendu d'une quête, signale l'objet qui t'améliore (flèche verte) et celui qui se vend le plus cher (pièce d'or). Utilise Pawn s'il est installé (selon tes poids de statistiques), sinon le niveau d'objet.",
+    name = ns.Tr("Conseil de récompense"),
+    desc = ns.Tr("Au rendu d'une quête, signale l'objet qui t'améliore (flèche verte) et celui qui se vend le plus cher (pièce d'or). Utilise Pawn s'il est installé (selon tes poids de statistiques), sinon le niveau d'objet."),
     options = {
-        { key = "pawn", label = "Utiliser Pawn s'il est installé", type = "check", default = true },
-        { key = "auto", label = "Choisir tout seul quand le choix est évident", type = "check", default = false },
+        { key = "pawn", label = ns.Tr("Utiliser Pawn s'il est installé"), type = "check", default = true },
+        { key = "auto", label = ns.Tr("Choisir tout seul quand le choix est évident"), type = "check", default = false },
     },
 })
 
@@ -85,7 +85,7 @@ local function evaluate()
     M.choice = nUp == 1 and upIdx or (nUp == 0 and bestGoldIdx) or nil
     -- choix évident : une seule amélioration, ou aucune (on prend la plus chère)
     if M:Opt("auto") and M.choice and not IsShiftKeyDown() and QuestFrameCompleteQuestButton then
-        ns.Print(("Récompense choisie : %s"):format(GetQuestItemLink("choice", M.choice) or M.choice))
+        ns.Print((ns.Tr("Récompense choisie : %s")):format(GetQuestItemLink("choice", M.choice) or M.choice))
         GetQuestReward(M.choice)
         return
     end

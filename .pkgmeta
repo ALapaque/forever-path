@@ -16,6 +16,7 @@ ignore:
   - CONTRIBUTING.md
   - INTEGRATIONS.md
   - TERRAIN.md
+  - LISTING.md
 
 manual-changelog:
   filename: CHANGELOG.md

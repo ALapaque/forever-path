@@ -4,10 +4,10 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "merchant", category = "comfort", default = true,
     name = "Marchand automatique",
-    desc = "À l'ouverture d'un marchand : vend tes objets gris (camelote) et répare ton équipement si le marchand le permet. Récapitulatif dans la discussion. Maintiens Maj pour ne rien faire.",
+    desc = ns.Tr("À l'ouverture d'un marchand : vend tes objets gris (camelote) et répare ton équipement si le marchand le permet. Récapitulatif dans la discussion. Maintiens Maj pour ne rien faire."),
     options = {
-        { key = "junk", label = "Vendre la camelote (objets gris)", type = "check", default = true },
-        { key = "repair", label = "Réparer l'équipement", type = "check", default = true },
+        { key = "junk", label = ns.Tr("Vendre la camelote (objets gris)"), type = "check", default = true },
+        { key = "repair", label = ns.Tr("Réparer l'équipement"), type = "check", default = true },
     },
 })
 
@@ -43,7 +43,7 @@ local function sellBatch(list, i, total)
         C_Timer.After(0.3, function() sellBatch(list, last + 1, total) end)
     else
         selling = nil
-        ns.Print(("Camelote vendue : %d objet(s), %s"):format(#list, money(total)))
+        ns.Print((ns.Tr("Camelote vendue : %d objet(s), %s")):format(#list, money(total)))
     end
 end
 
@@ -53,7 +53,7 @@ M:On("MERCHANT_SHOW", function()
         local cost, can = GetRepairAllCost()
         if can and cost and cost > 0 and cost <= GetMoney() then
             RepairAllItems(false)
-            ns.Print(("Équipement réparé : %s"):format(money(cost)))
+            ns.Print((ns.Tr("Équipement réparé : %s")):format(money(cost)))
         end
     end
     if M:Opt("junk") and not selling then
@@ -65,5 +65,5 @@ end)
 function M.preview(p)
     local t = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     t:SetPoint("CENTER")
-    t:SetText("|cff9d9d9dCamelote vendue : 7 objet(s)|r\n|cffffd100+ 1 po 23 pa|r\n\nÉquipement réparé")
+    t:SetText(ns.Tr("|cff9d9d9dCamelote vendue : 7 objet(s)|r\n|cffffd100+ 1 po 23 pa|r\n\nÉquipement réparé"))
 end

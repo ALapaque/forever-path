@@ -5,9 +5,36 @@ ns.Guides = {}
 ns.GuideOrder = {}
 
 -- guide = { id, name, faction, race = {...}, minLevel, maxLevel, next = "id", text = DSL }
+-- noms de zones français -> anglais (clients non francophones)
+local zoneList
+function ns.TrZones(text)
+    if ns.isFrench or type(text) ~= "string" then return text end
+    if not zoneList then
+        zoneList = {}
+        for _, z in ipairs(ns.Zones or {}) do
+            if z.fr and z.en and z.fr ~= z.en then zoneList[#zoneList + 1] = z end
+        end
+        table.sort(zoneList, function(a, b) return #a.fr > #b.fr end)
+    end
+    for _, z in ipairs(zoneList) do
+        local i, j = text:find(z.fr, 1, true)
+        while i do
+            text = text:sub(1, i - 1) .. z.en .. text:sub(j + 1)
+            i, j = text:find(z.fr, i + #z.en, true)
+        end
+    end
+    return text
+end
+
 function ns.RegisterGuide(g)
     assert(g.id and g.text, "guide sans id/text")
     g.steps = ns.ParseGuide(g.text)
+    if ns.isEnglish then
+        g.name = ns.TrZones(g.name)
+        for _, st in ipairs(g.steps) do
+            if st.text then st.text = ns.TrZones(ns.Tr(st.text)) end
+        end
+    end
     ns.Guides[g.id] = g
     table.insert(ns.GuideOrder, g.id)
 end
@@ -242,6 +269,9 @@ for _, ev in ipairs({ "QUEST_ACCEPTED", "QUEST_TURNED_IN", "QUEST_LOG_UPDATE", "
 end
 
 ns.On("FP_READY", function()
+    -- personnage transféré / changé de faction, ou guide d'un autre parcours : on repart du bon segment
+    local cur = ns.cdb.guideId and ns.Guides[ns.cdb.guideId]
+    if cur and cur.faction and cur.faction ~= ns.PlayerFaction() then ns.cdb.guideId = nil end
     if not ns.cdb.guideId or not ns.Guides[ns.cdb.guideId] then
         local id = E.PickDefault()
         if id then E.Load(id) end

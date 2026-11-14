@@ -63,7 +63,7 @@ function P.ZoneName(map)
 end
 
 -- Détour vers une entrée (texte affiché dans le guide)
-function P.Go(e, text, icon)
+function P.Go(e, text, icon, kind)
     if not e then return end
-    ns.Engine.SetDetour({ map = e.map, x = e.x, y = e.y, text = text or e.name, icon = icon, npcID = e.npc, radius = 10 })
+    ns.Engine.SetDetour({ map = e.map, x = e.x, y = e.y, text = text or e.name, icon = icon, npcID = e.npc, radius = 10, kind = kind })
 end

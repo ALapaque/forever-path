@@ -38,17 +38,25 @@ Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin offici
 | Repérage sur les barres de nom (PNJ, monstres de l'étape, monstres de quête) | ✔ |
 | Bouton « Cibler » (clic droit : poser un symbole) + raccourci | ✔ |
 | Bouton d'objet de quête (+ raccourci) | ✔ |
-| Prise et rendu automatiques (Maj = manuel, jamais de choix de récompense) | ✔ |
-| Conseil de récompense (amélioration / meilleure revente) | ✔ |
+| Prise et rendu automatiques (Maj = manuel) | ✔ |
+| Conseil de récompense (amélioration via Pawn ou niveau d'objet, meilleure revente, choix automatique en option) | ✔ |
 | Compteur d'XP (XP/h, temps avant le niveau) | ✔ |
-| Rappels (sorts, réparation, sacs) | ✔ |
-| Progression du groupe | ✔ |
+| Maître de classe : rappel et détour vers le plus proche | ✔ |
+| Session de jeu : point d'arrêt conseillé, puis auberge la plus proche | ✔ |
+| Marchand automatique (camelote, réparation) | ✔ |
+| Récolte sur la route (mineurs, herboristes) | ✔ |
+| Rappels (réparation, sacs) | ✔ |
+| Progression du groupe (avance / retard, quêtes manquantes, partage) | ✔ |
+| Quêtes de groupe signalées | ✔ |
+| Chrono par niveau, records, rapport de parcours anonyme | ✔ |
 | Aperçu 3D du PNJ | — |
 | Alertes de danger (Hardcore) | — |
 | Enregistreur de route | — |
 
 ## Commandes
-`/fp` afficher/masquer · `/fp config` options · `/fp next` / `/fp prev` · `/fp zones` · `/fp guides` · `/fp load <id>` · `/fp auto` (route automatique) · `/fp rec on|off|clear` · `/fp note <texte>` · `/fp export` · `/fp lock` · `/fp reset` · `/fp where` (debug : carte, coordonnées, npcID de la cible).
+`/fp` afficher/masquer · `/fp config` options · `/fp next` / `/fp prev` · `/fp zones` · `/fp guides` · `/fp load <id>` · `/fp auto` (route automatique) · `/fp session [minutes|stop]` · `/fp chrono` · `/fp rapport` · `/fp rec on|off|clear` · `/fp note <texte>` · `/fp export` · `/fp lock` · `/fp reset` · `/fp paths …` · `/fp where` (debug : carte, coordonnées, npcID de la cible).
+
+L'interface est en français, et en anglais sur tous les autres clients (`Locale_enUS.lua`, vérifié en CI par `tools/check_locale.py`).
 
 Raccourcis clavier : Options > Raccourcis > ForeverPath (étape suivante/précédente, Cibler, Objet de quête).
 
@@ -68,8 +76,12 @@ Options : race=  class=  r=  upto=  danger=1  npc=  target=
 git clone https://github.com/Questie/QuestieDB
 cd tools
 python3 -I load.py <QuestieDB>/data/Forever/
-python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides
+python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides     # --dry : mesure seulement
+python3 -I gen_world.py ../Data/World.lua                        # maîtres, auberges, récolte
 ```
+Chaque génération affiche ses mesures (temps estimé jusqu'au 60, XP/h, distance, farm) et l'écart avec `tools/route_metrics.json`. Des réglages peuvent être testés sans rien écrire : `gen_routes.py … --dry GREY=9 HUB=100`.
+
+Les rapports des joueurs (`/fp rapport`) s'analysent avec `python3 -I tools/analyze_reports.py rapports/*.txt`.
 Les données sont lues comme de simples données : aucun code Lua téléchargé n'est exécuté.
 
 ## Intégrations

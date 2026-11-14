@@ -158,6 +158,7 @@ end
 
 -- ns.Button(parent, label, w, h, onClick [, tooltip [, icon]])
 function ns.Button(parent, label, w, h, onClick, tooltip, icon)
+    label, tooltip = ns.Tr(label), type(tooltip) == "string" and ns.Tr(tooltip) or tooltip
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
     b:SetSize(w, h or 20)
     b:SetBackdrop({ bgFile = FLAT, edgeFile = FLAT, edgeSize = 1 })
@@ -227,7 +228,7 @@ toast:SetScript("OnUpdate", function(self, dt)
 end)
 
 function ns.Toast(msg, icon, r, g, b, duration)
-    toast.text:SetText(msg)
+    toast.text:SetText(ns.Tr(msg))
     toast.text:SetTextColor(r or 1, g or 1, b or 1)
     toast.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_Map_01")
     toast.elapsed, toast.duration = 0, duration or 4

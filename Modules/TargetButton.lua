@@ -6,12 +6,12 @@ local _, ns = ...
 -- Depuis le patch 12.0 (repris par Forever), SetRaidTarget est protégé : un addon ne peut
 -- plus marquer tout seul, seul un clic du joueur sur un bouton sécurisé le peut.
 -- Raccourci clavier dans Options > Raccourcis > ForeverPath.
-local ICONS = { "Étoile", "Cercle", "Losange", "Triangle", "Lune", "Carré", "Croix", "Crâne" }
+local ICONS = { ns.Tr("Étoile"), ns.Tr("Cercle"), ns.Tr("Losange"), ns.Tr("Triangle"), ns.Tr("Lune"), ns.Tr("Carré"), ns.Tr("Croix"), ns.Tr("Crâne") }
 
 local M = ns.RegisterModule({
     id = "targetbutton", category = "targets", default = true,
     name = "Bouton « Cibler »",
-    desc = "Clic gauche : cible le PNJ ou le monstre de l'étape, même dans la foule. Clic droit : pose un symbole au-dessus de lui.",
+    desc = ns.Tr("Clic gauche : cible le PNJ ou le monstre de l'étape, même dans la foule. Clic droit : pose un symbole au-dessus de lui."),
     options = {
         { key = "icon", label = "Symbole (clic droit)", type = "select", values = ICONS, default = 1 },
     },
@@ -35,9 +35,9 @@ b:SetScript("OnEnter", function(self)
     GameTooltip:AddLine("Cibler")
     for _, n in ipairs(self.names or {}) do GameTooltip:AddLine(n, 1, 1, 1) end
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine("Clic gauche : cibler", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine(("Clic droit : poser %s sur la cible"):format(ICONS[M:Opt("icon") or 1]):lower(), 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Glisser : déplacer", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine(ns.Tr("Clic gauche : cibler"), 0.7, 0.7, 0.7)
+    GameTooltip:AddLine((ns.Tr("Clic droit : poser %s sur la cible")):format(ICONS[M:Opt("icon") or 1]):lower(), 0.7, 0.7, 0.7)
+    GameTooltip:AddLine(ns.Tr("Glisser : déplacer"), 0.7, 0.7, 0.7)
     GameTooltip:Show()
 end)
 b:SetScript("OnLeave", function() GameTooltip:Hide() end)

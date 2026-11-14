@@ -2,12 +2,12 @@ local _, ns = ...
 
 local M = ns.RegisterModule({
     id = "automation", category = "comfort", default = true,
-    name = "Prise et rendu automatiques",
-    desc = "Accepte et rend tout seul les quêtes de la route. Les récompenses à choisir sont laissées au module « Conseil de récompense ». Maintiens Maj pour désactiver.",
+    name = ns.Tr("Prise et rendu automatiques"),
+    desc = ns.Tr("Accepte et rend tout seul les quêtes de la route. Les récompenses à choisir sont laissées au module « Conseil de récompense ». Maintiens Maj pour désactiver."),
     options = {
         { key = "accept", label = "Accepter automatiquement", type = "check", default = true },
         { key = "turnin", label = "Rendre automatiquement", type = "check", default = true },
-        { key = "onlyGuide", label = "Seulement les quêtes de la route", type = "check", default = true },
+        { key = "onlyGuide", label = ns.Tr("Seulement les quêtes de la route"), type = "check", default = true },
     },
 })
 

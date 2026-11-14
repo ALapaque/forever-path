@@ -6,10 +6,10 @@ local PREFIX = "FPATH1"
 
 local M = ns.RegisterModule({
     id = "groupsync", category = "comfort", default = true,
-    name = "Progression du groupe",
-    desc = "En groupe, affiche l'étape de chaque membre qui utilise ForeverPath (en avance, en retard), signale qui n'a pas la quête de l'étape et propose de la partager.",
+    name = ns.Tr("Progression du groupe"),
+    desc = ns.Tr("En groupe, affiche l'étape de chaque membre qui utilise ForeverPath (en avance, en retard), signale qui n'a pas la quête de l'étape et propose de la partager."),
     options = {
-        { key = "share", label = "Proposer de partager les quêtes", type = "check", default = true },
+        { key = "share", label = ns.Tr("Proposer de partager les quêtes"), type = "check", default = true },
     },
 })
 
@@ -74,10 +74,10 @@ function M:Update()
     for name, d in pairs(members) do
         if GetTime() - d.time < 600 and (not UnitInParty or UnitInParty(name)) then
             local where
-            if d.guide ~= myGuide then where = "autre segment"
-            elseif not myIdx or d.index == myIdx then where = "même étape"
-            elseif d.index > myIdx then where = ("|cff3fbf3fen avance de %d|r"):format(d.index - myIdx)
-            else where = ("|cffff7f3fen retard de %d|r"):format(myIdx - d.index) end
+            if d.guide ~= myGuide then where = ns.Tr("autre segment")
+            elseif not myIdx or d.index == myIdx then where = ns.Tr("même étape")
+            elseif d.index > myIdx then where = (ns.Tr("|cff3fbf3fen avance de %d|r")):format(d.index - myIdx)
+            else where = (ns.Tr("|cffff7f3fen retard de %d|r")):format(myIdx - d.index) end
             lines[#lines + 1] = ("|cff66ccff%s|r%s : %s"):format(Ambiguate(name, "short"),
                 d.level and (" (%d)"):format(d.level) or "", where)
         end
@@ -86,13 +86,13 @@ function M:Update()
     local q, missing = M.Missing()
     shareQuest = nil
     if q and #missing > 0 then
-        lines[#lines + 1] = ("|cffffd100Sans la quête :|r %s"):format(table.concat(missing, ", "))
+        lines[#lines + 1] = (ns.Tr("|cffffd100Sans la quête :|r %s")):format(table.concat(missing, ", "))
         if C_QuestLog.GetLogIndexForQuestID(q) then shareQuest = q end
     end
     ns.Guide:SetSection("group", 80, #lines > 0 and table.concat(lines, "\n") or nil)
     if not shareBtn and ns.Guide.AddButton then
         shareBtn = ns.Guide:AddButton("share", nil, 22, function() M:Share() end,
-            "Partager la quête de l'étape avec le groupe", "Interface\\GossipFrame\\AvailableQuestIcon")
+            ns.Tr("Partager la quête de l'étape avec le groupe"), "Interface\\GossipFrame\\AvailableQuestIcon")
     end
     if shareBtn then
         shareBtn:SetShown(self.enabled and M:Opt("share") and shareQuest ~= nil and IsInGroup() or false)
@@ -137,5 +137,5 @@ M:On("QUEST_REMOVED", queueSend)
 function M.preview(p)
     local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
-    fs:SetText("|cff66ccffThrall|r (14) : même étape\n|cff66ccffJaina|r (13) : |cffff7f3fen retard de 3|r\n|cffffd100Sans la quête :|r Jaina")
+    fs:SetText(ns.Tr("|cff66ccffThrall|r (14) : même étape\n|cff66ccffJaina|r (13) : |cffff7f3fen retard de 3|r\n|cffffd100Sans la quête :|r Jaina"))
 end

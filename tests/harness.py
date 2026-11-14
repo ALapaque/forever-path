@@ -128,6 +128,7 @@ function RunTimers() local t=TIMERS TIMERS={} for _,fn in ipairs(t) do fn() end 
 C_GossipInfo={}
 SlashCmdList={}
 '''
+mocks = mocks.replace('return "frFR"', 'return "%s"' % (__import__("os").environ.get("FP_LOCALE") or "frFR"))
 lua.execute(mocks)
 toc = open(f"{ROOT}/ForeverPath.toc", encoding="utf-8").read().splitlines()
 lua.execute("C_GossipInfo={} SlashCmdList={}")

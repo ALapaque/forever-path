@@ -7,13 +7,13 @@ local _, ns = ...
 
 local M = ns.RegisterModule({
     id = "guide3d", category = "nav", default = true,
-    name = "Guidage 3D dans le monde",
-    desc = "Un faisceau lumineux posé sur l'objectif, avec l'icône de l'étape et la distance. Hors champ : une flèche au bord de l'écran.",
+    name = ns.Tr("Guidage 3D dans le monde"),
+    desc = ns.Tr("Un faisceau lumineux posé sur l'objectif, avec l'icône de l'étape et la distance. Hors champ : une flèche au bord de l'écran."),
     options = {
         { key = "beam", label = "Faisceau lumineux", type = "check", default = true },
-        { key = "label", label = "Nom de l'étape sous le marqueur", type = "check", default = true },
-        { key = "hideBlizzard", label = "Masquer le marqueur de Blizzard", type = "check", default = true },
-        { key = "scale", label = "Taille", type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
+        { key = "label", label = ns.Tr("Nom de l'étape sous le marqueur"), type = "check", default = true },
+        { key = "hideBlizzard", label = ns.Tr("Masquer le marqueur de Blizzard"), type = "check", default = true },
+        { key = "scale", label = ns.Tr("Taille"), type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
     },
 })
 

@@ -4,12 +4,12 @@ local _, ns = ...
 -- et (option) tous les monstres liés à une quête du journal (via les infobulles).
 local M = ns.RegisterModule({
     id = "nameplates", category = "targets", default = true,
-    name = "Repérage sur les barres de nom",
-    desc = "Halo et icône au-dessus des monstres à tuer et du PNJ à qui parler. Rebondit pour attirer l'œil.",
+    name = ns.Tr("Repérage sur les barres de nom"),
+    desc = ns.Tr("Halo et icône au-dessus des monstres à tuer et du PNJ à qui parler. Rebondit pour attirer l'œil."),
     options = {
-        { key = "questMobs", label = "Marquer aussi les monstres de toutes mes quêtes", type = "check", default = true },
-        { key = "friendly", label = "Afficher les barres de nom des PNJ amicaux", type = "check", default = true },
-        { key = "bounce", label = "Icône animée", type = "check", default = true },
+        { key = "questMobs", label = ns.Tr("Marquer aussi les monstres de toutes mes quêtes"), type = "check", default = true },
+        { key = "friendly", label = ns.Tr("Afficher les barres de nom des PNJ amicaux"), type = "check", default = true },
+        { key = "bounce", label = ns.Tr("Icône animée"), type = "check", default = true },
     },
 })
 

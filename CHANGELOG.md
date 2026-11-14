@@ -1,5 +1,11 @@
 # ForeverPath
 
+## v0.2.0-beta10
+
+- **Anglais** : toute l'interface (modules, réglages, messages, guides et noms de zones) est traduite pour les clients non francophones. Une vérification automatique bloque toute version avec un texte non traduit.
+- **Multi-personnages** : un personnage transféré ou qui a changé de faction repart automatiquement du bon segment.
+- Fiche CurseForge / Wago prête (LISTING.md), README à jour.
+
 ## v0.2.0-beta9
 
 ### Groupe et communauté

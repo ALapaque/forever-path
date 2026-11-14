@@ -4,11 +4,11 @@ local L = ns.L
 -- Zones et donjons conseillés selon le niveau, alerte au level-up, choix de la route.
 local M = ns.RegisterModule({
     id = "zones", category = "guide", default = true,
-    name = "Zones et donjons conseillés",
-    desc = "Bouton « Zones » : les meilleures zones et les donjons pour ton niveau, avec les nouvelles zones de Forever. Alerte quand ta zone devient trop basse.",
+    name = ns.Tr("Zones et donjons conseillés"),
+    desc = ns.Tr("Bouton « Zones » : les meilleures zones et les donjons pour ton niveau, avec les nouvelles zones de Forever. Alerte quand ta zone devient trop basse."),
     options = {
-        { key = "alert", label = "Alerte au passage de niveau", type = "check", default = true },
-        { key = "count", label = "Nombre de zones affichées", type = "slider", min = 3, max = 8, step = 1, default = 5 },
+        { key = "alert", label = ns.Tr("Alerte au passage de niveau"), type = "check", default = true },
+        { key = "count", label = ns.Tr("Nombre de zones affichées"), type = "slider", min = 3, max = 8, step = 1, default = 5 },
     },
 })
 ns.ZonesModule = M
@@ -92,7 +92,7 @@ function p:Refresh()
     for _, z in ipairs(R.Zones(lvl, nil, M:Opt("count") or 5)) do
         local r, g, b = R.Color(z, lvl)
         local s = ("|c%s%d-%d|r  %s"):format(hex(r, g, b), z.min, z.max, ns.ZoneName(z))
-        if z.faction == "Contested" then s = s .. " |cffaaaaaa(contestée)|r" end
+        if z.faction == "Contested" then s = s .. ns.Tr(" |cffaaaaaa(contestée)|r") end
         if z.new then s = s .. " |cff66ccffNOUVEAU|r" end
         if z.unconfirmed then s = s .. " |cffff7f3f" .. L.UNCONFIRMED .. "|r" end
         if here == z then s = s .. " |cff3fbf3f(" .. L.YOU_ARE_HERE .. ")|r" end
@@ -123,7 +123,7 @@ ns.ZonePanel = p
 local btn
 function M:OnEnable()
     if ns.Guide and not btn then btn = ns.Guide:AddButton("zones", L.ZONES, 60, function() p:Toggle() end,
-        "Zones et donjons conseillés pour ton niveau") end
+        ns.Tr("Zones et donjons conseillés pour ton niveau")) end
     if btn then btn:Show(); ns.Guide:Layout() end
 end
 function M:OnDisable()
@@ -149,5 +149,5 @@ function M.preview(pp)
     local fs = pp:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("LEFT", 10, 0)
     fs:SetJustifyH("LEFT")
-    fs:SetText("|cffffd100Zones (niv. 38)|r\n|cffffff0036-44|r Rives Claires |cff66ccffNOUVEAU|r\n|cffffff0035-45|r Terres ingrates\n|cffcc66ff35-40|r La Cité engloutie")
+    fs:SetText(ns.Tr("|cffffd100Zones (niv. 38)|r\n|cffffff0036-44|r Rives Claires |cff66ccffNOUVEAU|r\n|cffffff0035-45|r Terres ingrates\n|cffcc66ff35-40|r La Cité engloutie"))
 end

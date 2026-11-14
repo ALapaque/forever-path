@@ -67,7 +67,7 @@ S:Start(6)
 check(ns.cdb.session and ns.cdb.session.stopIdx == idx, "session démarrée")
 NOW = NOW + 7 * 60
 S:Update()
-check(ns.cdb.session.finished and E.Detour() and E.Detour().text:find("Auberge"), "fin de session : détour vers l'auberge")
+check(ns.cdb.session.finished and E.Detour() and E.Detour().kind == "inn", "fin de session : détour vers l'auberge")
 E.SetDetour(nil)
 SlashCmdList.FOREVERPATH("session stop")
 check(ns.cdb.session == nil, "/fp session stop")

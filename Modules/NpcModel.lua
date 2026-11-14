@@ -2,10 +2,10 @@ local _, ns = ...
 
 local M = ns.RegisterModule({
     id = "npcmodel", category = "targets", default = false,
-    name = "Aperçu 3D du PNJ",
-    desc = "Montre à côté du guide le modèle 3D du PNJ ou du monstre de l'étape, pour le reconnaître du premier coup d'œil.",
+    name = ns.Tr("Aperçu 3D du PNJ"),
+    desc = ns.Tr("Montre à côté du guide le modèle 3D du PNJ ou du monstre de l'étape, pour le reconnaître du premier coup d'œil."),
     options = {
-        { key = "size", label = "Taille", type = "slider", min = 80, max = 200, step = 10, default = 120 },
+        { key = "size", label = ns.Tr("Taille"), type = "slider", min = 80, max = 200, step = 10, default = 120 },
     },
 })
 

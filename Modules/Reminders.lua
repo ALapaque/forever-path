@@ -3,9 +3,9 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "reminders", category = "comfort", default = true,
     name = "Rappels utiles",
-    desc = "Petits rappels à l'écran : équipement à réparer, sacs presque pleins. (Les nouveaux sorts sont gérés par le module « Maître de classe ».)",
+    desc = ns.Tr("Petits rappels à l'écran : équipement à réparer, sacs presque pleins. (Les nouveaux sorts sont gérés par le module « Maître de classe ».)"),
     options = {
-        { key = "repair", label = "Réparation (< 30 %)", type = "check", default = true },
+        { key = "repair", label = ns.Tr("Réparation (< 30 %)"), type = "check", default = true },
         { key = "bags", label = "Sacs presque pleins", type = "check", default = true },
     },
 })
@@ -21,7 +21,7 @@ M:On("UPDATE_INVENTORY_DURABILITY", function()
     end
     if low < 0.3 then
         lastRepair = GetTime()
-        ns.Toast("Ton équipement est presque cassé : pense à réparer.", "Interface\\Icons\\Trade_BlackSmithing", 1, 0.6, 0.2)
+        ns.Toast(ns.Tr("Ton équipement est presque cassé : pense à réparer."), "Interface\\Icons\\Trade_BlackSmithing", 1, 0.6, 0.2)
     end
 end)
 
@@ -31,7 +31,7 @@ M:On("BAG_UPDATE_DELAYED", function()
     for bag = 0, 4 do free = free + (C_Container.GetContainerNumFreeSlots(bag) or 0) end
     if free <= 2 then
         lastBags = GetTime()
-        ns.Toast(("Plus que %d place(s) dans tes sacs : vends ou jette des objets."):format(free), "Interface\\Icons\\INV_Misc_Bag_08", 1, 0.85, 0.3)
+        ns.Toast((ns.Tr("Plus que %d place(s) dans tes sacs : vends ou jette des objets.")):format(free), "Interface\\Icons\\INV_Misc_Bag_08", 1, 0.85, 0.3)
     end
 end)
 
@@ -42,5 +42,5 @@ function M.preview(p)
     local i = box:CreateTexture(nil, "ARTWORK"); i:SetSize(20, 20); i:SetPoint("LEFT", 5, 0)
     i:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
     local t = box:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
-    t:SetPoint("LEFT", i, "RIGHT", 5, 0); t:SetText("Nouveaux sorts !")
+    t:SetPoint("LEFT", i, "RIGHT", 5, 0); t:SetText(ns.Tr("Nouveaux sorts !"))
 end

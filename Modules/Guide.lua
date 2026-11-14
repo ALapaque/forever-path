@@ -5,12 +5,12 @@ local L = ns.L
 --   ns.Guide:SetSection(id, order, text)   (text = nil pour retirer)
 local M = ns.RegisterModule({
     id = "guide", category = "core", default = true,
-    name = "Fenêtre du guide",
-    desc = "L'étape en cours, la suivante, la progression et les boutons précédent / suivant.",
+    name = ns.Tr("Fenêtre du guide"),
+    desc = ns.Tr("L'étape en cours, la suivante, la progression et les boutons précédent / suivant."),
     options = {
-        { key = "upcoming", label = "Étapes suivantes affichées", type = "slider", min = 0, max = 4, step = 1, default = 1 },
-        { key = "scale", label = "Taille", type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
-        { key = "alpha", label = "Opacité du fond", type = "slider", min = 0.1, max = 1, step = 0.05, default = 0.85 },
+        { key = "upcoming", label = ns.Tr("Étapes suivantes affichées"), type = "slider", min = 0, max = 4, step = 1, default = 1 },
+        { key = "scale", label = ns.Tr("Taille"), type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
+        { key = "alpha", label = ns.Tr("Opacité du fond"), type = "slider", min = 0.1, max = 1, step = 0.05, default = 0.85 },
     },
 })
 ns.Guide = M
@@ -79,7 +79,7 @@ f.grip:SetScript("OnMouseUp", function()
 end)
 f.grip:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText("Glisser pour élargir / rétrécir", 1, 1, 1)
+    GameTooltip:SetText(ns.Tr("Glisser pour élargir / rétrécir"), 1, 1, 1)
     GameTooltip:Show()
 end)
 f.grip:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -104,7 +104,7 @@ f.cfg:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton")
 f.cfg:SetScript("OnClick", function() ns.Options:Open() end)
 f.cfg:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText("Options de ForeverPath", 1, 1, 1)
+    GameTooltip:SetText(ns.Tr("Options de ForeverPath"), 1, 1, 1)
     GameTooltip:AddLine("Modules, apparence, route", 0.7, 0.7, 0.7)
     GameTooltip:Show()
 end)
@@ -139,6 +139,7 @@ f.sub:SetJustifyH("LEFT")
 f.sections = {}
 local sectionData = {}
 function M:SetSection(id, order, text)
+    text = ns.Tr(text)
     if text == nil or text == "" then sectionData[id] = nil
     else sectionData[id] = { order = order, text = text } end
     M:Layout()
@@ -148,10 +149,10 @@ f.upcoming = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 f.upcoming:SetJustifyH("LEFT")
 f.upcoming:SetWordWrap(true)
 
-f.prev = ns.Button(f, "<", 26, 20, function() ns.Engine.Prev() end, "Étape précédente")
+f.prev = ns.Button(f, "<", 26, 20, function() ns.Engine.Prev() end, ns.Tr("Étape précédente"))
 f.prev:SetPoint("BOTTOMLEFT", 6, 6)
 f.next = ns.Button(f, ">", 26, 20, function() ns.Engine.Next() end,
-    "Étape suivante\n|cffaaaaaaPasse cette étape (elle reste passée après un /reload)|r")
+    ns.Tr("Étape suivante\n|cffaaaaaaPasse cette étape (elle reste passée après un /reload)|r"))
 f.next:SetPoint("LEFT", f.prev, "RIGHT", 3, 0)
 f.dist = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
 f.dist:SetPoint("LEFT", f.next, "RIGHT", 8, 0)

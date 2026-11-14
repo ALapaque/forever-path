@@ -83,7 +83,7 @@ function B.Register()
     local a = api()
     if not a then return end
     if not B.Available() then
-        ns.Print("Daylight UI détecté, mais sa version d'API (%s.%s) n'est pas encore prise en charge : thème « Doux » utilisé.",
+        ns.Print(ns.Tr("Daylight UI détecté, mais sa version d'API (%s.%s) n'est pas encore prise en charge : thème « Doux » utilisé."),
             tostring(a.major), tostring(a.minor))
         return
     end
@@ -104,7 +104,7 @@ function B.Register()
             end
         end
         if my.RegisterCommand then
-            pcall(my.RegisterCommand, "path", function() ns.Options:Open() end, "Ouvrir les options de ForeverPath")
+            pcall(my.RegisterCommand, "path", function() ns.Options:Open() end, ns.Tr("Ouvrir les options de ForeverPath"))
         end
     end
 end

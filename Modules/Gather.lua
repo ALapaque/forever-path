@@ -5,12 +5,12 @@ local Nav = ns.Nav
 -- métier, uniquement le long du trajet des prochaines étapes (données QuestieDB).
 local M = ns.RegisterModule({
     id = "gather", category = "nav", default = true,
-    name = "Récolte sur la route",
-    desc = "Si tu es mineur ou herboriste : affiche sur la carte du monde les filons et les herbes que tu peux récolter, seulement le long du trajet vers tes prochaines étapes.",
+    name = ns.Tr("Récolte sur la route"),
+    desc = ns.Tr("Si tu es mineur ou herboriste : affiche sur la carte du monde les filons et les herbes que tu peux récolter, seulement le long du trajet vers tes prochaines étapes."),
     options = {
-        { key = "corridor", label = "Largeur du couloir (yards)", type = "slider", min = 40, max = 300, step = 20, default = 120 },
-        { key = "steps", label = "Étapes couvertes", type = "slider", min = 1, max = 12, step = 1, default = 5 },
-        { key = "grey", label = "Montrer aussi les points trop faciles", type = "check", default = true },
+        { key = "corridor", label = ns.Tr("Largeur du couloir (yards)"), type = "slider", min = 40, max = 300, step = 20, default = 120 },
+        { key = "steps", label = ns.Tr("Étapes couvertes"), type = "slider", min = 1, max = 12, step = 1, default = 5 },
+        { key = "grey", label = ns.Tr("Montrer aussi les points trop faciles"), type = "check", default = true },
     },
 })
 

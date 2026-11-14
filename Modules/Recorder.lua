@@ -6,8 +6,8 @@ local L = ns.L
 -- Indispensable pour les nouvelles zones de Forever, absentes des bases de données.
 local M = ns.RegisterModule({
     id = "recorder", category = "community", default = false,
-    name = "Enregistreur de route",
-    desc = "Enregistre tes quêtes pendant que tu joues et exporte une route prête à partager. Parfait pour les nouvelles zones (Rives Claires, Shen'dralas, Hyjal...).",
+    name = ns.Tr("Enregistreur de route"),
+    desc = ns.Tr("Enregistre tes quêtes pendant que tu joues et exporte une route prête à partager. Parfait pour les nouvelles zones (Rives Claires, Shen'dralas, Hyjal...)."),
     options = {},
 })
 ns.Recorder = M
@@ -60,7 +60,7 @@ function M.Note(text)
 end
 function M.Export()
     local header = {
-        "# Route enregistrée avec ForeverPath " .. ns.VERSION,
+        ns.Tr("# Route enregistrée avec ForeverPath ") .. ns.VERSION,
         ("# %s %s, faction %s"):format(ns.PlayerRace() or "?", ns.PlayerClass() or "?", ns.PlayerFaction() or "?"),
         "",
     }
@@ -100,9 +100,9 @@ function M:OnEnable()
     snapshot()
     if ns.Guide and not btn then
         btn = ns.Guide:AddButton("rec", nil, 22, function() M.Set(not M.IsOn()); M:Paint() end, function(tt)
-            tt:SetText("Enregistreur de route", 1, 1, 1)
-            tt:AddLine(M.IsOn() and "|cffff4040Enregistrement en cours|r — clic pour arrêter" or "Clic pour enregistrer tes quêtes", 0.8, 0.8, 0.8, true)
-            tt:AddLine("/fp export pour copier la route", 0.6, 0.6, 0.6)
+            tt:SetText(ns.Tr("Enregistreur de route"), 1, 1, 1)
+            tt:AddLine(M.IsOn() and ns.Tr("|cffff4040Enregistrement en cours|r — clic pour arrêter") or ns.Tr("Clic pour enregistrer tes quêtes"), 0.8, 0.8, 0.8, true)
+            tt:AddLine(ns.Tr("/fp export pour copier la route"), 0.6, 0.6, 0.6)
         end, ns.MEDIA .. "dot")
     end
     if btn then btn:Show(); ns.Guide:Layout(); self:Paint() end

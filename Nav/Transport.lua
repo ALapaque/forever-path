@@ -14,7 +14,7 @@ T.LINKS = {
     { kind = "boat", a = { "wetlands", 4.9, 57.2, "Menethil" }, b = { "dustwallow", 71.6, 56.4, "Theramore" }, wait = 60, ride = 80 },
     { kind = "boat", a = { "wetlands", 4.6, 63.4, "Menethil" }, b = { "darkshore", 32.4, 43.8, "Auberdine" }, wait = 60, ride = 80 },
     { kind = "boat", a = { "darkshore", 33.2, 40.0, "Auberdine" }, b = { "teldrassil", 54.9, 96.8, "Rut'theran" }, wait = 50, ride = 50, faction = "Alliance" },
-    { kind = "boat", a = { "stv", 25.9, 73.1, "Baie-du-Butin" }, b = { "barrens", 63.6, 38.6, "Cabestan" }, wait = 60, ride = 80 },
+    { kind = "boat", a = { "stv", 25.9, 73.1, ns.Tr("Baie-du-Butin") }, b = { "barrens", 63.6, 38.6, "Cabestan" }, wait = 60, ride = 80 },
     { kind = "zeppelin", a = { "durotar", 50.8, 13.7, "Orgrimmar" }, b = { "tirisfal", 60.7, 58.8, "Fossoyeuse" }, wait = 60, ride = 90, faction = "Horde" },
     { kind = "zeppelin", a = { "durotar", 50.6, 12.6, "Orgrimmar" }, b = { "stv", 31.6, 29.1, "Grom'gol" }, wait = 60, ride = 90, faction = "Horde" },
     { kind = "zeppelin", a = { "tirisfal", 61.9, 59.0, "Fossoyeuse" }, b = { "stv", 31.4, 30.2, "Grom'gol" }, wait = 60, ride = 90, faction = "Horde" },

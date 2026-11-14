@@ -6,11 +6,11 @@ local function update(d)
     if not ns.Guide then return end
     if not btn and ns.Guide.AddButton then
         btn = ns.Guide:AddButton("detour", nil, 22, function() ns.Engine.SetDetour(nil) end,
-            "Annuler le détour\n|cffaaaaaaReprend le guidage vers l'étape du guide|r", "Interface\\Buttons\\UI-StopButton")
+            ns.Tr("Annuler le détour\n|cffaaaaaaReprend le guidage vers l'étape du guide|r"), "Interface\\Buttons\\UI-StopButton")
     end
     if d then
         local icon = d.icon and ("|T%s:14|t "):format(d.icon) or ""
-        ns.Guide:SetSection("detour", 5, ("%s|cff66ccffDétour :|r %s"):format(icon, d.text or ""))
+        ns.Guide:SetSection("detour", 5, (ns.Tr("%s|cff66ccffDétour :|r %s")):format(icon, d.text or ""))
     else
         ns.Guide:SetSection("detour", 5, nil)
     end
@@ -18,5 +18,5 @@ local function update(d)
 end
 ns.On("FP_DETOUR", update)
 ns.On("FP_DETOUR_ARRIVED", function(d)
-    ns.Toast(("Arrivé : %s"):format(d.text or ""), d.icon or "Interface\\Icons\\INV_Misc_Map_01", 0.4, 0.8, 1, 4)
+    ns.Toast((ns.Tr("Arrivé : %s")):format(d.text or ""), d.icon or "Interface\\Icons\\INV_Misc_Map_01", 0.4, 0.8, 1, 4)
 end)

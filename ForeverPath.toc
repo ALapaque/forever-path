@@ -16,6 +16,7 @@
 # Si l'addon apparaît « périmé », vérifie le numéro avec  /dump (select(4, GetBuildInfo()))
 
 Locale.lua
+Locale_enUS.lua
 Core.lua
 UI\Widgets.lua
 UI\DaylightUI.lua

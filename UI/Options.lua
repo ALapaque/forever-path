@@ -5,11 +5,11 @@ local O = {}
 ns.Options = O
 
 local CATEGORIES = {
-    { id = "look", label = "Apparence" },
+    { id = "look", label = ns.Tr("Apparence") },
     { id = "core", label = "Guide" }, { id = "guide", label = "Guide" },
-    { id = "nav", label = "Navigation" }, { id = "targets", label = "Repérage" },
-    { id = "comfort", label = "Confort" }, { id = "safety", label = "Sécurité" },
-    { id = "community", label = "Communauté" },
+    { id = "nav", label = ns.Tr("Navigation") }, { id = "targets", label = ns.Tr("Repérage") },
+    { id = "comfort", label = ns.Tr("Confort") }, { id = "safety", label = ns.Tr("Sécurité") },
+    { id = "community", label = ns.Tr("Communauté") },
 }
 local CAT_ORDER, CAT_LABEL = {}, {}
 for i, c in ipairs(CATEGORIES) do CAT_ORDER[c.id] = i; CAT_LABEL[c.id] = c.label end
@@ -44,7 +44,7 @@ f.ver = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 f.ver:SetPoint("LEFT", f.title, "RIGHT", 8, -3)
 f.sub = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
 f.sub:SetPoint("TOPLEFT", f.title, "BOTTOMLEFT", 0, -4)
-f.sub:SetText("Coche ce que tu veux utiliser. Tout s'applique immédiatement.")
+f.sub:SetText(ns.Tr("Coche ce que tu veux utiliser. Tout s'applique immédiatement."))
 
 local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
 close:SetPoint("TOPRIGHT", 0, 0)
@@ -62,7 +62,7 @@ route.value = route:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
 route.value:SetPoint("LEFT", route.label, "RIGHT", 8, 0)
 route.change = ns.Button(route, "Changer", 80, 22)
 route.change:SetPoint("RIGHT", -8, 0)
-route.reset = ns.Button(route, "Recommencer le segment", 170, 22)
+route.reset = ns.Button(route, ns.Tr("Recommencer le segment"), 170, 22)
 route.reset:SetPoint("RIGHT", route.change, "LEFT", -6, 0)
 
 local menu = CreateFrame("Frame", nil, f, "BackdropTemplate")
@@ -86,7 +86,7 @@ local function pathsForFaction()
 end
 
 local function openMenu()
-    local items = { { label = "Automatique (race et niveau)", path = false } }
+    local items = { { label = ns.Tr("Automatique (race et niveau)"), path = false } }
     for _, p in ipairs(pathsForFaction()) do items[#items + 1] = { label = PATH_LABELS[p] or p, path = p } end
     for i, it in ipairs(items) do
         local b = menu.buttons[i]
@@ -130,19 +130,19 @@ content:SetSize(W - 50, 10)
 scroll:SetScrollChild(content)
 
 -- Pied
-local allOn = ns.Button(f, "Tout activer", 110, 22, function()
+local allOn = ns.Button(f, ns.Tr("Tout activer"), 110, 22, function()
     for _, id in ipairs(ns.ModuleOrder) do ns.SetModuleEnabled(id, true) end
     O:Refresh()
 end)
 allOn:SetPoint("BOTTOMLEFT", 12, 12)
-local defaults = ns.Button(f, "Réglages recommandés", 160, 22, function()
+local defaults = ns.Button(f, ns.Tr("Réglages recommandés"), 160, 22, function()
     for _, id in ipairs(ns.ModuleOrder) do ns.SetModuleEnabled(id, ns.Modules[id].default) end
     O:Refresh()
 end)
 defaults:SetPoint("LEFT", allOn, "RIGHT", 6, 0)
 local hint = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 hint:SetPoint("BOTTOMRIGHT", -14, 18)
-hint:SetText("/fp config pour rouvrir ce panneau  •  Raccourcis : Options > Raccourcis > ForeverPath")
+hint:SetText(ns.Tr("/fp config pour rouvrir ce panneau  •  Raccourcis : Options > Raccourcis > ForeverPath"))
 
 ---------------------------------------------------------------------------
 -- Contrôles
@@ -342,7 +342,7 @@ function O:Refresh()
     f.ver:SetText("v" .. ns.VERSION)
     local g = ns.Engine.Current()
     local pathLabel = ns.cdb.path and (PATH_LABELS[ns.cdb.path] or ns.cdb.path) or "Automatique"
-    route.value:SetText(("%s  —  |cffffffff%s|r"):format(pathLabel, g and g.name or "aucun segment"))
+    route.value:SetText(("%s  —  |cffffffff%s|r"):format(pathLabel, g and g.name or ns.Tr("aucun segment")))
     for _, c in ipairs(cards) do self:SyncCard(c) end
 end
 
@@ -365,8 +365,8 @@ ns.On("FP_READY", function()
     t:SetText("ForeverPath")
     local d = panel:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
     d:SetPoint("TOPLEFT", t, "BOTTOMLEFT", 0, -8)
-    d:SetText("Guide de leveling gratuit pour WoW Forever.")
-    local b = ns.Button(panel, "Ouvrir le panneau ForeverPath", 240, 26, function()
+    d:SetText(ns.Tr("Guide de leveling gratuit pour WoW Forever."))
+    local b = ns.Button(panel, ns.Tr("Ouvrir le panneau ForeverPath"), 240, 26, function()
         if SettingsPanel then HideUIPanel(SettingsPanel) end
         O:Open()
     end)

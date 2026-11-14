@@ -6,11 +6,11 @@ SLASH_FOREVERPATH2 = "/foreverpath"
 
 -- Raccourcis clavier (Bindings.xml)
 BINDING_HEADER_FOREVERPATH = "ForeverPath"
-BINDING_NAME_FOREVERPATH_NEXT = "Étape suivante"
-BINDING_NAME_FOREVERPATH_PREV = "Étape précédente"
-BINDING_NAME_FOREVERPATH_TOGGLE = "Afficher / masquer le guide"
-BINDING_NAME_CLICK_ForeverPathTargetButton_LeftButton = "Cibler le PNJ / monstre de l'étape"
-BINDING_NAME_CLICK_ForeverPathQuestItemButton_LeftButton = "Utiliser l'objet de quête"
+BINDING_NAME_FOREVERPATH_NEXT = ns.Tr("Étape suivante")
+BINDING_NAME_FOREVERPATH_PREV = ns.Tr("Étape précédente")
+BINDING_NAME_FOREVERPATH_TOGGLE = ns.Tr("Afficher / masquer le guide")
+BINDING_NAME_CLICK_ForeverPathTargetButton_LeftButton = ns.Tr("Cibler le PNJ / monstre de l'étape")
+BINDING_NAME_CLICK_ForeverPathQuestItemButton_LeftButton = ns.Tr("Utiliser l'objet de quête")
 
 SlashCmdList.FOREVERPATH = function(msg)
     local cmd, arg = (msg or ""):match("^%s*(%S*)%s*(.-)%s*$")
@@ -52,7 +52,7 @@ SlashCmdList.FOREVERPATH = function(msg)
         ns.ShowExport(ns.Recorder.Export())
     elseif cmd == "lock" then
         ns.db.locked = not ns.db.locked
-        ns.Print("Fenêtres %s", ns.db.locked and "verrouillées" or "déverrouillées")
+        ns.Print(ns.Tr("Fenêtres %s"), ns.db.locked and ns.Tr("verrouillées") or ns.Tr("déverrouillées"))
     elseif cmd == "reset" then
         local id = ns.cdb.guideId
         if id then ns.cdb.skipped[id] = {}; ns.Engine.Load(id) end
@@ -60,29 +60,29 @@ SlashCmdList.FOREVERPATH = function(msg)
         local Net = ns.Nav and ns.Nav.Net
         if not (Net and ns.Nav.db) then return end
         if arg == "export" then
-            ns.ShowExport(Net.Export(), "Chemins appris (Ctrl+A, Ctrl+C) — à partager")
+            ns.ShowExport(Net.Export(), ns.Tr("Chemins appris (Ctrl+A, Ctrl+C) — à partager"))
         elseif arg == "import" then
-            ns.ShowImport("Colle des chemins partagés (FPN1...) puis Importer", function(text)
+            ns.ShowImport(ns.Tr("Colle des chemins partagés (FPN1...) puis Importer"), function(text)
                 local ok, res = Net.Import(text)
-                if ok then ns.Print("%d nouveaux points de chemin importés.", res)
-                else ns.Print("Import impossible : %s", tostring(res)) end
+                if ok then ns.Print(ns.Tr("%d nouveaux points de chemin importés."), res)
+                else ns.Print(ns.Tr("Import impossible : %s"), tostring(res)) end
                 if ns.Journeys then ns.Journeys:Replan("import") end
             end)
         elseif arg == "reset" then
             Net.Reset()
-            ns.Print("Chemins appris effacés.")
+            ns.Print(ns.Tr("Chemins appris effacés."))
         elseif arg == "here" then
             local p = ns.Nav.Player()
             if p then
-                ns.Print("%d liaisons oubliées autour de toi (40 m).", Net.Forget(p.c, p.x, p.y, 40))
+                ns.Print(ns.Tr("%d liaisons oubliées autour de toi (40 m)."), Net.Forget(p.c, p.x, p.y, 40))
                 if ns.Journeys then ns.Journeys:Replan("oubli") end
             end
         else
             local nodes, edges, conts = Net.Stats()
             local flights = #ns.Nav.Transport.Flights()
-            ns.Print("Chemins appris : %d points, %d liaisons, %d continent(s). Vols connus : %d. Foyer : %s.",
-                nodes, edges, conts, flights, ns.Nav.char and ns.Nav.char.hearth and "connu" or "à apprendre")
-            ns.Print("/fp paths export | import | here (oublier autour de moi) | reset")
+            ns.Print(ns.Tr("Chemins appris : %d points, %d liaisons, %d continent(s). Vols connus : %d. Foyer : %s."),
+                nodes, edges, conts, flights, ns.Nav.char and ns.Nav.char.hearth and "connu" or ns.Tr("à apprendre"))
+            ns.Print(ns.Tr("/fp paths export | import | here (oublier autour de moi) | reset"))
         end
     elseif cmd == "where" then
         local mapID, x, y = ns.PlayerMapPos()
@@ -94,7 +94,7 @@ SlashCmdList.FOREVERPATH = function(msg)
         if type(DaylightUI) == "table" then
             local a = type(DaylightUI.API) == "table" and DaylightUI.API
             ns.Print("Daylight UI : API %s.%s, plugin %s%s", tostring(a and a.major), tostring(a and a.minor),
-                ns.Daylight.registered and "enregistré" or "non enregistré",
+                ns.Daylight.registered and ns.Tr("enregistré") or ns.Tr("non enregistré"),
                 ns.Daylight.lastError and (" (" .. tostring(ns.Daylight.lastError) .. ")") or "")
         end
         local id = ns.NpcIDFromUnit("target")

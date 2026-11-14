@@ -4,10 +4,10 @@ local _, ns = ...
 -- rapport anonyme à partager (/fp rapport) pour améliorer la route avec de vraies parties.
 local M = ns.RegisterModule({
     id = "chrono", category = "community", default = true,
-    name = "Chrono et rapport de parcours",
-    desc = "Mesure ton temps de jeu par niveau et le compare à ton record (tous personnages). /fp chrono pour le tableau à partager, /fp rapport pour envoyer un rapport anonyme qui aide à améliorer la route.",
+    name = ns.Tr("Chrono et rapport de parcours"),
+    desc = ns.Tr("Mesure ton temps de jeu par niveau et le compare à ton record (tous personnages). /fp chrono pour le tableau à partager, /fp rapport pour envoyer un rapport anonyme qui aide à améliorer la route."),
     options = {
-        { key = "show", label = "Afficher le chrono dans le guide", type = "check", default = true },
+        { key = "show", label = ns.Tr("Afficher le chrono dans le guide"), type = "check", default = true },
     },
 })
 
@@ -60,7 +60,7 @@ M:On("PLAYER_LEVEL_UP", function(lvl)
     if not best or s.played < best then
         rec[lvl] = s.played
         if best and lvl % 5 == 0 then
-            ns.Toast(("Record : niveau %d en %s (%s de mieux)"):format(lvl, M.Fmt(s.played), M.Fmt(best - s.played)),
+            ns.Toast((ns.Tr("Record : niveau %d en %s (%s de mieux)")):format(lvl, M.Fmt(s.played), M.Fmt(best - s.played)),
                 "Interface\\Icons\\INV_Misc_PocketWatch_02", 1, 0.82, 0.1, 5)
         end
     end
@@ -79,14 +79,14 @@ function M:Update()
     if not (self.enabled and self:Opt("show")) then ns.Guide:SetSection("chrono", 91, nil) return end
     local s = stats()
     local lvl = ns.PlayerLevel()
-    local text = ("|cffd4af37Chrono|r %s de jeu"):format(M.Fmt(s.played))
+    local text = (ns.Tr("|cffd4af37Chrono|r %s de jeu")):format(M.Fmt(s.played))
     local best = records()[lvl + 1]
     if best then
         local diff = best - s.played
         if diff >= 0 then
-            text = text .. ("  •  record du niv. %d dans %s"):format(lvl + 1, M.Fmt(diff))
+            text = text .. (ns.Tr("  •  record du niv. %d dans %s")):format(lvl + 1, M.Fmt(diff))
         else
-            text = text .. ("  •  |cffff7f3f%s de retard|r sur le record"):format(M.Fmt(-diff))
+            text = text .. (ns.Tr("  •  |cffff7f3f%s de retard|r sur le record")):format(M.Fmt(-diff))
         end
     end
     ns.Guide:SetSection("chrono", 91, text)
@@ -139,9 +139,9 @@ function M.Report()
     return table.concat(out, "\n")
 end
 
-ns.SlashExt.chrono = function() ns.ShowExport(M.Table(), "Chrono ForeverPath") end
+ns.SlashExt.chrono = function() ns.ShowExport(M.Table(), ns.Tr("Chrono ForeverPath")) end
 ns.SlashExt.rapport = function()
-    ns.ShowExport(M.Report(), "Rapport de parcours (Ctrl+C puis colle-le sur GitHub ou Discord)")
+    ns.ShowExport(M.Report(), ns.Tr("Rapport de parcours (Ctrl+C puis colle-le sur GitHub ou Discord)"))
 end
 ns.SlashExt.report = ns.SlashExt.rapport
 
@@ -152,5 +152,5 @@ function M:OnDisable() self:Update() end
 function M.preview(p)
     local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
-    fs:SetText("|cffd4af37Chrono|r 6h12 de jeu\nrecord du niv. 21 dans 14 min\n\n/fp rapport")
+    fs:SetText(ns.Tr("|cffd4af37Chrono|r 6h12 de jeu\nrecord du niv. 21 dans 14 min\n\n/fp rapport"))
 end

@@ -37,6 +37,7 @@ jobs:
           python3 tests/harness.py . tests/test_comfort.lua
           python3 tests/harness.py . tests/test_social.lua
           python3 tests/harness.py . tests/test_travel.lua
+          python3 tests/harness.py . tests/test_hardcore.lua
           FP_LOCALE=enUS python3 tests/harness.py . tests/test_locale.lua
           python3 tools/check_locale.py .
       - name: Caractères affichables par les polices du jeu

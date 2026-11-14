@@ -65,6 +65,10 @@ Modules\Flights.lua
 Modules\Dialogue.lua
 Modules\Supplies.lua
 Modules\QuestLog.lua
+Modules\Hardcore.lua
+Modules\CatchUp.lua
+Modules\Dungeons.lua
+Modules\Splits.lua
 
 UI\ExportFrame.lua
 UI\Options.lua

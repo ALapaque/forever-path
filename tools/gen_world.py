@@ -109,6 +109,53 @@ for m in sorted(nodes):
         out.append("        { %s, %d, %s, \"%s\" }," % (lua_str(kind), skill, lua_str(name), "".join(s)))
     out.append("    },")
 out.append("}")
+
+# --- quêtes de donjon (donjons Classic présents dans QuestieDB) : à prendre avant d'y aller
+Q, QFR = db["Quest"], db["questFR"]
+DUNGEONS = {  # zone Questie : (fr, en, min, max)
+    1581: ("Les Mortemines", "The Deadmines", 17, 26), 718: ("Cavernes des Lamentations", "Wailing Caverns", 17, 24),
+    209: ("Donjon d'Ombrecroc", "Shadowfang Keep", 22, 30), 717: ("La Prison", "The Stockade", 24, 32),
+    719: ("Profondeurs de Brassenoire", "Blackfathom Deeps", 24, 32), 133: ("Gnomeregan", "Gnomeregan", 29, 38),
+    1717: ("Kraal de Tranchebauge", "Razorfen Kraul", 29, 38), 796: ("Monastère écarlate", "Scarlet Monastery", 34, 45),
+    722: ("Souilles de Tranchebauge", "Razorfen Downs", 37, 46), 1417: ("Temple englouti", "Sunken Temple", 45, 54),
+    2100: ("Maraudon", "Maraudon", 46, 55), 1977: ("Zul'Gurub", "Zul'Gurub", 58, 60),
+    1584: ("Profondeurs de Rochenoire", "Blackrock Depths", 52, 60), 1583: ("Pic Rochenoire", "Blackrock Spire", 55, 60),
+    2557: ("Hache-Tripes", "Dire Maul", 55, 60), 2057: ("Scholomance", "Scholomance", 58, 60),
+    2017: ("Stratholme", "Stratholme", 58, 60), 2437: ("Gouffre de Ragefeu", "Ragefire Chasm", 13, 18),
+}
+ALLI, HORDE = 1 | 4 | 8 | 64, 2 | 16 | 32 | 128
+dq = defaultdict(list)
+for qid, q in Q.items():
+    z = g(q, 17)
+    if z not in DUNGEONS or g(q, 7):
+        continue
+    races = g(q, 6) or 0
+    fac = "both" if races == 0 or (races & ALLI and races & HORDE) else "Alliance" if races & ALLI else "Horde"
+    starters = list((g(g(q, 2), 1) or {}).values())
+    if not starters:
+        continue
+    giver = N.get(starters[0])
+    sp = spawns(g(giver, 7))
+    if not sp:
+        continue
+    m, pts = max(sp.items(), key=lambda kv: len(kv[1]))
+    title = g(QFR.get(qid), 1) or g(q, 1) or ""
+    dq[z].append((qid, g(q, 5, 0) or 0, g(q, 4, 1) or 1, fac, starters[0], m, pts[0][0], pts[0][1], title, g(q, 1) or title))
+out2 = ["", "-- [zone] = { fr, en, min, max, quêtes = { { id, niveau, niveau requis, faction, PNJ, carte, x, y, titre fr, titre en } } }",
+        "ns.World.dungeons = {"]
+nq = 0
+for z, (fr, en, lo, hi) in sorted(DUNGEONS.items(), key=lambda kv: kv[1][2]):
+    qs = sorted(dq.get(z, []), key=lambda t: t[1])
+    if not qs:
+        continue
+    out2.append("    { %s, %s, %d, %d, {" % (lua_str(fr), lua_str(en), lo, hi))
+    for t in qs:
+        nq += 1
+        out2.append("        { %d, %d, %d, %s, %d, %d, %.1f, %.1f, %s, %s }," % (t[0], t[1], t[2], lua_str(t[3]), t[4], t[5], t[6], t[7], lua_str(t[8]), lua_str(t[9])))
+    out2.append("    } },")
+out2.append("}")
+out += out2
 open(OUT, "w", encoding="utf-8").write("\n".join(out) + "\n")
+print("quêtes de donjon : %d" % nq)
 print("maîtres : %d, aubergistes : %d, points de récolte : %d, %d Ko" % (len(trainers), len(inns), total,
       os.path.getsize(OUT) // 1024))

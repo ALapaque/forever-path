@@ -261,6 +261,7 @@ class Char:
         self.src = defaultdict(int)
         self.time = 0.0
         self.bind, self.hearth_cd, self.hearths = None, 0.0, 0
+        self.danger = set()
         self.dist = 0.0
         self.zones = 0
         self.quests = 0
@@ -388,6 +389,9 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 info = infos[qid]
                 if log[qid] == "todo" and info["omap"] == mapid and dist(mapid, pos, info["opos"]) <= HUB:
                     steps.append(("C", info)); log[qid] = "ready"
+                    top = max([g(N.get(m), 5, 0) or 0 for m in info["mobs"]] or [0])
+                    if top >= ch.level + 3:
+                        ch.danger.add(info["id"])
                     ch.time += T_KILL if info["kill"] else T_OTHER
                     # XP des monstres tués pendant l'objectif (estimation)
                     ch.add_xp(mob_xp(min(info["lvl"], ch.level + 2)) * (22 if info["kill"] else 3), 'kills')
@@ -491,6 +495,8 @@ def render(zone, steps, stop):
             if who[0] == "npc":
                 opts.append("id=%d" % who[1])
                 used_npcs.add(who[1])
+            if kind == "A":
+                opts.append("lvl=%d" % info["lvl"])
             lines.append("%s %d %s %s" % (kind, info["id"], fmt(p), " ".join(opts)))
         elif kind == "C":
             if info["mobs"]:
@@ -516,7 +522,7 @@ def metrics_of(pid, ch):
     total_xp = sum(ch.src.values())
     return {"path": pid, "level": ch.level, "hours_to_60": round(hours, 1),
             "xp_per_hour": int(total_xp / max(1, ch.time) * 3600), "walk_km": round(ch.dist * 0.9144 / 1000, 1),
-            "grind_levels": ch.grind, "quests": ch.quests, "zones": ch.zones, "hearths": ch.hearths,
+            "danger_quests": len(ch.danger), "grind_levels": ch.grind, "quests": ch.quests, "zones": ch.zones, "hearths": ch.hearths,
             "grind_share": round(ch.src.get("grind", 0) / max(1, total_xp), 3)}
 
 def main():
@@ -564,6 +570,16 @@ def main():
         for gd in guides:
             gd["text"] = "\n".join(l for l in gd["text"].split("\n")
                                    if not (_re.match(r"^[AC] (\d+)", l) and _re.match(r"^[AC] (\d+)", l).group(1) not in turned))
+        # quêtes dangereuses (monstres de 3 niveaux ou plus au-dessus du personnage) : danger=1
+        if ch.danger:
+            for gd in guides:
+                out_lines = []
+                for l in gd["text"].split("\n"):
+                    mq = _re.match(r"^[ACT] (\d+)", l)
+                    if mq and int(mq.group(1)) in ch.danger:
+                        l += " danger=1"
+                    out_lines.append(l)
+                gd["text"] = "\n".join(out_lines)
         for i, gd in enumerate(guides):
             gd["next"] = guides[i + 1]["id"] if i + 1 < len(guides) else None
         stats.append((pid, ch.level, len(guides), sum(gd["n"] for gd in guides), ch.grind, dict(ch.src)))

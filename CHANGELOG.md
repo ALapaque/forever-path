@@ -1,5 +1,12 @@
 # ForeverPath
 
+## v0.2.0-beta12
+
+- **Mode Hardcore** (route prudente, désactivé par défaut) : les quêtes dont les monstres ont 3 niveaux ou plus au-dessus de toi au moment de les faire (environ 100 à 140 étapes par parcours, repérées à la génération) sont sautées : prise, objectif et rendu. Alerte en entrant dans une zone trop haute.
+- **Rattrapage** : si tu as pris de l'avance, les quêtes devenues trop basses ne sont plus proposées (écart réglable).
+- **Quêtes de donjon** : quand ton niveau colle à un donjon, le guide indique ses quêtes à prendre avant d'y aller, avec un bouton vers le donneur le plus proche. `/fp donjons` affiche la liste. Données QuestieDB : 153 quêtes de donjons Classic. Les nouveaux donjons de Forever viendront par l'enregistreur.
+- **Écran de splits** (speedrun, désactivé par défaut) : chrono du segment, écart avec ton meilleur temps et derniers segments, façon LiveSplit.
+
 ## v0.2.0-beta11
 
 ### Gagner du temps sur la route

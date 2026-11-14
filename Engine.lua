@@ -61,6 +61,13 @@ function E.IsDone(step, idx)
     if skipped and skipped[idx] then return true end
     if not E.Applies(step) then return true end
     if step.upto and ns.PlayerLevel() >= step.upto then return true end
+    -- mode Hardcore : quêtes dangereuses sautées (prise, objectif et rendu)
+    local hc = ns.Modules.hardcore
+    if step.danger and hc and hc.enabled and hc:Opt("skip") and step.quest and not questInLog(step.quest) then return true end
+    -- rattrapage : quête devenue grise et pas encore prise
+    local cu = ns.Modules.catchup
+    if step.type == "accept" and step.qlvl and cu and cu.enabled
+        and ns.PlayerLevel() >= step.qlvl + (cu:Opt("gap") or 9) and not questInLog(step.quest) then return true end
     local t = step.type
     if t == "accept" then
         return questInLog(step.quest) or questDone(step.quest)

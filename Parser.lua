@@ -22,6 +22,7 @@ Options (après le texte, sans espaces dans la valeur, _ = espace) :
   upto=<niv>   étape ignorée si le joueur a déjà ce niveau (routes adaptatives)
   danger=1     étape signalée comme dangereuse (élites, PvP...)
   opt=1        étape optionnelle
+  lvl=<niv>    niveau de la quête (rattrapage : prise sautée si elle est devenue grise)
 ]==]
 
 local TYPES = {
@@ -72,6 +73,7 @@ function ns.ParseGuide(text)
                     elseif k == "mobs" then step.mobs = splitSet(v, true)
                     elseif k == "target" then step.target = unders(v)
                     elseif k == "upto" then step.upto = tonumber(v)
+                    elseif k == "lvl" then step.qlvl = tonumber(v)
                     elseif k == "danger" then step.danger = true
                     elseif k == "opt" then step.optional = true
                     elseif k == "map" then step.map = tonumber(v) or v

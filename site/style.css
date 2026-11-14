@@ -144,7 +144,7 @@ h2 { font-size: clamp(32px, 4.4vw, 58px); line-height: 1.04; font-weight: 500; }
 .features { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
 .feature { grid-column: span 4; position: relative; padding: 28px; border-radius: var(--radius); background: linear-gradient(160deg, var(--ink-2), var(--ink));
   border: 1px solid var(--line); overflow: hidden; transition: transform .35s var(--ease), border-color .35s; }
-.feature:nth-child(1) { grid-column: span 7; } .feature:nth-child(2) { grid-column: span 5; }
+.feature:nth-child(1) { grid-column: span 7; } .feature:nth-child(2) { grid-column: span 5; } .feature:nth-child(6) { grid-column: span 12; }
 .feature::after { content: ""; position: absolute; inset: auto -30% -60% auto; width: 260px; height: 260px; border-radius: 50%;
   background: radial-gradient(circle, var(--accent, rgba(212, 175, 55, .22)), transparent 70%); transition: transform .5s var(--ease); }
 .feature:hover { transform: translateY(-6px); border-color: rgba(212, 175, 55, .45); }
@@ -240,6 +240,7 @@ details li span:last-child { font: 12px var(--mono); color: var(--muted); white-
   .stats { grid-template-columns: repeat(3, 1fr); }
   .stats div:nth-child(4) { border-left: 0; }
   .feature, .feature:nth-child(1), .feature:nth-child(2) { grid-column: span 6; }
+  .feature:nth-child(5), .feature:nth-child(6) { grid-column: span 6; }
   .terminal ul { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
@@ -250,7 +251,7 @@ details li span:last-child { font: 12px var(--mono); color: var(--muted); white-
   .links a { font-size: 18px; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .stats div { border-left: 0 !important; }
-  .feature, .feature:nth-child(1), .feature:nth-child(2) { grid-column: span 12; }
+  .feature, .feature:nth-child(n) { grid-column: span 12; }
   .steps { grid-template-columns: 1fr; }
   .steps li:not(:last-child)::after { top: auto; bottom: -18px; right: auto; left: 46px; width: 0; height: 18px; border-top: 0; border-left: 2px dotted var(--gold); }
   .faq { grid-template-columns: 1fr; }

@@ -1,5 +1,9 @@
 # ForeverPath
 
+## v0.2.0-beta15
+
+- **Collecteur de quêtes** : le nouveau contenu de WoW Forever (plus de 1 000 quêtes) n'est pas encore dans QuestieDB. ForeverPath le note maintenant tout seul pendant que tu joues : donneur, rendu, objectifs, niveau, XP, monstres, et les quêtes disponibles affichées par le jeu sur la carte. Rien n'est envoyé. `/fp collecte export` produit le texte à partager (dossier `Collected/` du dépôt). `tools/merge_collected.py` fusionne les collectes de tous les joueurs, et le générateur ajoute ces quêtes aux routes.
+
 ## v0.2.0-beta14
 
 - **Profils et assistant** : au premier lancement, choisis Découverte, Speedrun, Hardcore ou Minimal, et les bons modules se cochent d'un coup. `/fp profil` pour changer, `/fp profil export` / `import` pour partager tes réglages.

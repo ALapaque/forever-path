@@ -508,6 +508,54 @@ def render(zone, steps, stop):
 def lua_str(s):
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
+# ---------------------------------------------------------------- quêtes collectées en jeu
+COLLECTED_PATH = os.environ.get("FP_COLLECTED") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "collected.json")
+COLLECTED = json.load(open(COLLECTED_PATH, encoding="utf-8"))["quests"] if os.path.exists(COLLECTED_PATH) else {}
+collected_stats = []
+_xp_by_lvl = None
+
+def estimate_xp(lvl):
+    """XP médiane des quêtes Classic de ce niveau (quand la collecte n'a pas vu l'XP)."""
+    global _xp_by_lvl
+    if _xp_by_lvl is None:
+        by = defaultdict(list)
+        for qid, q in Q.items():
+            x = g(XPDB.get(qid), 2, 0) or 0
+            if x:
+                by[g(q, 5, 1) or 1].append(x)
+        _xp_by_lvl = {l: sorted(v)[len(v) // 2] for l, v in by.items()}
+    return _xp_by_lvl.get(lvl) or 80 * lvl
+
+def collected_infos(faction, maps_order, infos):
+    added, outside = 0, defaultdict(int)
+    for key, c in COLLECTED.items():
+        qid = int(key)
+        if qid in infos or qid in Q:
+            continue
+        if c.get("faction") not in ("both", faction) or c.get("elite") or (c.get("group") or 0) > 1:
+            continue
+        gv, en, lvl = c.get("giver"), c.get("ender"), c.get("lvl")
+        if not (gv and en and lvl):
+            continue
+        maps = [gv["map"], en["map"]] + ([c["objective"]["map"]] if c.get("objective") else [])
+        if not all(m in maps_order for m in maps):
+            for m in maps:
+                if m not in maps_order:
+                    outside[m] += 1
+            continue
+        obj = c.get("objective")
+        infos[qid] = {
+            "id": qid, "giver": ("npc", c["giverNpc"]) if c.get("giverNpc") else ("pos", 0),
+            "gmap": gv["map"], "gpos": (gv["x"], gv["y"]),
+            "ender": ("npc", c["enderNpc"]) if c.get("enderNpc") else ("pos", 0),
+            "emap": en["map"], "epos": (en["x"], en["y"]),
+            "omap": obj and obj["map"], "opos": obj and (obj["x"], obj["y"]), "mobs": c.get("mobs") or [],
+            "req": max(1, lvl - 4), "lvl": lvl, "xp": c.get("xp") or estimate_xp(lvl), "races": [],
+            "preSingle": [], "preGroup": [], "exclusive": [], "kill": bool(c.get("mobs")), "collected": True,
+        }
+        added += 1
+    return added, dict(outside)
+
 def apply_sets():
     for k, v in SETS:
         globals()[k] = type(globals()[k])(float(v)) if isinstance(globals()[k], (int, float)) else v
@@ -544,6 +592,9 @@ def main():
             info = analyse(qid, faction, maps_order)
             if info and not (info["races"] and not set(info["races"]) & set(races)):
                 infos[qid] = info
+        # nouveau contenu de Forever collecté en jeu (tools/collected.json)
+        added, outside = collected_infos(faction, maps_order, infos)
+        collected_stats.append((pid, added, outside))
         for k, (zone, stop) in enumerate(path):
             remaining = set(ZONES[z] for z, _ in path[k:])
             # quêtes devenues impossibles (zone déjà quittée pour de bon) : abandon
@@ -606,6 +657,10 @@ def main():
         open(os.path.join(OUT, fn), "w", encoding="utf-8").write("\n".join(out))
         index.append(fn)
     report_metrics(metrics)
+    if COLLECTED:
+        for pid, added, outside in collected_stats:
+            print("%-20s quêtes collectées ajoutées : %d%s" % (pid, added,
+                  ("  (hors parcours, cartes : %s)" % ", ".join("%s×%d" % kv for kv in sorted(outside.items()))) if outside else ""))
     if DRY:
         return
     # noms de PNJ localisés

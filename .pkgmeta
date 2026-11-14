@@ -20,6 +20,7 @@ ignore:
   - Routes
   - site
   - media-cf
+  - Collected
 
 manual-changelog:
   filename: CHANGELOG.md

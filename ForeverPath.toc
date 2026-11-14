@@ -82,6 +82,7 @@ Modules\Profiles.lua
 Modules\BugReport.lua
 Modules\Version.lua
 Modules\Sounds.lua
+Modules\Collector.lua
 
 UI\ExportFrame.lua
 UI\Options.lua

@@ -51,6 +51,7 @@ local fr = {
         "/fp importer | routes — bibliothèque de routes",
         "/fp edit pos|suppr|note|export — corriger la route",
         "/fp donjons — quêtes de donjon à ton niveau",
+        "/fp collecte [export] — quêtes de Forever collectées",
         "/fp where — infos de position (debug)",
     },
 }
@@ -90,6 +91,7 @@ local en = {
         "/fp importer | routes — route library",
         "/fp edit pos|suppr|note|export — fix the route",
         "/fp donjons — dungeon quests for your level",
+        "/fp collecte [export] — collected Forever quests",
         "/fp where — position info (debug)",
     },
 }

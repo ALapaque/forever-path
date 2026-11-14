@@ -38,7 +38,39 @@ def glow(x, y, w=128, h=64):
     a = max(0.0, 1 - d) ** 1.6
     return 255, 255, 255, clamp(a * 255)
 
+def dot(x, y, n=32):
+    # disque plein (bouton d'enregistrement), blanc, bord adouci
+    u, v = (x + 0.5) / n - 0.5, (y + 0.5) / n - 0.5
+    d = math.hypot(u, v)
+    a = max(0.0, min(1.0, (0.36 - d) * n))
+    return 255, 255, 255, clamp(a * 255)
+
+def pin(x, y, n=32):
+    # épingle de carte : cercle en haut + pointe en bas, trou au centre
+    u, v = (x + 0.5) / n - 0.5, (y + 0.5) / n - 0.5
+    cy = -0.12
+    d = math.hypot(u, v - cy)
+    inside = d <= 0.28
+    if not inside and v > cy:
+        # pointe : triangle sous le cercle
+        half = 0.26 * (1 - (v - cy) / 0.58)
+        inside = v <= 0.46 and abs(u) <= half
+    if d <= 0.1:
+        inside = False
+    return 255, 255, 255, 255 if inside else 0
+
+def chevron(x, y, n=16):
+    # petit chevron » pour les étapes suivantes
+    u, v = (x + 0.5) / n, (y + 0.5) / n
+    def stroke(off):
+        return abs((u - off) - (0.5 - abs(v - 0.5)) * 0.8) < 0.09
+    on = (stroke(0.15) or stroke(0.45)) and 0.15 < v < 0.85
+    return 255, 255, 255, 255 if on else 0
+
 out = sys.argv[1]
 write_tga(out + "/arrow.tga", 64, 64, arrow)
 write_tga(out + "/glow.tga", 128, 64, glow)
+write_tga(out + "/dot.tga", 32, 32, dot)
+write_tga(out + "/pin.tga", 32, 32, pin)
+write_tga(out + "/chevron.tga", 16, 16, chevron)
 print("ok")

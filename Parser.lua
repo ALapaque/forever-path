@@ -19,7 +19,7 @@ Options (après le texte, sans espaces dans la valeur, _ = espace) :
   class=MAGE,PRIEST  race=Human,Dwarf   restreint l'étape
   r=<yards>    rayon de validation d'un G
   upto=<niv>   étape ignorée si le joueur a déjà ce niveau (routes adaptatives)
-  danger=1     étape signalée comme dangereuse (élites, PvP…)
+  danger=1     étape signalée comme dangereuse (élites, PvP...)
   opt=1        étape optionnelle
 ]==]
 

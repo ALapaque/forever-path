@@ -5,6 +5,7 @@ local O = {}
 ns.Options = O
 
 local CATEGORIES = {
+    { id = "look", label = "Apparence" },
     { id = "core", label = "Guide" }, { id = "guide", label = "Guide" },
     { id = "nav", label = "Navigation" }, { id = "targets", label = "Repérage" },
     { id = "comfort", label = "Confort" }, { id = "safety", label = "Sécurité" },
@@ -36,12 +37,12 @@ f:SetScript("OnDragStart", f.StartMoving)
 f:SetScript("OnDragStop", f.StopMovingOrSizing)
 tinsert(UISpecialFrames, "ForeverPathOptions")
 
-f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+f.title = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontHuge")
 f.title:SetPoint("TOPLEFT", 16, -12)
 f.title:SetText("|cffd4af37ForeverPath|r")
-f.ver = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+f.ver = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 f.ver:SetPoint("LEFT", f.title, "RIGHT", 8, -3)
-f.sub = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+f.sub = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
 f.sub:SetPoint("TOPLEFT", f.title, "BOTTOMLEFT", 0, -4)
 f.sub:SetText("Coche ce que tu veux utiliser. Tout s'applique immédiatement.")
 
@@ -54,10 +55,10 @@ route:SetPoint("TOPLEFT", 12, -58)
 route:SetPoint("TOPRIGHT", -12, -58)
 route:SetHeight(34)
 ns.Skin(route, 0.5, 0.3)
-route.label = route:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+route.label = route:CreateFontString(nil, "OVERLAY", "ForeverPathFontNormal")
 route.label:SetPoint("LEFT", 10, 0)
 route.label:SetText("Route :")
-route.value = route:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+route.value = route:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
 route.value:SetPoint("LEFT", route.label, "RIGHT", 8, 0)
 route.change = ns.Button(route, "Changer", 80, 22)
 route.change:SetPoint("RIGHT", -8, 0)
@@ -92,7 +93,7 @@ local function openMenu()
         if not b then
             b = CreateFrame("Button", nil, menu)
             b:SetSize(244, 20)
-            b.text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            b.text = b:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
             b.text:SetPoint("LEFT", 6, 0)
             b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
             menu.buttons[i] = b
@@ -139,7 +140,7 @@ local defaults = ns.Button(f, "Réglages recommandés", 160, 22, function()
     O:Refresh()
 end)
 defaults:SetPoint("LEFT", allOn, "RIGHT", 6, 0)
-local hint = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+local hint = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 hint:SetPoint("BOTTOMRIGHT", -14, 18)
 hint:SetText("/fp config pour rouvrir ce panneau  •  Raccourcis : Options > Raccourcis > ForeverPath")
 
@@ -149,7 +150,7 @@ hint:SetText("/fp config pour rouvrir ce panneau  •  Raccourcis : Options > Ra
 local function makeCheck(parent, label, get, set)
     local c = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
     c:SetSize(22, 22)
-    c.label = c:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    c.label = c:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     c.label:SetPoint("LEFT", c, "RIGHT", 2, 0)
     c.label:SetText(label)
     c:SetScript("OnClick", function(self) set(self:GetChecked() and true or false) end)
@@ -160,7 +161,7 @@ end
 local function makeSlider(parent, def, get, set)
     local holder = CreateFrame("Frame", nil, parent)
     holder:SetSize(190, 30)
-    local lbl = holder:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local lbl = holder:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     lbl:SetPoint("TOPLEFT", 4, 0)
     local s = CreateFrame("Slider", nil, holder, "BackdropTemplate")
     s:SetOrientation("HORIZONTAL")
@@ -173,7 +174,7 @@ local function makeSlider(parent, def, get, set)
     local th = s:GetThumbTexture()
     if th then
         th:SetSize(8, 14)
-        th:SetVertexColor(unpack(ns.GOLD))
+        th:SetVertexColor(unpack(ns.Theme().accent))
     end
     s:SetMinMaxValues(def.min, def.max)
     s:SetValueStep(def.step or 1)
@@ -190,26 +191,44 @@ local function makeSlider(parent, def, get, set)
     return holder, 32
 end
 
+-- Sélecteur « < valeur > ». def.values : liste ou fonction ; def.store = "value" pour
+-- mémoriser le libellé (listes dynamiques, ex. polices) plutôt que l'index.
 local function makeSelect(parent, def, get, set)
     local holder = CreateFrame("Frame", nil, parent)
-    holder:SetSize(200, 22)
-    local lbl = holder:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    holder:SetSize(330, 22)
+    local lbl = holder:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     lbl:SetPoint("LEFT", 4, 0)
     lbl:SetText(def.label .. " :")
-    local val = holder:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     local prev = ns.Button(holder, "<", 20, 18)
+    local val = holder:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
     local nxt = ns.Button(holder, ">", 20, 18)
+    local w = def.width or 90
     prev:SetPoint("LEFT", lbl, "RIGHT", 6, 0)
-    val:SetPoint("LEFT", prev, "RIGHT", 6, 0)
-    nxt:SetPoint("LEFT", prev, "RIGHT", 70, 0)
+    val:SetPoint("LEFT", prev, "RIGHT", 4, 0)
+    val:SetWidth(w)
+    val:SetWordWrap(false)
+    nxt:SetPoint("LEFT", prev, "RIGHT", w + 8, 0)
+    local function values()
+        return type(def.values) == "function" and def.values() or def.values
+    end
+    local function index()
+        local list, cur = values(), get()
+        if def.store == "value" then
+            for i, v in ipairs(list) do if v == cur then return i end end
+            return 1
+        end
+        return cur or def.default or 1
+    end
     local function step(d)
-        local i = (get() or def.default) + d
-        if i < 1 then i = #def.values elseif i > #def.values then i = 1 end
-        set(i); holder.Sync()
+        local list = values()
+        local i = index() + d
+        if i < 1 then i = #list elseif i > #list then i = 1 end
+        set(def.store == "value" and list[i] or i)
+        holder.Sync()
     end
     prev:SetScript("OnClick", function() step(-1) end)
     nxt:SetScript("OnClick", function() step(1) end)
-    holder.Sync = function() val:SetText(def.values[get() or def.default] or "?") end
+    holder.Sync = function() val:SetText(values()[index()] or "?") end
     return holder, 24
 end
 
@@ -235,24 +254,25 @@ local function buildCard(m)
         if not ok then geterrorhandler()(err) end
     end
 
-    -- titre + case
+    -- titre + case (les modules « locked » sont toujours actifs : pas de case)
     c.check = CreateFrame("CheckButton", nil, c, "UICheckButtonTemplate")
     c.check:SetSize(24, 24)
     c.check:SetPoint("TOPLEFT", c.pv, "TOPRIGHT", 6, 2)
+    if m.locked then c.check:Hide() end
     c.check:SetScript("OnClick", function(self)
         ns.SetModuleEnabled(m.id, self:GetChecked() and true or false)
         O:SyncCard(c)
     end)
-    c.name = c:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    c.name = c:CreateFontString(nil, "OVERLAY", "ForeverPathFontNormal")
     c.name:SetPoint("LEFT", c.check, "RIGHT", 2, 0)
     c.name:SetPoint("RIGHT", c, "RIGHT", -8, 0)
     c.name:SetJustifyH("LEFT")
     c.name:SetText(m.name)
-    c.cat = c:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    c.cat = c:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
     c.cat:SetPoint("TOPRIGHT", -8, -8)
     c.cat:SetText(CAT_LABEL[m.category] or "")
 
-    c.desc = c:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    c.desc = c:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     c.desc:SetPoint("TOPLEFT", c.check, "BOTTOMLEFT", 4, -2)
     c.desc:SetWidth(CARD_W - 150 - 30)
     c.desc:SetJustifyH("LEFT")
@@ -284,9 +304,10 @@ local function buildCard(m)
 end
 
 function O:SyncCard(c)
-    local on = ns.WantsEnabled(c.module.id)
+    local on = c.module.locked or ns.WantsEnabled(c.module.id)
     c.check:SetChecked(on)
-    c.name:SetTextColor(on and 1 or 0.6, on and 0.82 or 0.6, on and 0 or 0.6)
+    local a = ns.Theme().accent
+    if on then c.name:SetTextColor(a[1], a[2], a[3]) else c.name:SetTextColor(0.6, 0.6, 0.6) end
     c.pv:SetAlpha(on and 1 or 0.4)
     for _, ctl in ipairs(c.controls) do
         if ctl.Sync then ctl:Sync() end
@@ -333,15 +354,16 @@ end
 function O:Toggle() if f:IsShown() then f:Hide() else self:Open() end end
 f:SetScript("OnHide", function() menu:Hide() end)
 ns.On("FP_STEP_CHANGED", function() O:Refresh() end)
+ns.On("FP_THEME_CHANGED", function() O:Refresh() end)
 
 -- Entrée dans le menu Options de Blizzard
 ns.On("FP_READY", function()
     if not (Settings and Settings.RegisterCanvasLayoutCategory) then return end
     local panel = CreateFrame("Frame")
-    local t = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    local t = panel:CreateFontString(nil, "OVERLAY", "ForeverPathFontHuge")
     t:SetPoint("TOPLEFT", 16, -16)
     t:SetText("ForeverPath")
-    local d = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    local d = panel:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
     d:SetPoint("TOPLEFT", t, "BOTTOMLEFT", 0, -8)
     d:SetText("Guide de leveling gratuit pour WoW Forever.")
     local b = ns.Button(panel, "Ouvrir le panneau ForeverPath", 240, 26, function()

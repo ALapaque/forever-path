@@ -10,7 +10,7 @@ local M = ns.RegisterModule({
     options = {
         { key = "upcoming", label = "Étapes suivantes affichées", type = "slider", min = 0, max = 4, step = 1, default = 1 },
         { key = "scale", label = "Taille", type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
-        { key = "alpha", label = "Opacité du fond", type = "slider", min = 0.2, max = 1, step = 0.05, default = 0.88 },
+        { key = "alpha", label = "Opacité du fond", type = "slider", min = 0.1, max = 1, step = 0.05, default = 0.85 },
     },
 })
 ns.Guide = M
@@ -26,6 +26,9 @@ M.STYLE = {
     fly        = { verb = "FLY",      icon = "Interface\\Icons\\Ability_Mount_Gryphon_01", color = "ff66ccff" },
     flightpath = { verb = "FLIGHTPATH", icon = "Interface\\Icons\\Ability_Mount_Wyvern_01", color = "ff66ccff" },
 }
+
+-- « » » dessiné en texture : les flèches Unicode (→) ne sont pas dans la police du jeu
+M.CHEVRON = "|T" .. ns.MEDIA .. "chevron:10:10:0:0|t "
 
 function M.StepLabel(step)
     if not step then return "" end
@@ -53,13 +56,45 @@ f:Hide()
 ns.Skin(f)
 ns.MakeMovable(f, "guide", { "RIGHT", "RIGHT", -60, 120 })
 
-f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+-- Poignée de redimensionnement (coin bas droit) : règle la largeur, la hauteur suit le contenu.
+f:SetResizable(true)
+if f.SetResizeBounds then f:SetResizeBounds(240, 60, 640, 2000) end
+f.grip = CreateFrame("Button", nil, f)
+f.grip:SetSize(14, 14)
+f.grip:SetPoint("BOTTOMRIGHT", -1, 1)
+f.grip:SetFrameLevel(f:GetFrameLevel() + 5)
+f.grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+f.grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+f.grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+f.grip:SetScript("OnMouseDown", function()
+    if not ns.db.locked then f:StartSizing("RIGHT") end
+end)
+f.grip:SetScript("OnMouseUp", function()
+    f:StopMovingOrSizing()
+    ns.db.guideWidth = math.floor(f:GetWidth() + 0.5)
+    -- StartSizing peut ré-ancrer le cadre : on sauvegarde aussi sa position
+    local p, _, rp, x, y = f:GetPoint()
+    ns.db.frames.guide = { p, rp, x, y }
+    M:Layout()
+end)
+f.grip:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText("Glisser pour élargir / rétrécir", 1, 1, 1)
+    GameTooltip:Show()
+end)
+f.grip:SetScript("OnLeave", function() GameTooltip:Hide() end)
+local lastW
+f:SetScript("OnSizeChanged", function(self, w)
+    if w ~= lastW then lastW = w; if M.enabled then M:Layout() end end
+end)
+
+f.title = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
 f.title:SetPoint("TOPLEFT", 8, -6)
 f.title:SetPoint("TOPRIGHT", -84, -6)
 f.title:SetJustifyH("LEFT")
 f.title:SetWordWrap(false)
 
-f.progress = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+f.progress = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 f.progress:SetPoint("TOPRIGHT", -26, -6)
 
 f.cfg = CreateFrame("Button", nil, f)
@@ -67,13 +102,20 @@ f.cfg:SetSize(14, 14)
 f.cfg:SetPoint("TOPRIGHT", -6, -4)
 f.cfg:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton")
 f.cfg:SetScript("OnClick", function() ns.Options:Open() end)
+f.cfg:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    GameTooltip:SetText("Options de ForeverPath", 1, 1, 1)
+    GameTooltip:AddLine("Modules, apparence, route", 0.7, 0.7, 0.7)
+    GameTooltip:Show()
+end)
+f.cfg:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
 f.bar = CreateFrame("StatusBar", nil, f)
 f.bar:SetPoint("TOPLEFT", 8, -20)
 f.bar:SetPoint("TOPRIGHT", -8, -20)
 f.bar:SetHeight(3)
 f.bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
-f.bar:SetStatusBarColor(unpack(ns.GOLD))
+f.bar:SetStatusBarColor(unpack(ns.Theme().accent))
 f.bar.bg = f.bar:CreateTexture(nil, "BACKGROUND")
 f.bar.bg:SetAllPoints()
 f.bar.bg:SetColorTexture(1, 1, 1, 0.08)
@@ -82,13 +124,13 @@ f.icon = f:CreateTexture(nil, "ARTWORK")
 f.icon:SetSize(28, 28)
 f.icon:SetPoint("TOPLEFT", 8, -30)
 
-f.text = f:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+f.text = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
 f.text:SetPoint("TOPLEFT", f.icon, "TOPRIGHT", 8, 0)
 f.text:SetPoint("RIGHT", f, "RIGHT", -8, 0)
 f.text:SetJustifyH("LEFT")
 f.text:SetWordWrap(true)
 
-f.sub = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+f.sub = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 f.sub:SetPoint("TOPLEFT", f.text, "BOTTOMLEFT", 0, -3)
 f.sub:SetPoint("RIGHT", f, "RIGHT", -8, 0)
 f.sub:SetJustifyH("LEFT")
@@ -102,21 +144,22 @@ function M:SetSection(id, order, text)
     M:Layout()
 end
 
-f.upcoming = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+f.upcoming = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
 f.upcoming:SetJustifyH("LEFT")
 f.upcoming:SetWordWrap(true)
 
-f.prev = ns.Button(f, "<", 26, 20, function() ns.Engine.Prev() end)
+f.prev = ns.Button(f, "<", 26, 20, function() ns.Engine.Prev() end, "Étape précédente")
 f.prev:SetPoint("BOTTOMLEFT", 6, 6)
-f.next = ns.Button(f, ">", 26, 20, function() ns.Engine.Next() end)
+f.next = ns.Button(f, ">", 26, 20, function() ns.Engine.Next() end,
+    "Étape suivante\n|cffaaaaaaPasse cette étape (elle reste passée après un /reload)|r")
 f.next:SetPoint("LEFT", f.prev, "RIGHT", 3, 0)
-f.dist = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+f.dist = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
 f.dist:SetPoint("LEFT", f.next, "RIGHT", 8, 0)
 
 -- boutons optionnels (les modules les montrent/cachent)
 f.buttons = {}
-function M:AddButton(id, label, w, onClick)
-    local b = ns.Button(f, label, w, 20, onClick)
+function M:AddButton(id, label, w, onClick, tooltip, icon)
+    local b = ns.Button(f, label, w, 20, onClick, tooltip, icon)
     b:Hide()
     f.buttons[#f.buttons + 1] = { id = id, b = b }
     return b
@@ -133,7 +176,7 @@ function M:Layout()
     for i, d in ipairs(list) do
         local fs = f.sections[i]
         if not fs then
-            fs = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            fs = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
             fs:SetJustifyH("LEFT")
             fs:SetWordWrap(true)
             f.sections[i] = fs
@@ -163,7 +206,7 @@ function M:Layout()
         local b = f.buttons[i].b
         if b:IsShown() then
             b:ClearAllPoints()
-            if anchor then b:SetPoint("RIGHT", anchor, "LEFT", -3, 0) else b:SetPoint("BOTTOMRIGHT", -6, 6) end
+            if anchor then b:SetPoint("RIGHT", anchor, "LEFT", -3, 0) else b:SetPoint("BOTTOMRIGHT", -16, 6) end
             anchor = b
         end
     end
@@ -219,22 +262,26 @@ function M:Update()
 
     local n = self:Opt("upcoming") or 1
     local lines = {}
-    for _, s in ipairs(ns.Engine.Upcoming(n)) do lines[#lines + 1] = "→ " .. (M.StepLabel(s)) end
+    for _, s in ipairs(ns.Engine.Upcoming(n)) do lines[#lines + 1] = M.CHEVRON .. (M.StepLabel(s)) end
     f.upcoming:SetText(table.concat(lines, "\n"))
     self:UpdateDistance()
     self:Layout()
 end
 
 function M:UpdateDistance()
-    local _, step = ns.Engine.Current()
+    local step = ns.Engine.NavStep()
     local d = step and ns.Engine.Distance(step)
     f.dist:SetText(d and ("%d m"):format(math.floor(d * 0.9144)) or "")
 end
 
 function M:ApplyLook()
     f:SetScale(self:Opt("scale") or 1)
-    f:SetBackdropColor(0.05, 0.05, 0.07, self:Opt("alpha") or 0.88)
+    f:SetWidth(ns.db.guideWidth or 330)
+    f.fpAlpha = self:Opt("alpha")
+    ns.ReSkin(f)
+    f.bar:SetStatusBarColor(unpack(ns.Theme().accent))
 end
+ns.On("FP_THEME_CHANGED", function() M:ApplyLook() end)
 
 function M:OnEnable() self:ApplyLook(); f:Show(); self:Update() end
 function M:OnDisable() f:Hide() end

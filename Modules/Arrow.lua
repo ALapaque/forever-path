@@ -21,9 +21,9 @@ f.tex = f:CreateTexture(nil, "ARTWORK")
 f.tex:SetPoint("TOP", 0, 0)
 f.tex:SetTexture(ns.MEDIA .. "arrow")
 
-f.dist = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+f.dist = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontNormal")
 f.dist:SetPoint("TOP", f.tex, "BOTTOM", 0, -2)
-f.label = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+f.label = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
 f.label:SetPoint("TOP", f.dist, "BOTTOM", 0, -1)
 f.label:SetWidth(160)
 f.label:SetWordWrap(false)
@@ -41,7 +41,7 @@ f:SetScript("OnUpdate", function(self, dt)
     acc = acc + dt
     if acc < 0.03 then return end
     acc = 0
-    local _, step = ns.Engine.Current()
+    local step = ns.Engine.NavStep()
     if not step or not step.x then self.tex:Hide(); self.dist:SetText(""); self.label:SetText(""); return end
     local d, bearing = ns.Geo.Vector(step)
     if not d then
@@ -80,7 +80,7 @@ function M.preview(p)
     t:SetPoint("CENTER", 0, 8)
     t:SetTexture(ns.MEDIA .. "arrow")
     t:SetVertexColor(0.4, 1, 0.2)
-    local d = p:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    local d = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
     d:SetPoint("TOP", t, "BOTTOM", 0, -2)
     d:SetText("86 m")
     -- petite animation de rotation

@@ -110,6 +110,18 @@ function E.Prev()
     ns.Fire("FP_STEP_CHANGED", true)
 end
 
+-- Étape à viser pour la navigation : l'étape en cours si elle a une position,
+-- sinon la prochaine étape applicable qui en a une (notes, paliers de niveau...).
+function E.NavStep()
+    local g, step, i = E.Current()
+    if not step then return end
+    if step.x then return step end
+    for j = i + 1, math.min(#g.steps, i + 15) do
+        local s = g.steps[j]
+        if s.x and E.Applies(s) and not E.IsDone(s, j) then return s end
+    end
+end
+
 -- Prochaines étapes applicables (aperçu)
 function E.Upcoming(n)
     local g, _, i = E.Current()

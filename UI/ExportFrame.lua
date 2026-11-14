@@ -17,7 +17,7 @@ f:SetScript("OnDragStop", f.StopMovingOrSizing)
 f:Hide()
 tinsert(UISpecialFrames, "ForeverPathExport") -- fermeture avec Échap
 
-f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+f.title = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontNormal")
 f.title:SetPoint("TOPLEFT", 10, -8)
 f.title:SetText(L.EXPORT_TITLE)
 

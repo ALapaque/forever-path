@@ -75,6 +75,35 @@ print("éolide horde niveau 1 hors île ->", id2)
 PLAYER.race, PLAYER.level = "Scourge", 35; print("mort-vivant 35 ->", ns.Engine.PickDefault())
 PLAYER.faction, PLAYER.race, PLAYER.level = "Alliance", "NightElf", 48; print("elfe 48 ->", ns.Engine.PickDefault())
 
+-- apparence : thèmes et police
+local A = ns.Modules.appearance
+check(A.locked and ns.IsEnabled("appearance"), "module apparence toujours actif")
+A:SetOpt("theme", "Minimal"); check(ns.db.theme == "minimal", "changement de thème")
+A:SetOpt("font", "Arial Narrow"); check(ns.db.font == "Arial Narrow", "changement de police")
+A:SetOpt("fontScale", 1.2); check(ns.db.fontScale == 1.2, "taille du texte")
+check(#ns.FontList() >= 4, "liste des polices")
+
+-- marqueur automatique retiré (SetRaidTarget est protégé depuis 12.0)
+check(ns.Modules.marker == nil, "plus de module marqueur automatique")
+
+-- barre d'actions
+ns.ActionBar:Layout(); check(true, "mise en page de la barre d'actions")
+
+-- navigation : une note sans position vise la prochaine étape positionnée
+local g2 = ns.Guides["skyborne-horde-01-zephras"]
+check(g2 ~= nil, "guide éolide présent")
+PLAYER.faction, PLAYER.race, PLAYER.level = "Alliance", "Human", 1
+ns.cdb.path = nil
+ns.Engine.Load("alliance-human-01-elwynn")
+check(ns.Engine.NavStep() ~= nil, "étape de navigation")
+
+-- barres de nom : objectif rempli -> plus de marque
+local NP = ns.Modules.nameplates
+C_TooltipInfo = { GetUnit = function() return { lines = { { type = 8, leftText = "Zombie 8/8", completed = true } } } end }
+check(NP.QuestState("nameplate1") == "done", "objectif rempli détecté")
+C_TooltipInfo = { GetUnit = function() return { lines = { { type = 8, leftText = "Zombie 2/8", completed = false } } } end }
+check(NP.QuestState("nameplate1") == "todo", "objectif en cours détecté")
+
 -- slash
 SlashCmdList.FOREVERPATH("where"); SlashCmdList.FOREVERPATH("config"); SlashCmdList.FOREVERPATH("zones")
 TICK()

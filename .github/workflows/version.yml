@@ -96,6 +96,7 @@ jobs:
         run: |
           pip install lupa
           python3 tests/harness.py
+          python3 tools/check_glyphs.py
 
       - name: Créer le tag
         if: needs.check.outputs.tag_exists != 'true'

@@ -39,7 +39,7 @@ ns.Zones = {
     { key = "dustwallow", fr = "Marécage d'Âprefange",      en = "Dustwallow Marsh",       min = 35, max = 45, faction = "Contested", cont = "KA", mapID = 1445 },
     { key = "badlands",   fr = "Terres ingrates",           en = "Badlands",               min = 35, max = 45, faction = "Contested", cont = "EK", mapID = 1418 },
     { key = "swamp",      fr = "Marais des Chagrins",       en = "Swamp of Sorrows",       min = 35, max = 45, faction = "Contested", cont = "EK", mapID = 1435 },
-    { key = "riverglades", fr = "Rives Claires",            en = "The Riverglades",        min = 36, max = 44, faction = "Contested", cont = "EK", mapID = nil, new = true, note = "Accès : Col de Rochenoire (Carmines) ou bateau Tanaris → Port-Poudrefuse" },
+    { key = "riverglades", fr = "Rives Claires",            en = "The Riverglades",        min = 36, max = 44, faction = "Contested", cont = "EK", mapID = nil, new = true, note = "Accès : Col de Rochenoire (Carmines) ou bateau de Tanaris vers Port-Poudrefuse" },
     { key = "shendralas", fr = "Shen'dralas",               en = "Shen'dralas",            min = 30, max = 42, faction = "Contested", cont = "KA", mapID = nil, new = true, unconfirmed = true, note = "Accès : Vallée des Ossements, sud de Désolace" },
 
     -- 40-50

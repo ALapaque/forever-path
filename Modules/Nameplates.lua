@@ -40,28 +40,42 @@ local function overlayFor(plate)
     return o
 end
 
--- Le monstre est-il lié à une quête active ? (lignes d'objectif dans l'infobulle)
-local function isQuestUnit(unit)
-    if not (C_TooltipInfo and C_TooltipInfo.GetUnit) then return false end
+-- État de quête d'un monstre d'après les lignes d'objectif de son infobulle :
+--   "todo" = au moins un objectif non rempli le concerne, "done" = tous remplis, nil = aucun.
+local function questState(unit)
+    if not (C_TooltipInfo and C_TooltipInfo.GetUnit) then return end
     local ok, data = pcall(C_TooltipInfo.GetUnit, unit)
-    if not ok or not data or not data.lines then return false end
+    if not ok or not data or not data.lines then return end
     local qType = Enum.TooltipDataLineType and Enum.TooltipDataLineType.QuestObjective
+    local seen, todo = false, false
     for _, line in ipairs(data.lines) do
-        if line.type == qType and not ns.IsSecret(line.leftText) then
-            local done = line.completed
-            if not done then return true end
+        if line.type == qType and not ns.IsSecret(line.leftText) and not ns.IsSecret(line.completed) then
+            seen = true
+            if not line.completed then todo = true end
         end
     end
-    return false
+    if todo then return "todo" elseif seen then return "done" end
 end
+M.QuestState = questState
 
 local function classify(unit)
     local targets = ns.Engine.Targets()
     local id = ns.NpcIDFromUnit(unit)
-    if id and targets.ids[id] then return targets.ids[id] end
-    local okName, name = pcall(UnitName, unit)
-    if okName and name and not ns.IsSecret(name) and targets.names[name] then return targets.names[name] end
-    if M:Opt("questMobs") and UnitCanAttack("player", unit) and isQuestUnit(unit) then return "quest" end
+    local kind = id and targets.ids[id]
+    if not kind then
+        local okName, name = pcall(UnitName, unit)
+        if okName and name and not ns.IsSecret(name) then kind = targets.names[name] end
+    end
+    local attackable = UnitCanAttack("player", unit)
+    if kind == "mob" or (not kind and attackable) then
+        local st = questState(unit)
+        -- objectif déjà rempli pour ce monstre (ex. 8/8) : plus de marque
+        if st == "done" then return end
+        if kind == "mob" then return kind end
+        if st == "todo" and M:Opt("questMobs") then return "quest" end
+        return
+    end
+    return kind
 end
 
 local STYLE = {
@@ -101,9 +115,16 @@ M:On("NAME_PLATE_UNIT_REMOVED", function(unit)
     if o then o:Hide() end
     active[unit] = nil
 end)
-M:On("FP_STEP_CHANGED", refreshAll)
-M:On("QUEST_LOG_UPDATE", refreshAll)
-M:On("UNIT_QUEST_LOG_CHANGED", refreshAll)
+-- le journal change souvent (chaque monstre tué) : on regroupe les rafraîchissements
+local queued = false
+local function queueRefresh()
+    if queued then return end
+    queued = true
+    C_Timer.After(0.25, function() queued = false; refreshAll() end)
+end
+M:On("FP_STEP_CHANGED", queueRefresh)
+M:On("QUEST_LOG_UPDATE", queueRefresh)
+M:On("UNIT_QUEST_LOG_CHANGED", queueRefresh)
 
 local function applyCVars()
     if InCombatLockdown() then return end
@@ -121,7 +142,7 @@ function M.preview(p)
     bar:SetSize(90, 9)
     bar:SetPoint("CENTER", 0, -6)
     bar:SetColorTexture(0.8, 0.15, 0.1)
-    local name = p:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local name = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     name:SetPoint("BOTTOM", bar, "TOP", 0, 2)
     name:SetText("Vermine kobold")
     local glow = p:CreateTexture(nil, "BACKGROUND")

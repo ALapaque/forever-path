@@ -49,7 +49,7 @@ end)
 M:On("FP_STEP_CHANGED", function() M:Update() end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cffcc66ffXP|r 18.4k/h\nniveau dans 23 min  •  61%")
 end

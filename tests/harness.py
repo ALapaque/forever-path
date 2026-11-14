@@ -15,7 +15,7 @@ function mockobj()
   local o = {}
   return setmetatable(o, {__call=function() return nil end, __index=function(t,k)
     if k=="GetFontString" or k:match("^Create") then return function() return mockobj() end end
-    if k:match("Height$") or k:match("Width$") or k=="GetScale" then return function() return 10 end end
+    if k:match("Height$") or k:match("Width$") or k=="GetScale" or k:match("Level$") then return function() return 10 end end
     if k=="IsShown" then return function() return false end end
     if k=="GetPoint" then return function() return "CENTER",nil,"CENTER",0,0 end end
     return function() return nil end
@@ -47,6 +47,7 @@ setmetatable(_G, {__index=function(t,k)
 end})
 function strsplit(sep, s) local out={} for p in (s..sep):gmatch("(.-)"..sep:gsub("%p","%%%0")) do out[#out+1]=p end return unpack(out) end
 function Mixin(o, ...) return o end
+function CreateFont(name) local f = mockobj(); rawset(f, "GetFont", function() return "Fonts\\FRIZQT__.TTF", 12, "" end); _G[name] = f; return f end
 BackdropTemplateMixin = {}
 function GetTime() return 1000 end
 function InCombatLockdown() return false end
@@ -83,6 +84,7 @@ C_QuestLog = {
   IsComplete=function(q) return QLOG[q] and QLOG[q].complete or false end,
   GetTitleForQuestID=function(q) return "Quest"..q end,
   RequestLoadQuestByID=function() end,
+  GetQuestObjectives=function(q) return {{text="Kobold 3/10", finished=false}} end,
   GetNumQuestLogEntries=function() local n=0 for _ in pairs(QLOG) do n=n+1 end return n end,
   GetInfo=function(i) local n=0 for q,v in pairs(QLOG) do n=n+1 if n==i then return {questID=q,isHeader=false} end end end,
 }

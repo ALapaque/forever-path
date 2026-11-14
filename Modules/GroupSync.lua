@@ -54,7 +54,7 @@ M:On("FP_STEP_CHANGED", function() send(); M:Update() end)
 M:On("GROUP_ROSTER_UPDATE", function() send(); M:Update() end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cff66ccffThrall|r : étape 12/48\n|cff66ccffJaina|r : étape 14/48")
 end

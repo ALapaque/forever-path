@@ -7,7 +7,7 @@ local L = ns.L
 local M = ns.RegisterModule({
     id = "recorder", category = "community", default = false,
     name = "Enregistreur de route",
-    desc = "Enregistre tes quêtes pendant que tu joues et exporte une route prête à partager. Parfait pour les nouvelles zones (Rives Claires, Shen'dralas, Hyjal…).",
+    desc = "Enregistre tes quêtes pendant que tu joues et exporte une route prête à partager. Parfait pour les nouvelles zones (Rives Claires, Shen'dralas, Hyjal...).",
     options = {},
 })
 ns.Recorder = M
@@ -99,20 +99,23 @@ local btn
 function M:OnEnable()
     snapshot()
     if ns.Guide and not btn then
-        btn = ns.Guide:AddButton("rec", "●", 24, function() M.Set(not M.IsOn()); M:Paint() end)
+        btn = ns.Guide:AddButton("rec", nil, 22, function() M.Set(not M.IsOn()); M:Paint() end, function(tt)
+            tt:SetText("Enregistreur de route", 1, 1, 1)
+            tt:AddLine(M.IsOn() and "|cffff4040Enregistrement en cours|r — clic pour arrêter" or "Clic pour enregistrer tes quêtes", 0.8, 0.8, 0.8, true)
+            tt:AddLine("/fp export pour copier la route", 0.6, 0.6, 0.6)
+        end, ns.MEDIA .. "dot")
     end
     if btn then btn:Show(); ns.Guide:Layout(); self:Paint() end
 end
 function M:OnDisable() if btn then btn:Hide(); ns.Guide:Layout() end end
 function M:Paint()
     if not btn then return end
-    local fs = btn:GetFontString()
-    if M.IsOn() then fs:SetTextColor(1, 0.2, 0.2) else fs:SetTextColor(0.6, 0.6, 0.6) end
+    if M.IsOn() then btn.icon:SetVertexColor(1, 0.15, 0.15) else btn.icon:SetVertexColor(0.55, 0.55, 0.55) end
 end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("CENTER")
     fs:SetJustifyH("LEFT")
-    fs:SetText("|cffff3333●|r REC\nA 9601 @42.1,55.3 id=...\nC 9601 @45.0,61.2")
+    fs:SetText("|T" .. ns.MEDIA .. "dot:12:12:0:0:32:32:0:32:0:32:255:50:50|t REC\nA 9601 @42.1,55.3 id=...\nC 9601 @45.0,61.2")
 end

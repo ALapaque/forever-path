@@ -14,7 +14,7 @@ b:SetSize(36, 36)
 b:RegisterForClicks("AnyUp", "AnyDown")
 b:SetAttribute("type", "item")
 b:Hide()
-ns.MakeMovable(b, "questitem", { "CENTER", "CENTER", 0, -160 })
+ns.ActionBar:Register(b, 20)
 b.icon = b:CreateTexture(nil, "ARTWORK")
 b.icon:SetAllPoints()
 b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
@@ -56,15 +56,17 @@ function M:Update()
         b.icon:SetTexture(tex)
         b.count:SetText(charges and charges > 1 and charges or "")
         b:Show()
+        ns.ActionBar:Layout()
     else
         b.link = nil
         b:SetAttribute("item", nil)
         b:Hide()
+        ns.ActionBar:Layout()
     end
 end
 
 function M:OnEnable() self:Update() end
-function M:OnDisable() if not InCombatLockdown() then b:Hide() end end
+function M:OnDisable() if not InCombatLockdown() then b:Hide(); ns.ActionBar:Layout() end end
 M:On("FP_STEP_CHANGED", function() M:Update() end)
 M:On("QUEST_LOG_UPDATE", function() M:Update() end)
 M:On("BAG_UPDATE_DELAYED", function() M:Update() end)
@@ -75,7 +77,7 @@ function M.preview(p)
     t:SetSize(36, 36)
     t:SetPoint("CENTER", 0, 6)
     t:SetTexture("Interface\\Icons\\INV_Potion_51")
-    local k = p:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local k = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
     k:SetPoint("TOP", t, "BOTTOM", 0, -3)
     k:SetText("Raccourci : à définir")
 end

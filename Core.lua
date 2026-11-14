@@ -120,6 +120,7 @@ end
 function ns.WantsEnabled(id)
     local m = ns.Modules[id]
     if not m then return false end
+    if m.locked then return true end
     local v = ns.db.modules[id]
     if v == nil then return m.default end
     return v

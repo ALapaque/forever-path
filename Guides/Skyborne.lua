@@ -15,7 +15,7 @@ for _, faction in ipairs({ "Alliance", "Horde" }) do
         text = ([[
 M zephras
 N "Fais toutes les quêtes de l'île : suis les points d'exclamation, la carte montre les objectifs."
-N "Astuce : active l'enregistreur (bouton ●) pour créer la route de l'île et la partager."
+N "Astuce : active l'enregistreur (bouton rond rouge) pour créer la route de l'île et la partager."
 L 12 "Termine l'île jusqu'au niveau 12"
 N "%s"
 N "La route continue automatiquement avec le parcours de ta faction."

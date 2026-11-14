@@ -4,13 +4,13 @@
 ## Notes-frFR: Guide de leveling 1-60 gratuit et modulaire pour WoW Forever
 ## Author: Arlioz
 ## Version: @project-version@
+## OptionalDeps: TomTom, LibSharedMedia-3.0
 ## X-License: GPL-3.0
 ## X-Website: https://github.com/ALapaque/forever-path
 ## Category: Quests
 ## Category-frFR: Quêtes
 ## SavedVariables: ForeverPathDB
 ## SavedVariablesPerCharacter: ForeverPathCharDB
-## OptionalDeps: TomTom
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
 
 # Si l'addon apparaît « périmé », vérifie le numéro avec  /dump (select(4, GetBuildInfo()))
@@ -25,12 +25,14 @@ Engine.lua
 Guides\_NpcNames.lua
 
 Modules\Guide.lua
+Modules\Appearance.lua
+Modules\ActionBar.lua
 Modules\Objectives.lua
 Modules\Zones.lua
 Modules\Waypoint.lua
+Modules\MapRoute.lua
 Modules\Arrow.lua
 Modules\Nameplates.lua
-Modules\Marker.lua
 Modules\TargetButton.lua
 Modules\NpcModel.lua
 Modules\QuestItem.lua

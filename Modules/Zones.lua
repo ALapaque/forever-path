@@ -77,11 +77,11 @@ function p:Refresh()
         n = n + 1
         local fs = self.lines[n]
         if not fs then
-            fs = self:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            fs = self:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
             fs:SetJustifyH("LEFT"); fs:SetWordWrap(true); fs:SetWidth(310)
             self.lines[n] = fs
         end
-        fs:SetFontObject(header and "GameFontNormal" or "GameFontHighlightSmall")
+        fs:SetFontObject(header and "ForeverPathFontNormal" or "ForeverPathFontSmall")
         fs:ClearAllPoints()
         fs:SetPoint("TOPLEFT", 10, y)
         fs:SetText(text)
@@ -95,7 +95,7 @@ function p:Refresh()
         if z.faction == "Contested" then s = s .. " |cffaaaaaa(contestée)|r" end
         if z.new then s = s .. " |cff66ccffNOUVEAU|r" end
         if z.unconfirmed then s = s .. " |cffff7f3f" .. L.UNCONFIRMED .. "|r" end
-        if here == z then s = s .. " |cff3fbf3f← " .. L.YOU_ARE_HERE .. "|r" end
+        if here == z then s = s .. " |cff3fbf3f(" .. L.YOU_ARE_HERE .. ")|r" end
         add(s)
         if z.note then add("   |cff888888" .. z.note .. "|r") end
     end
@@ -122,7 +122,8 @@ ns.ZonePanel = p
 
 local btn
 function M:OnEnable()
-    if ns.Guide and not btn then btn = ns.Guide:AddButton("zones", L.ZONES, 60, function() p:Toggle() end) end
+    if ns.Guide and not btn then btn = ns.Guide:AddButton("zones", L.ZONES, 60, function() p:Toggle() end,
+        "Zones et donjons conseillés pour ton niveau") end
     if btn then btn:Show(); ns.Guide:Layout() end
 end
 function M:OnDisable()
@@ -145,7 +146,7 @@ end)
 M:On("ZONE_CHANGED_NEW_AREA", function() if p:IsShown() then p:Refresh() end end)
 
 function M.preview(pp)
-    local fs = pp:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local fs = pp:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
     fs:SetPoint("LEFT", 10, 0)
     fs:SetJustifyH("LEFT")
     fs:SetText("|cffffd100Zones (niv. 38)|r\n|cffffff0036-44|r Rives Claires |cff66ccffNOUVEAU|r\n|cffffff0035-45|r Terres ingrates\n|cffcc66ff35-40|r La Cité engloutie")

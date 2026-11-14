@@ -3,6 +3,10 @@ package-as: ForeverPath
 
 enable-nolib-creation: no
 
+# deuxième addon livré dans le même zip : les données de terrain (chargées à la demande)
+move-folders:
+  ForeverPath/ForeverPath_Terrain: ForeverPath_Terrain
+
 ignore:
   - tests
   - tools
@@ -11,6 +15,7 @@ ignore:
   - .gitignore
   - CONTRIBUTING.md
   - INTEGRATIONS.md
+  - TERRAIN.md
 
 manual-changelog:
   filename: CHANGELOG.md

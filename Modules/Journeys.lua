@@ -11,6 +11,7 @@ local M = ns.RegisterModule({
     options = {
         { key = "learn", label = "Apprendre les chemins en jouant", type = "check", default = true },
         { key = "corners", label = "Guider virage par virage", type = "check", default = true },
+        { key = "terrain", label = "Contourner falaises et lacs (données de terrain)", type = "check", default = true },
         { key = "flights", label = "Utiliser les vols connus", type = "check", default = true },
         { key = "boats", label = "Utiliser bateaux, zeppelins et tram", type = "check", default = true },
         { key = "hearth", label = "Utiliser la pierre de foyer", type = "check", default = true },
@@ -26,7 +27,7 @@ local DEVIATE = 60         -- yards : trop loin du chemin -> nouveau calcul
 local ARRIVE_TRANSPORT = 30
 
 M.COLORS = {
-    known = { 0.3, 0.9, 0.35 }, risky = { 1, 0.55, 0.15 }, flight = { 0.35, 0.7, 1 },
+    known = { 0.3, 0.9, 0.35 }, terrain = { 0.45, 0.95, 0.75 }, risky = { 1, 0.55, 0.15 }, flight = { 0.35, 0.7, 1 },
     boat = { 0.3, 0.9, 0.9 }, zeppelin = { 0.85, 0.45, 1 }, tram = { 0.8, 0.8, 0.8 }, hearth = { 1, 0.5, 0.8 },
 }
 local LABEL = {
@@ -108,6 +109,53 @@ function M:Driving()
 end
 
 ---------------------------------------------------------------------------
+-- Affinage par le terrain (falaises, trous, eau) : les lignes droites « à risque »
+-- sont remplacées par un chemin sur la grille du terrain, calculé en arrière-plan.
+---------------------------------------------------------------------------
+local refineToken = 0
+local function refine(j)
+    local Terrain = Nav.Terrain
+    if not (Terrain and j and M:Opt("terrain")) then return end
+    refineToken = refineToken + 1
+    local token = refineToken
+    Terrain.Cancel()
+    for li, l in ipairs(j.legs) do
+        if l.mode == "walk" then
+            for si = 2, #l.pts do
+                local a, b = l.pts[si - 1], l.pts[si]
+                if b.risky and a.c == b.c and Nav.Dist(a, b) > 25 and Terrain.Has(b.c) then
+                    Terrain.PathAsync(b.c, a, b, function(pts)
+                        if token ~= refineToken or journey ~= j or not pts then return end
+                        -- retrouve le segment (les indices ont pu bouger)
+                        local idx
+                        for k = 2, #l.pts do if l.pts[k] == b and l.pts[k - 1] == a then idx = k end end
+                        if not idx then return end
+                        local before = Nav.Dist(a, b)
+                        local len, inserted = 0, 0
+                        for k = 2, #pts do len = len + Nav.Dist(pts[k - 1], pts[k]) end
+                        for k = 2, #pts - 1 do
+                            local p = pts[k]
+                            p.terrain = true
+                            table.insert(l.pts, idx + inserted, p)
+                            inserted = inserted + 1
+                        end
+                        b.risky, b.terrain = false, true
+                        l.time = l.time + (len - before * 1.25) / Nav.RunSpeed()
+                        if li == leg then
+                            if idx + inserted <= corner then corner = corner + inserted
+                            elseif idx <= corner then corner = idx end
+                            drive()
+                        end
+                        M:Render()
+                        fire("JourneyChanged", ForeverPathAPI.GetJourney())
+                    end)
+                end
+            end
+        end
+    end
+end
+
+---------------------------------------------------------------------------
 -- Calcul
 ---------------------------------------------------------------------------
 function M:Replan(reason)
@@ -130,6 +178,7 @@ function M:Replan(reason)
     self.reason = reason
     if journey then
         drive()
+        refine(journey)
     elseif ns.Waypoint and ns.Waypoint.enabled then
         ns.Waypoint:Place(false)     -- pas d'itinéraire : point directement sur l'étape
     end
@@ -232,7 +281,8 @@ function M:Polylines()
             for j = startIdx, #l.pts do
                 local q = l.pts[j]
                 if prev then
-                    out[#out + 1] = { pts = { prev, q }, color = q.risky and M.COLORS.risky or M.COLORS.known }
+                    out[#out + 1] = { pts = { prev, q },
+                        color = q.risky and M.COLORS.risky or q.terrain and M.COLORS.terrain or M.COLORS.known }
                 end
                 prev = q
             end

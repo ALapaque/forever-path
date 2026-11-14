@@ -4,7 +4,7 @@
 ## Notes-frFR: Guide de leveling 1-60 gratuit et modulaire pour WoW Forever
 ## Author: Arlioz
 ## Version: @project-version@
-## OptionalDeps: TomTom, LibSharedMedia-3.0, DaylightUI
+## OptionalDeps: TomTom, LibSharedMedia-3.0, DaylightUI, ForeverPath_Terrain
 ## X-License: GPL-3.0
 ## X-Website: https://github.com/ALapaque/forever-path
 ## Category: Quests
@@ -27,6 +27,7 @@ Nav\World.lua
 Nav\Network.lua
 Nav\Transport.lua
 Nav\Planner.lua
+Nav\Terrain.lua
 Guides\_NpcNames.lua
 
 Modules\Guide.lua

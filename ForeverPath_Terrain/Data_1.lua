@@ -1,0 +1,1 @@
+-- Pas encore de données pour le continent 1 : lancer tools/bake_terrain.py (voir TERRAIN.md).

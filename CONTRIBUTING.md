@@ -42,4 +42,13 @@ function M:OnDisable() end
 Le module apparaît automatiquement dans le panneau d'options. Ajoute son fichier au `.toc`, après `Modules\Guide.lua`.
 
 ## Publier une version (mainteneurs)
-Pousse un tag `vX.Y.Z` (ou `vX.Y.Z-beta1`) : l'action **Release** empaquette l'addon et le publie sur GitHub Releases. Elle publie aussi sur CurseForge et Wago si les secrets `CF_API_KEY` / `WAGO_API_TOKEN` et les lignes `## X-Curse-Project-ID` / `## X-Wago-ID` du `.toc` sont renseignés.
+La version est créée **automatiquement** par le workflow **Version** :
+1. Ajoute en tête du `CHANGELOG.md` une section `## vX.Y.Z` (ou `## vX.Y.Z-beta1` pour une bêta) avec les changements.
+2. Pousse sur `main`, ou merge une pull request.
+3. Le workflow voit qu'aucun tag n'existe pour cette version. Il lance luacheck et les tests, crée le tag, empaquette l'addon et publie la release. Une version avec `alpha` ou `beta` dans le nom est publiée comme pré-version.
+
+Tu peux aussi le lancer à la main : onglet **Actions** > **Version** > **Run workflow**, avec un numéro de version précis si besoin.
+
+Pousser un tag `vX.Y.Z` toi-même fonctionne toujours (workflow **Release**).
+
+CurseForge et Wago : ajoute les secrets `CF_API_KEY` / `WAGO_API_TOKEN` dans GitHub, et les lignes `## X-Curse-Project-ID` / `## X-Wago-ID` dans `ForeverPath.toc`. Sans eux, seule la release GitHub est publiée.

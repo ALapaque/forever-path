@@ -1,0 +1,105 @@
+name: Version
+
+# Crée la version automatiquement :
+#  - à chaque push sur main, lit la version en tête du CHANGELOG.md (« ## vX.Y.Z ») ;
+#  - si le tag n'existe pas encore : lint + tests, création du tag, empaquetage et publication
+#    (GitHub Releases, et CurseForge / Wago si les secrets sont configurés).
+# Lancement manuel possible depuis l'onglet Actions (« Run workflow »).
+on:
+  push:
+    branches: [main]
+    paths:
+      - CHANGELOG.md
+      - .github/workflows/version.yml
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version à publier (ex. v0.3.0 ou v0.3.0-beta1). Vide = celle du CHANGELOG."
+        required: false
+        type: string
+
+concurrency:
+  group: version
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      create: ${{ steps.v.outputs.create }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Lire la version
+        id: v
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ -n "${INPUT_VERSION}" ]]; then
+            version="${INPUT_VERSION}"
+          else
+            version="$(bash tools/changelog_version.sh CHANGELOG.md)"
+          fi
+          if ! [[ "${version}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::Version invalide : ${version} (attendu vX.Y.Z ou vX.Y.Z-beta1)"
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/${version}" >/dev/null; then
+            echo "Le tag ${version} existe déjà : rien à publier."
+            echo "create=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nouvelle version : ${version}"
+            echo "create=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: check
+    if: needs.check.outputs.create == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Luacheck
+        uses: nebularg/actions-luacheck@v1
+        with:
+          args: --no-color -q
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tests de l'addon
+        run: |
+          pip install lupa
+          python3 tests/harness.py
+
+      - name: Créer le tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${VERSION}" -m "ForeverPath ${VERSION}"
+          git push origin "refs/tags/${VERSION}"
+
+      # Le tag poussé avec GITHUB_TOKEN ne déclenche pas d'autre workflow :
+      # on empaquette et publie ici, sur le commit tagué.
+      - name: Empaqueter et publier
+        uses: BigWigsMods/packager@v2
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Résumé
+        run: |
+          echo "### ForeverPath ${VERSION} publiée" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Release : ${{ github.server_url }}/${{ github.repository }}/releases/tag/${VERSION}" >> "$GITHUB_STEP_SUMMARY"

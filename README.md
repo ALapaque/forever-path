@@ -68,7 +68,7 @@ python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides
 Les données sont lues comme de simples données : aucun code Lua téléchargé n'est exécuté.
 
 ## Contribuer
-Bugs, routes des nouvelles zones, nouveaux modules : voir [CONTRIBUTING.md](CONTRIBUTING.md). Chaque push lance luacheck et les tests. Un tag `vX.Y.Z` publie une version.
+Bugs, routes des nouvelles zones, nouveaux modules : voir [CONTRIBUTING.md](CONTRIBUTING.md). Chaque push lance luacheck et les tests. Une nouvelle section `## vX.Y.Z` en tête du `CHANGELOG.md` publie automatiquement la version.
 
 ## Licence
 GPLv3 (voir `LICENSE.md`). Les routes sont dérivées de [QuestieDB](https://github.com/Questie/QuestieDB), dont l'équipe autorise la réutilisation sous GPLv3. Merci à elle.

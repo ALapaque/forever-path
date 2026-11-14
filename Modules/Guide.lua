@@ -273,7 +273,7 @@ end
 function M:UpdateDistance()
     local step = ns.Engine.NavStep()
     local d = step and ns.Engine.Distance(step)
-    f.dist:SetText(d and ("%d m"):format(math.floor(d * 0.9144)) or "")
+    f.dist:SetText(d and ns.FormatDistance(d) or "")
 end
 
 function M:ApplyLook()

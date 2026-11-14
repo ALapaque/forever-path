@@ -73,9 +73,31 @@ local function ourWaypoint()
     return C_SuperTrack and C_SuperTrack.IsSuperTrackingUserWaypoint and C_SuperTrack.IsSuperTrackingUserWaypoint()
 end
 
+-- Le marqueur de Blizzard (SuperTrackedFrame) recalcule sa propre transparence à chaque image :
+-- un SetAlpha(0) unique ne tenait pas, et sa distance (« 65 mètres ») venait se superposer à la nôtre.
+-- On masque donc ses éléments (icône, distance, flèche), qu'il ne retouche pas, et on le revérifie.
+local blizzHidden = false
+local function blizzParts()
+    local s = SuperTrackedFrame
+    if type(s) ~= "table" then return {} end
+    local parts = { s.Icon, s.DistanceText, s.Arrow, s.Glow }
+    if s.GetRegions then for _, r in ipairs({ s:GetRegions() }) do parts[#parts + 1] = r end end
+    if s.GetChildren then for _, c in ipairs({ s:GetChildren() }) do parts[#parts + 1] = c end end
+    return parts
+end
 local function setBlizzardHidden(hide)
-    if SuperTrackedFrame and SuperTrackedFrame.SetAlpha then
-        SuperTrackedFrame:SetAlpha(hide and 0 or 1)
+    blizzHidden = hide and true or false
+    for _, part in ipairs(blizzParts()) do
+        if type(part) == "table" and part.SetAlpha then part:SetAlpha(hide and 0 or 1) end
+    end
+end
+local function keepBlizzardHidden()
+    if not blizzHidden then return end
+    for _, part in ipairs(blizzParts()) do
+        if type(part) == "table" and part.GetAlpha then
+            local a = part:GetAlpha()
+            if type(a) == "number" and not ns.IsSecret(a) and a > 0 then part:SetAlpha(0) end
+        end
     end
 end
 
@@ -96,12 +118,13 @@ f:SetScript("OnUpdate", function(self, dt)
     self:ClearAllPoints()
     self:SetPoint("CENTER", UIParent, "BOTTOMLEFT", cx, cy)
     self:SetAlpha(1)
+    keepBlizzardHidden()
 
     local a = ns.Theme().accent
     local clamped = C_Navigation.WasClampedToScreen and C_Navigation.WasClampedToScreen()
     local dist = C_Navigation.GetDistance and C_Navigation.GetDistance()
-    if dist and not ns.IsSecret(dist) then
-        self.dist:SetText(("%d m"):format(math.floor(dist * 0.9144)))
+    if dist and not ns.IsSecret(dist) and blizzHidden then
+        self.dist:SetText(ns.FormatDistance(dist))
     else
         self.dist:SetText("")
     end
@@ -129,6 +152,12 @@ f:SetScript("OnUpdate", function(self, dt)
     self.disc:SetVertexColor(0.05, 0.05, 0.07, 0.85)
     self.icon:Show()
     self.label:SetShown(M:Opt("label"))
+    self.label:ClearAllPoints()
+    if blizzHidden then
+        self.label:SetPoint("TOP", self.dist, "BOTTOM", 0, -1)
+    else
+        self.label:SetPoint("TOP", self.disc, "BOTTOM", 0, -22)  -- sous la distance affichée par le jeu
+    end
     -- à portée : petit rebond de l'icône
     local inRange = state == (Enum.NavigationState and Enum.NavigationState.InRange or 2)
     self.disc:SetPoint("CENTER", 0, 14 + (inRange and math.abs(math.sin(t * 5)) * 8 or 0))

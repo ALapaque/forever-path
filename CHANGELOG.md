@@ -1,5 +1,11 @@
 # ForeverPath
 
+## v1.0.2
+
+- **Police choisie enfin appliquée** quand elle vient d'un autre addon (pack LibSharedMedia, Daylight UI) : elle n'existait pas encore au chargement de ForeverPath, qui retombait sur Friz Quadrata. Elle est maintenant réappliquée à la connexion et dès qu'un addon enregistre une police.
+- **Plus de textes superposés sur le marqueur 3D** : la distance du marqueur de Blizzard (« 65 mètres ») venait s'afficher par-dessus la nôtre. Il est maintenant vraiment masqué (il réaffichait ses éléments à chaque image). Si tu choisis de garder le marqueur de Blizzard, ForeverPath n'affiche plus sa propre distance et place le nom de l'étape en dessous.
+- **Distances identiques au jeu** : même nombre et même unité que le client (« 65 mètres »), au lieu d'une conversion qui donnait une valeur différente (58 m).
+
 ## v1.0.1
 
 - **Correctif** : erreur au lancement du jeu (`Core.lua:271`) quand le cadre des splits n'avait encore jamais été déplacé. Les fenêtres sans position enregistrée gardent maintenant leur place par défaut.

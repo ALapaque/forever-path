@@ -102,6 +102,19 @@ local function fontPath(name)
     return p or ns.FONTS[1].path
 end
 
+-- Distance affichée comme le marqueur du jeu (même nombre, même unité que le client :
+-- « 65 mètres » en français, « 65 yds » en anglais), pour ne jamais montrer deux valeurs différentes.
+function ns.FormatDistance(yards)
+    if type(yards) ~= "number" or ns.IsSecret and ns.IsSecret(yards) then return "" end
+    local n = math.floor(yards + 0.5)
+    local fmt = type(IN_GAME_NAVIGATION_RANGE) == "string" and IN_GAME_NAVIGATION_RANGE
+    if fmt then
+        local ok, txt = pcall(string.format, fmt, n)
+        if ok and txt then return txt end
+    end
+    return ("%d m"):format(n)
+end
+
 function ns.ApplyFonts()
     local t = ns.Theme()
     local path = fontPath(ns.db and ns.db.font)
@@ -246,3 +259,24 @@ ns.On("FP_INIT", function()
     ns.db.fontScale = ns.db.fontScale or 1
     ns.ApplyLook()
 end)
+
+-- La police choisie peut venir d'un autre addon (pack LibSharedMedia, Daylight UI) chargé après
+-- ForeverPath : au démarrage elle n'existe pas encore et on retombait sur Friz Quadrata pour de bon.
+-- On réapplique donc à la connexion, un peu après, et à chaque police enregistrée plus tard.
+local pendingFonts
+local function reapplyFonts()
+    if pendingFonts or not ns.db then return end
+    pendingFonts = true
+    C_Timer.After(0.5, function() pendingFonts = false; ns.ApplyFonts() end)
+end
+ns.On("PLAYER_LOGIN", function()
+    ns.ApplyFonts()
+    C_Timer.After(3, ns.ApplyFonts)
+    local media = lsm()
+    if media and media.RegisterCallback then
+        pcall(media.RegisterCallback, ns, "LibSharedMedia_Registered", function(_, kind)
+            if kind == "font" then reapplyFonts() end
+        end)
+    end
+end)
+ns.On("PLAYER_ENTERING_WORLD", reapplyFonts)

@@ -61,7 +61,7 @@ f:SetScript("OnUpdate", function(self, dt)
     self.tex:Show()
     self.tex:SetRotation(rel)
     self.tex:SetVertexColor(color(rel))
-    self.dist:SetText(("%d m"):format(math.floor(d * 0.9144)))
+    self.dist:SetText(ns.FormatDistance(d))
     local label = ns.Guide and ns.Guide.StepLabel(step) or ""
     self.label:SetText(label)
 end)

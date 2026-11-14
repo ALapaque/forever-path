@@ -5,6 +5,7 @@
 ## Author: Arlioz
 ## Version: @project-version@
 ## X-License: GPL-3.0
+## X-Website: https://github.com/ALapaque/forever-path
 ## Category: Quests
 ## Category-frFR: Quêtes
 ## SavedVariables: ForeverPathDB

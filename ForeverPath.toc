@@ -69,6 +69,13 @@ Modules\Hardcore.lua
 Modules\CatchUp.lua
 Modules\Dungeons.lua
 Modules\Splits.lua
+Modules\Library.lua
+Modules\Editor.lua
+Modules\Rares.lua
+Modules\Secondary.lua
+Modules\MinimapButton.lua
+Modules\Gold.lua
+Modules\Talents.lua
 
 UI\ExportFrame.lua
 UI\Options.lua

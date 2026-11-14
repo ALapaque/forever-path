@@ -53,6 +53,11 @@ function P.NearestTrainer()
     local _, cls = UnitClass("player")
     return P.Nearest(P.Trainers(), function(e) return e.class == cls and faction(e.faction) end)
 end
+-- maître d'un métier secondaire (FIRSTAID, COOKING, FISHING) ou d'une classe donnée
+function P.NearestTrainerOf(kind)
+    return P.Nearest(P.Trainers(), function(e) return e.class == kind and faction(e.faction) end)
+end
+
 function P.NearestInn()
     return P.Nearest(P.Inns(), function(e) return faction(e.faction) end)
 end

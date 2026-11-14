@@ -57,6 +57,7 @@ function E.Distance(step)
 end
 
 function E.IsDone(step, idx)
+    if step.removed then return true end          -- retirée avec l'éditeur
     local skipped = ns.cdb.skipped[ns.cdb.guideId]
     if skipped and skipped[idx] then return true end
     if not E.Applies(step) then return true end

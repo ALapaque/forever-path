@@ -17,6 +17,7 @@ ignore:
   - INTEGRATIONS.md
   - TERRAIN.md
   - LISTING.md
+  - Routes
 
 manual-changelog:
   filename: CHANGELOG.md

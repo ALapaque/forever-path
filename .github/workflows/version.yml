@@ -106,6 +106,7 @@ jobs:
           python3 tests/harness.py . tests/test_social.lua
           python3 tests/harness.py . tests/test_travel.lua
           python3 tests/harness.py . tests/test_hardcore.lua
+          python3 tests/harness.py . tests/test_library.lua
           FP_LOCALE=enUS python3 tests/harness.py . tests/test_locale.lua
           python3 tools/check_locale.py .
           python3 tools/check_glyphs.py

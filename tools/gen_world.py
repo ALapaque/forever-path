@@ -64,8 +64,12 @@ for nid, n in N.items():
     m, pts = max(sp.items(), key=lambda kv: len(kv[1]))
     x, y = pts[0]
     name = g(NPCFR.get(nid), 1) or g(n, 1)
+    SECONDARY = {"First Aid Trainer": "FIRSTAID", "Cooking Trainer": "COOKING", "Fishing Trainer": "FISHING",
+                 "Fishing Trainer & Supplies": "FISHING"}
     if sub.endswith(" Trainer") and sub[:-8] in CLASSES:
         trainers.append((CLASSES[sub[:-8]], nid, m, x, y, fac, name))
+    elif sub in SECONDARY:
+        trainers.append((SECONDARY[sub], nid, m, x, y, fac, name))
     elif sub == "Innkeeper":
         inns.append((nid, m, x, y, fac, name))
 
@@ -155,6 +159,24 @@ for z, (fr, en, lo, hi) in sorted(DUNGEONS.items(), key=lambda kv: kv[1][2]):
     out2.append("    } },")
 out2.append("}")
 out += out2
+
+# --- rares (rang 2 = rare élite, 4 = rare) : { idPNJ, carte, x, y, niv min, niv max, rang, nom }
+rares = []
+for nid, n in N.items():
+    rank = g(n, 6, 0)
+    if rank not in (2, 4):
+        continue
+    sp = spawns(g(n, 7))
+    if not sp:
+        continue
+    m, pts = max(sp.items(), key=lambda kv: len(kv[1]))
+    rares.append((nid, m, pts[0][0], pts[0][1], g(n, 4, 0) or 0, g(n, 5, 0) or 0, rank, g(NPCFR.get(nid), 1) or g(n, 1) or "?"))
+out.append("")
+out.append("ns.World.rares = {")
+for r in sorted(rares, key=lambda t: (t[1], t[0])):
+    out.append("    { %d, %d, %.1f, %.1f, %d, %d, %d, %s }," % (r[0], r[1], r[2], r[3], r[4], r[5], r[6], lua_str(r[7])))
+out.append("}")
+print("rares : %d" % len(rares))
 open(OUT, "w", encoding="utf-8").write("\n".join(out) + "\n")
 print("quêtes de donjon : %d" % nq)
 print("maîtres : %d, aubergistes : %d, points de récolte : %d, %d Ko" % (len(trainers), len(inns), total,

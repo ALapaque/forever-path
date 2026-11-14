@@ -1,5 +1,15 @@
 # ForeverPath
 
+## v0.2.0-beta13
+
+- **Bibliothèque de routes** : `/fp importer` pour coller une route partagée (nouvelles zones de Forever, variantes). Elle est gardée pour tous tes personnages. `/fp routes` pour la liste. Les routes partagées vivent dans le dossier `Routes/` du dépôt.
+- **Éditeur de route en jeu** : `/fp edit pos` (l'étape prend ta position), `suppr`, `note <texte>`, `annuler`, `export` (route corrigée à partager). Les corrections sont réappliquées à chaque connexion.
+- **Rares sur la carte** : 327 monstres rares (QuestieDB) avec leur niveau, filtrés autour du tien.
+- **Métiers d'appoint** : secourisme (activé par défaut), cuisine et pêche. Quand un maître est tout près et que tu n'as pas le métier, un détour est proposé.
+- **Bouton de la minimap** (déplaçable) et données pour les barres d'infos (LibDataBroker).
+- **Objectif monture** : à partir du niveau 30, ton or comparé au prix de la monture (réglable), avec ton gain d'or par heure.
+- **Rappel de talents** : points à dépenser, bouton vers la fenêtre des talents. Pas de conseil de répartition tant que les arbres de Forever ne sont pas documentés.
+
 ## v0.2.0-beta12
 
 - **Mode Hardcore** (route prudente, désactivé par défaut) : les quêtes dont les monstres ont 3 niveaux ou plus au-dessus de toi au moment de les faire (environ 100 à 140 étapes par parcours, repérées à la génération) sont sautées : prise, objectif et rendu. Alerte en entrant dans une zone trop haute.

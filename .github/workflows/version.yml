@@ -107,6 +107,8 @@ jobs:
           python3 tests/harness.py . tests/test_travel.lua
           python3 tests/harness.py . tests/test_hardcore.lua
           python3 tests/harness.py . tests/test_library.lua
+          python3 tests/harness.py . tests/test_profiles.lua
+          FP_LOCALE=deDE python3 tests/harness.py . tests/test_locale_de.lua
           FP_LOCALE=enUS python3 tests/harness.py . tests/test_locale.lua
           python3 tools/check_locale.py .
           python3 tools/check_glyphs.py
@@ -130,7 +132,7 @@ jobs:
           path: .packager
       - name: Empaqueter et publier
         env:
-          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          CF_API_KEY: ${{ secrets.CURSE_FORGE_API_KEY || vars.CURSE_FORGE_API_KEY || secrets.CF_API_KEY }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
         run: |

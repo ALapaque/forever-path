@@ -46,6 +46,11 @@ local fr = {
         "/fp session [minutes|stop] — session de jeu",
         "/fp chrono — temps par niveau",
         "/fp rapport — rapport de parcours anonyme",
+        "/fp profil [nom|export|import] — profils de réglages",
+        "/fp bug — rapport de bug à copier",
+        "/fp importer | routes — bibliothèque de routes",
+        "/fp edit pos|suppr|note|export — corriger la route",
+        "/fp donjons — quêtes de donjon à ton niveau",
         "/fp where — infos de position (debug)",
     },
 }
@@ -80,6 +85,11 @@ local en = {
         "/fp session [minutes|stop] — play session",
         "/fp chrono — time per level",
         "/fp rapport — anonymous run report",
+        "/fp profil [name|export|import] — settings profiles",
+        "/fp bug — bug report to copy",
+        "/fp importer | routes — route library",
+        "/fp edit pos|suppr|note|export — fix the route",
+        "/fp donjons — dungeon quests for your level",
         "/fp where — position info (debug)",
     },
 }
@@ -87,11 +97,24 @@ local en = {
 local locale = GetLocale and GetLocale()
 if type(locale) ~= "string" then locale = "frFR" end
 local L = setmetatable({}, { __index = function(_, k) return fr[k] or k end })
--- Français pour frFR, anglais pour toutes les autres langues
+-- Français pour frFR ; allemand et espagnol (textes courts, le reste en anglais) ; anglais ailleurs
 ns.isFrench = (locale == "frFR")
 ns.isEnglish = not ns.isFrench
+ns.locale = locale
+local verbs = {
+    deDE = { ACCEPT = "Annehmen", COMPLETE = "Erledigen", TURNIN = "Abgeben", GOTO = "Gehe zu", LEVEL = "Stufe %d erreichen",
+             NOTE = "Notiz", HEARTH = "Ruhestein", FLY = "Fliegen", BIND = "Ruhestein binden", STEP = "Schritt %d / %d",
+             ZONES = "Zonen", ARRIVED = "Angekommen", FLIGHTPATH = "Flugpunkt", LOADED = "Guide geladen: %s",
+             NEXT_SEGMENT = "Nächster Abschnitt: %s" },
+    esES = { ACCEPT = "Aceptar", COMPLETE = "Completar", TURNIN = "Entregar", GOTO = "Ir a", LEVEL = "Llegar al nivel %d",
+             NOTE = "Nota", HEARTH = "Piedra de hogar", FLY = "Volar", BIND = "Vincular piedra", STEP = "Paso %d / %d",
+             ZONES = "Zonas", ARRIVED = "Has llegado", FLIGHTPATH = "Punto de vuelo", LOADED = "Guía cargada: %s",
+             NEXT_SEGMENT = "Siguiente segmento: %s" },
+}
+verbs.esMX = verbs.esES
 if ns.isEnglish then
     for k, v in pairs(en) do rawset(L, k, v) end
+    for k, v in pairs(verbs[locale] or {}) do rawset(L, k, v) end
 end
 ns.L = L
 
@@ -134,15 +157,24 @@ local function fill(tpl, caps)
     end))
 end
 
+-- dictionnaire de la langue du client (allemand, espagnol), complété par l'anglais
+local function dict()
+    local d = (ns.locale == "deDE" and ns.DE) or ((ns.locale == "esES" or ns.locale == "esMX") and ns.ES)
+    return d
+end
+
 function ns.Tr(s)
     if ns.isFrench or type(s) ~= "string" or s == "" or not ns.EN then return s end
-    local e = ns.EN[s]
+    local d = dict()
+    local e = d and d[s] or ns.EN[s]
     if e then return e end
     if not s:find("%d") and not s:find(" ", 1, true) then return s end
     if not patterns then
         patterns = {}
         for frText, enText in pairs(ns.EN) do
-            if frText:find("%%[%-%d%.]*[dsfx]") then patterns[#patterns + 1] = { toPattern(frText), enText } end
+            if frText:find("%%[%-%d%.]*[dsfx]") then
+                patterns[#patterns + 1] = { toPattern(frText), d and d[frText] or enText }
+            end
         end
         table.sort(patterns, function(a, b) return #a[1] > #b[1] end)   -- le plus précis d'abord
     end
@@ -150,7 +182,7 @@ function ns.Tr(s)
         local caps = { s:match(p[1]) }
         if caps[1] then
             -- les valeurs capturées peuvent elles-mêmes être des textes à traduire
-            for i, c in ipairs(caps) do caps[i] = ns.EN[c] or c end
+            for i, c in ipairs(caps) do caps[i] = (d and d[c]) or ns.EN[c] or c end
             return fill(p[2], caps)
         end
     end

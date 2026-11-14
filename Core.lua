@@ -54,6 +54,15 @@ function ns.GossipOption(kind, opts)
     end
 end
 
+-- Erreurs : gardées (les 15 dernières) pour /fp bug, puis transmises au gestionnaire du jeu
+ns.errors = {}
+function ns.ReportError(err)
+    table.insert(ns.errors, 1, { time = date and date("%H:%M:%S") or "", msg = tostring(err),
+        stack = debugstack and debugstack(2, 6, 0) or "" })
+    while #ns.errors > 15 do table.remove(ns.errors) end
+    geterrorhandler()(err)
+end
+
 -- Sous-commandes /fp ajoutées par les modules : ns.SlashExt.nom = function(arg) ... end
 ns.SlashExt = {}
 
@@ -79,7 +88,7 @@ function ns.Fire(event, ...)
     if not list then return end
     for i = 1, #list do
         local ok, err = pcall(list[i], ...)
-        if not ok then geterrorhandler()(err) end
+        if not ok then ns.ReportError(err) end
     end
 end
 
@@ -191,14 +200,17 @@ ns.On("PLAYER_LOGIN", function()
             m.enabled = true
             if m.OnEnable then
                 local ok, err = pcall(m.OnEnable, m)
-                if not ok then geterrorhandler()(err) end
+                if not ok then ns.ReportError(err) end
             end
         end
     end
     ns.Fire("FP_READY")
     if ns.db.firstRun then
         ns.db.firstRun = false
-        C_Timer.After(3, function() if ns.Options then ns.Options:Open() end end)
+        C_Timer.After(3, function()
+            local P = ns.Modules.profiles
+            if P and P.ShowWizard then P.ShowWizard() elseif ns.Options then ns.Options:Open() end
+        end)
     end
 end)
 

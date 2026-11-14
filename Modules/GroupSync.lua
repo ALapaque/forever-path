@@ -100,6 +100,17 @@ function M:Update()
     end
 end
 
+-- session de groupe : on suit le segment du chef (sans toucher à ses propres étapes faites)
+function M.Follow(sender, d)
+    if not (M.enabled and M:Opt("follow") and d.guide and ns.Guides[d.guide]) then return end
+    local leader = UnitIsGroupLeader and UnitIsGroupLeader(Ambiguate(sender, "none"))
+    if ns.IsSecret(leader) or not leader then return end
+    if ns.cdb.guideId ~= d.guide then
+        ns.Engine.Load(d.guide, true)
+        ns.Print(ns.Tr("Route du chef de groupe chargée : %s"):format(ns.Guides[d.guide].name or d.guide))
+    end
+end
+
 function M:Share()
     if not shareQuest then return end
     if C_QuestLog.SetSelectedQuest then C_QuestLog.SetSelectedQuest(shareQuest) end
@@ -119,6 +130,7 @@ M:On("CHAT_MSG_ADDON", function(prefix, msg, _, sender)
     if d then
         d.time = GetTime()
         members[sender] = d
+        M.Follow(sender, d)
         M:Update()
     end
 end)

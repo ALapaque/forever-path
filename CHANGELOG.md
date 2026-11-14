@@ -1,5 +1,16 @@
 # ForeverPath
 
+## v0.2.0-beta14
+
+- **Profils et assistant** : au premier lancement, choisis Découverte, Speedrun, Hardcore ou Minimal, et les bons modules se cochent d'un coup. `/fp profil` pour changer, `/fp profil export` / `import` pour partager tes réglages.
+- **Rapport de bug** : `/fp bug` rassemble version, client, personnage, étape, modules, autres addons et dernières erreurs (BugSack compris) dans un texte à coller.
+- **Nouvelle version** : ForeverPath te prévient si quelqu'un de ton groupe ou de ta guilde a une version plus récente.
+- **Accessibilité** : couleurs adaptées aux daltoniens (étapes, tracé, itinéraires) et texte jusqu'à 180 %.
+- **Signaux sonores** (désactivés par défaut) : étape terminée, objectifs complets, arrivée.
+- **Allemand et espagnol** : interface traduite (textes courts). Les longues descriptions des modules restent en anglais pour l'instant.
+- **Suivre le chef** (option du module Groupe) : les membres chargent automatiquement le segment du chef de groupe.
+- Publication CurseForge prête dans la CI (clé `CURSE_FORGE_API_KEY`) : il reste à ajouter l'identifiant du projet dans le TOC.
+
 ## v0.2.0-beta13
 
 - **Bibliothèque de routes** : `/fp importer` pour coller une route partagée (nouvelles zones de Forever, variantes). Elle est gardée pour tous tes personnages. `/fp routes` pour la liste. Les routes partagées vivent dans le dossier `Routes/` du dépôt.

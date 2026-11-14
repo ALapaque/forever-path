@@ -14,7 +14,8 @@ local M = ns.RegisterModule({
     options = {
         { key = "theme", label = ns.Tr("Thème"), type = "select", values = themeNames, store = "value", width = 150 },
         { key = "font", label = ns.Tr("Police"), type = "select", values = function() return ns.FontList() end, store = "value", width = 150 },
-        { key = "fontScale", label = ns.Tr("Taille du texte"), type = "slider", min = 0.8, max = 1.4, step = 0.05, default = 1 },
+        { key = "fontScale", label = ns.Tr("Taille du texte"), type = "slider", min = 0.8, max = 1.8, step = 0.05, default = 1 },
+        { key = "colorblind", label = ns.Tr("Couleurs adaptées aux daltoniens"), type = "check", default = false },
         { key = "locked", label = ns.Tr("Verrouiller les fenêtres (pas de déplacement)"), type = "check", default = false },
     },
 })
@@ -25,6 +26,7 @@ function M:Opt(key)
     if key == "font" then return ns.db.font end
     if key == "fontScale" then return ns.db.fontScale end
     if key == "locked" then return ns.db.locked end
+    if key == "colorblind" then return ns.db.colorblind end
 end
 
 function M:SetOpt(key, value)
@@ -36,6 +38,11 @@ function M:SetOpt(key, value)
         ns.db.fontScale = value
     elseif key == "locked" then
         ns.db.locked = value
+        return
+    elseif key == "colorblind" then
+        ns.db.colorblind = value
+        ns.ApplyPalette()
+        ns.Fire("FP_STEP_CHANGED", true)
         return
     end
     ns.ApplyLook()
@@ -61,3 +68,37 @@ function M.preview(p)
     fs:SetPoint("BOTTOM", 0, 6)
     fs:SetText(ns.Tr("Aa — police au choix"))
 end
+
+---------------------------------------------------------------------------
+-- Palette daltonien (Okabe-Ito) : couleurs des étapes, du tracé de la route et des itinéraires.
+-- Les tables d'origine sont modifiées sur place ; la palette normale est gardée pour revenir.
+---------------------------------------------------------------------------
+local CB_STEP = { accept = "fff0e442", complete = "ffe69f00", turnin = "ff56b4e9", ["goto"] = "ffcccccc" }
+local CB_RGB = {
+    accept = { 0.94, 0.89, 0.26 }, complete = { 0.9, 0.62, 0 }, turnin = { 0.34, 0.71, 0.91 }, ["goto"] = { 0.8, 0.8, 0.8 },
+    known = { 0.34, 0.71, 0.91 }, terrain = { 0, 0.62, 0.45 }, risky = { 0.84, 0.37, 0 }, flight = { 0.8, 0.47, 0.65 },
+}
+local saved
+local function swap(tbl, key, value)
+    if not tbl or tbl[key] == nil then return end
+    saved[tbl] = saved[tbl] or {}
+    if saved[tbl][key] == nil then saved[tbl][key] = tbl[key] end
+    tbl[key] = value
+end
+function ns.ApplyPalette()
+    saved = saved or {}
+    -- retour à la palette normale
+    for tbl, keys in pairs(saved) do for k, v in pairs(keys) do tbl[k] = v end end
+    if not (ns.db and ns.db.colorblind) then return end
+    local style = ns.Guide and ns.Guide.STYLE
+    for k, c in pairs(CB_STEP) do
+        if style and style[k] then
+            saved[style[k]] = saved[style[k]] or { color = style[k].color }
+            style[k].color = c
+        end
+    end
+    local mr = ns.Modules.maproute and ns.Modules.maproute.COLORS
+    local jr = ns.Modules.journeys and ns.Modules.journeys.COLORS
+    for k, c in pairs(CB_RGB) do swap(mr, k, c); swap(jr, k, c) end
+end
+ns.On("FP_INIT", function() C_Timer.After(0, ns.ApplyPalette) end)

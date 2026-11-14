@@ -17,6 +17,7 @@ local COLORS = {
     ["goto"] = { 0.4, 0.8, 1 }, default = { 0.85, 0.85, 0.85 },
 }
 
+M.COLORS = COLORS
 local overlay, pins, dots = nil, {}, {}
 
 local function canvas()

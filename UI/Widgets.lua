@@ -72,6 +72,9 @@ local function lsm() return LibStub and LibStub("LibSharedMedia-3.0", true) end
 -- Liste des polices proposées (Blizzard + LibSharedMedia si présent, ex. polices de packs d'interface)
 function ns.FontList()
     local list, seen = {}, {}
+    if ns.Daylight and ns.Daylight.registered and ns.Daylight.FontPath() then
+        list[#list + 1] = ns.Daylight.FONT_NAME; seen[ns.Daylight.FONT_NAME] = true
+    end
     for _, f in ipairs(ns.FONTS) do list[#list + 1] = f.name; seen[f.name] = true end
     local media = lsm()
     if media then
@@ -83,6 +86,10 @@ function ns.FontList()
 end
 
 local function fontPath(name)
+    if ns.Daylight and name == ns.Daylight.FONT_NAME then
+        local p = ns.Daylight.FontPath()
+        if p then return p end
+    end
     for _, f in ipairs(ns.FONTS) do if f.name == name then return f.path end end
     local media = lsm()
     local p = media and name and media:Fetch("font", name, true)
@@ -222,10 +229,10 @@ function ns.Toast(msg, icon, r, g, b, duration)
 end
 
 ns.On("FP_INIT", function()
-    -- thème par défaut : « Doux » si Daylight UI est installé
+    -- thème par défaut : « Doux » si Daylight UI est installé (remplacé par le thème
+    -- « Daylight UI » si son API est prise en charge, voir UI/DaylightUI.lua)
     if ns.db.theme == nil then
-        local loaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("DaylightUI")
-        ns.db.theme = loaded and "soft" or "dark"
+        ns.db.theme = type(DaylightUI) == "table" and "soft" or "dark"
     end
     ns.db.font = ns.db.font or ns.FONTS[1].name
     ns.db.fontScale = ns.db.fontScale or 1

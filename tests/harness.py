@@ -15,7 +15,7 @@ function mockobj()
   local o = {}
   return setmetatable(o, {__call=function() return nil end, __index=function(t,k)
     if k=="GetFontString" or k:match("^Create") then return function() return mockobj() end end
-    if k:match("Height$") or k:match("Width$") or k=="GetScale" or k:match("Level$") then return function() return 10 end end
+    if k:match("Height$") or k:match("Width$") or k:match("Scale$") or k:match("Level$") then return function() return 10 end end
     if k=="IsShown" then return function() return false end end
     if k=="GetPoint" then return function() return "CENTER",nil,"CENTER",0,0 end end
     return function() return nil end
@@ -37,7 +37,7 @@ function FireEvent(e, ...) core._scripts.OnEvent(core, e, ...) end
 function GetLocale() return "frFR" end
 MISSING = {}
 setmetatable(_G, {__index=function(t,k)
-  if type(k)=="string" and k:match("^ForeverPath") then return nil end
+  if type(k)=="string" and (k:match("^ForeverPath") or k=="DaylightUI") then return nil end
   if type(k)=="string" and k:match("^[A-Z]") or (type(k)=="string" and k:match("^C_")) then
     MISSING[k]=true
     local stub = mockobj()

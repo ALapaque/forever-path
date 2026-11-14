@@ -10,7 +10,7 @@ end
 local M = ns.RegisterModule({
     id = "appearance", category = "look", default = true, locked = true,
     name = "Apparence",
-    desc = "Le style des fenêtres et la police. « Doux » s'accorde avec Daylight UI ; les polices de tes autres addons (LibSharedMedia) sont proposées aussi.",
+    desc = "Le style des fenêtres et la police. Avec Daylight UI installé, le thème « Daylight UI » reprend ses couleurs et sa police en direct. Les polices LibSharedMedia sont proposées aussi.",
     options = {
         { key = "theme", label = "Thème", type = "select", values = themeNames, store = "value", width = 150 },
         { key = "font", label = "Police", type = "select", values = function() return ns.FontList() end, store = "value", width = 150 },

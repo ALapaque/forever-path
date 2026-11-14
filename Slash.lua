@@ -61,6 +61,12 @@ SlashCmdList.FOREVERPATH = function(msg)
         ns.Print("mapID=%s (%s) x=%.1f y=%.1f zone=%s interface=%s cartes=%s", tostring(mapID),
             info and info.name or "?", (x or 0) * 100, (y or 0) * 100, z and z.key or "?",
             tostring((select(4, GetBuildInfo()))), tostring(ns.resolvedMaps))
+        if type(DaylightUI) == "table" then
+            local a = type(DaylightUI.API) == "table" and DaylightUI.API
+            ns.Print("Daylight UI : API %s.%s, plugin %s%s", tostring(a and a.major), tostring(a and a.minor),
+                ns.Daylight.registered and "enregistré" or "non enregistré",
+                ns.Daylight.lastError and (" (" .. tostring(ns.Daylight.lastError) .. ")") or "")
+        end
         local id = ns.NpcIDFromUnit("target")
         if id then ns.Print("cible npcID=%d", id) end
     else

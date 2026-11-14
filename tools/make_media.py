@@ -67,10 +67,21 @@ def chevron(x, y, n=16):
     on = (stroke(0.15) or stroke(0.45)) and 0.15 < v < 0.85
     return 255, 255, 255, 255 if on else 0
 
+def beam(x, y, w=32, h=256):
+    # colonne de lumière : douce sur les bords, s'estompe vers le haut
+    u = (x + 0.5) / w - 0.5
+    v = (y + 0.5) / h            # 0 en haut, 1 en bas
+    across = max(0.0, 1 - (abs(u) / 0.5) ** 1.5)
+    along = v ** 1.8
+    core = max(0.0, 1 - abs(u) / 0.12) * 0.6
+    a = min(1.0, across * along + core * along)
+    return 255, 255, 255, clamp(a * 255)
+
 out = sys.argv[1]
 write_tga(out + "/arrow.tga", 64, 64, arrow)
 write_tga(out + "/glow.tga", 128, 64, glow)
 write_tga(out + "/dot.tga", 32, 32, dot)
 write_tga(out + "/pin.tga", 32, 32, pin)
 write_tga(out + "/chevron.tga", 16, 16, chevron)
+write_tga(out + "/beam.tga", 32, 256, beam)
 print("ok")

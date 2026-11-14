@@ -1,5 +1,12 @@
 # ForeverPath
 
+## v0.2.0-beta3
+
+### Nouveau
+- **Guidage 3D dans le monde** : un faisceau lumineux posé sur l'objectif, avec l'icône de l'étape (prendre / faire / rendre) et la distance. Quand l'objectif est hors champ, une flèche au bord de l'écran indique de quel côté tourner. Il s'appuie sur le cadre de navigation du jeu (`C_Navigation`), le même que le marqueur de Blizzard, qu'on peut masquer.
+- **Plugin Daylight UI** : ForeverPath s'enregistre auprès de Daylight UI. Le thème « Daylight UI » reprend en direct sa couleur d'accent, ses couleurs de texte et sa police, et suit tes changements de style. Il est adopté automatiquement la première fois que Daylight UI est détecté. `/dui path` ouvre les options de ForeverPath.
+- `/fp where` affiche aussi l'état du pont Daylight UI.
+
 ## v0.2.0-beta2
 
 Retours du premier test en jeu (merci Hazghard).

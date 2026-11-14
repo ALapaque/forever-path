@@ -26,6 +26,8 @@ jobs:
       - name: Installer lupa (Lua 5.1)
         run: pip install lupa
       - name: Tests de l'addon (API WoW simulée)
-        run: python3 tests/harness.py
+        run: |
+          python3 tests/harness.py
+          python3 tests/harness.py . tests/test_daylight.lua
       - name: Caractères affichables par les polices du jeu
         run: python3 tools/check_glyphs.py

@@ -22,7 +22,7 @@ Les routes sont générées à partir de **QuestieDB (données Forever)** par `t
 **Limite :** les quêtes ajoutées par Forever (nouvelles zones, nouveaux donjons) ne sont pas encore dans QuestieDB. Utilise l'enregistreur pour les ajouter.
 
 ## Apparence
-Quatre thèmes (Sombre doré, Doux façon Daylight UI, Blizzard, Minimal), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
+Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin officiel : couleurs et police de Daylight UI en direct, si installé), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
 
 ## Modules (tous désactivables)
 | Module | Par défaut |
@@ -32,6 +32,7 @@ Quatre thèmes (Sombre doré, Doux façon Daylight UI, Blizzard, Minimal), choix
 | Zones et donjons conseillés + alerte de niveau | ✔ |
 | Point sur la carte et la minimap, bouton épingle (+ TomTom) | ✔ |
 | Tracé de la route sur la carte du monde | ✔ |
+| Guidage 3D dans le monde (faisceau, distance, flèche de bord d'écran) | ✔ |
 | Flèche de direction | ✔ |
 | Repérage sur les barres de nom (PNJ, monstres de l'étape, monstres de quête) | ✔ |
 | Bouton « Cibler » (clic droit : poser un symbole) + raccourci | ✔ |

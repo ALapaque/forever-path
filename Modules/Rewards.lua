@@ -4,8 +4,11 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "rewards", category = "comfort", default = true,
     name = "Conseil de récompense",
-    desc = "Au rendu d'une quête, signale l'objet qui t'améliore (flèche verte) et celui qui se vend le plus cher (pièce d'or).",
-    options = {},
+    desc = "Au rendu d'une quête, signale l'objet qui t'améliore (flèche verte) et celui qui se vend le plus cher (pièce d'or). Utilise Pawn s'il est installé (selon tes poids de statistiques), sinon le niveau d'objet.",
+    options = {
+        { key = "pawn", label = "Utiliser Pawn s'il est installé", type = "check", default = true },
+        { key = "auto", label = "Choisir tout seul quand le choix est évident", type = "check", default = false },
+    },
 })
 
 local SLOTS = {
@@ -42,6 +45,16 @@ local function equippedLevel(slot)
     return C_Item.GetDetailedItemLevelInfo(link) or 0
 end
 
+-- Pawn (optionnel) : flèche d'amélioration selon les poids de statistiques du joueur
+local function pawnUpgrade(link)
+    if not M:Opt("pawn") then return nil end
+    local f = _G.PawnShouldItemLinkHaveUpgradeArrow
+    if type(f) ~= "function" then return nil end
+    local ok, res = pcall(f, link)
+    if ok then return res and true or false end
+end
+M.PawnUpgrade = pawnUpgrade
+
 local function evaluate()
     local n = GetNumQuestChoices()
     for _, m in pairs(marks) do m:Hide() end
@@ -56,13 +69,25 @@ local function evaluate()
             local slots = SLOTS[equipLoc or ""]
             local id = C_Item.GetItemInfoInstant(link)
             local usable = id and (not C_PlayerInfo.CanUseItem or C_PlayerInfo.CanUseItem(id))
-            if slots and usable then
+            local viaPawn = slots and usable and pawnUpgrade(link)
+            if viaPawn ~= nil then
+                if viaPawn then up[i] = true end
+            elseif slots and usable then
                 local ilvl = C_Item.GetDetailedItemLevelInfo(link) or 0
                 local worst = math.huge
                 for _, s in ipairs(slots) do worst = math.min(worst, equippedLevel(s)) end
                 if ilvl > worst then up[i] = true end
             end
         end
+    end
+    local nUp, upIdx = 0
+    for i in pairs(up) do nUp = nUp + 1; upIdx = i end
+    M.choice = nUp == 1 and upIdx or (nUp == 0 and bestGoldIdx) or nil
+    -- choix évident : une seule amélioration, ou aucune (on prend la plus chère)
+    if M:Opt("auto") and M.choice and not IsShiftKeyDown() and QuestFrameCompleteQuestButton then
+        ns.Print(("Récompense choisie : %s"):format(GetQuestItemLink("choice", M.choice) or M.choice))
+        GetQuestReward(M.choice)
+        return
     end
     for i = 1, n do
         local button = QuestInfo_GetRewardButton and QuestInfo_GetRewardButton(QuestInfoFrame.rewardsFrame, i)

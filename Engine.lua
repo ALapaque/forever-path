@@ -112,7 +112,19 @@ end
 
 -- Étape à viser pour la navigation : l'étape en cours si elle a une position,
 -- sinon la prochaine étape applicable qui en a une (notes, paliers de niveau...).
+-- Détour : destination temporaire (maître de classe, auberge...) qui passe avant l'étape du guide.
+-- d = { map = uiMapID, x = 0..100, y = 0..100, text = "...", icon = "...", radius = yards }
+local detour
+function E.SetDetour(d)
+    if d then d.type, d.detour = "goto", true end
+    detour = d
+    ns.Fire("FP_DETOUR", d)
+    ns.Fire("FP_STEP_CHANGED", true)
+end
+function E.Detour() return detour end
+
 function E.NavStep()
+    if detour then return detour end
     local g, step, i = E.Current()
     if not step then return end
     if step.x then return step end
@@ -240,6 +252,14 @@ ns.On("FP_READY", function()
     C_Timer.NewTicker(0.5, function()
         local _, step = E.Current()
         if step and step.type == "goto" then E.Refresh() end
+        if detour then
+            local d = E.Distance(detour)
+            if d and d < (detour.radius or 12) then
+                local done = detour
+                E.SetDetour(nil)
+                ns.Fire("FP_DETOUR_ARRIVED", done)
+            end
+        end
         ns.Fire("FP_TICK")
     end)
 end)

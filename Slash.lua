@@ -15,6 +15,8 @@ BINDING_NAME_CLICK_ForeverPathQuestItemButton_LeftButton = "Utiliser l'objet de 
 SlashCmdList.FOREVERPATH = function(msg)
     local cmd, arg = (msg or ""):match("^%s*(%S*)%s*(.-)%s*$")
     cmd = cmd:lower()
+    local ext = ns.SlashExt and ns.SlashExt[cmd]
+    if ext then return ext(arg) end
     if cmd == "" then
         if ns.Guide.enabled then ns.Guide:Toggle() else ns.SetModuleEnabled("guide", true) end
     elseif cmd == "config" or cmd == "options" then

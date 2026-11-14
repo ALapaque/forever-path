@@ -8,7 +8,9 @@ import json, math, os, pickle, sys
 from collections import defaultdict
 
 DATA_DIR, OUT = sys.argv[1], sys.argv[2]
-db = pickle.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.pkl"), "rb"))
+DRY = "--dry" in sys.argv            # mesure seulement, n'écrit pas les guides
+SETS = [a.split("=", 1) for a in sys.argv[3:] if "=" in a and not a.startswith("--")]
+db = pickle.load(open(os.environ.get("FP_DB") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.pkl"), "rb"))
 Q, N, O, I = db["Quest"], db["Npc"], db["Object"], db["Item"]
 A2M, XPDB, NPCFR, QFR = db["area2map"], db["xp"], db["npcFR"], db["questFR"]
 
@@ -76,8 +78,20 @@ XP_TO_LEVEL = [0, 400, 900, 1400, 2100, 2800, 3600, 4500, 5400, 6500, 7600, 8800
                106300, 111800, 117500, 123200, 129100, 135100, 141200, 147500, 153900, 160400, 167100, 173900,
                180800, 187900, 195000, 202300, 209800]
 
-HUB = 45            # yards : rayon "même endroit"
+HUB = 100           # yards : rayon "même endroit" (réglé par mesure)
 MAX_LOG = 20
+# Réglages de la recherche (balayés par --tune) : poids des candidats et anticipation
+W_TURNIN, W_ACCEPT = 0.95, 0.9
+LOOKAHEAD = 0           # 0 = glouton ; >0 : tient compte des actions voisines du candidat
+GREY = 9                # quête ignorée à partir de niveau + GREY
+
+# --- modèle de temps (secondes) pour la mesure de qualité
+T_TALK = 8              # prendre / rendre une quête
+T_KILL, T_OTHER = 170, 70   # objectif à tuer / autre (ramasser, utiliser, explorer)
+T_ZONE = 150            # changement de zone (trajet inter-zones moyen)
+T_MOB = 28              # par monstre en farm
+def speed(level):
+    return 11.2 if level >= 40 else 7.0
 
 def g(t, k, d=None):
     return t.get(k, d) if isinstance(t, dict) else d
@@ -245,8 +259,18 @@ class Char:
         self.grind = 0
         self.log = {}
         self.src = defaultdict(int)
+        self.time = 0.0
+        self.dist = 0.0
+        self.zones = 0
+        self.quests = 0
+
+    def walk(self, d):
+        self.dist += d
+        self.time += d / speed(self.level)
 
     def add_xp(self, amount, src="grind"):
+        if src == "grind":
+            self.time += amount / mob_xp(self.level) * T_MOB
         self.src[src] += amount
         self.xp += amount
         while self.level < 60 and self.xp >= XP_TO_LEVEL[self.level]:
@@ -269,7 +293,7 @@ def available(info, ch, inlog):
         return False
     if info["lvl"] > ch.level + 3:
         return False                      # quête rouge : on attend
-    if info["lvl"] + 7 <= ch.level:
+    if info["lvl"] + GREY <= ch.level:
         return False                      # quête grise : pas rentable
     if info["preGroup"] and not all(p in ch.done for p in info["preGroup"]):
         return False
@@ -292,8 +316,13 @@ def visit(zone, stop, ch, infos, remaining_maps):
         return (info["gmap"] == mapid and len(log) < MAX_LOG and available(info, ch, log)
                 and reachable(info))
 
+    ch.zones += 1
+    ch.time += T_ZONE
+
     def T(info):
         steps.append(("T", info))
+        ch.time += T_TALK
+        ch.quests += 1
         ch.done.add(info["id"])
         ch.add_xp(quest_xp(info, ch.level), 'quest')
         for e in info["exclusive"]:
@@ -302,6 +331,7 @@ def visit(zone, stop, ch, infos, remaining_maps):
 
     def Aq(info):
         steps.append(("A", info))
+        ch.time += T_TALK
         log[info["id"]] = "ready" if not info["opos"] else "todo"
         for e in info["exclusive"]:
             ch.blocked.add(e)
@@ -327,6 +357,7 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 break
             pos = max(targets, key=lambda p: sum(1 for t in targets if dist(mapid, p, t) < 150))
             steps.append(("G", pos))
+            ch.walk(250)        # arrivée dans la zone jusqu'au premier hub (moyenne)
         changed = True
         while changed:
             changed = False
@@ -341,6 +372,7 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 info = infos[qid]
                 if log[qid] == "todo" and info["omap"] == mapid and dist(mapid, pos, info["opos"]) <= HUB:
                     steps.append(("C", info)); log[qid] = "ready"
+                    ch.time += T_KILL if info["kill"] else T_OTHER
                     # XP des monstres tués pendant l'objectif (estimation)
                     ch.add_xp(mob_xp(min(info["lvl"], ch.level + 2)) * (22 if info["kill"] else 3), 'kills')
                     changed = True
@@ -350,11 +382,15 @@ def visit(zone, stop, ch, infos, remaining_maps):
             if st == "todo" and info["omap"] == mapid:
                 cands.append((dist(mapid, pos, info["opos"]), info["opos"]))
             elif st == "ready" and info["emap"] == mapid:
-                cands.append((dist(mapid, pos, info["epos"]) * 0.85, info["epos"]))
-        if True:
-            for info in infos.values():
-                if can_accept(info):
-                    cands.append((dist(mapid, pos, info["gpos"]) * 1.1, info["gpos"]))
+                cands.append((dist(mapid, pos, info["epos"]) * W_TURNIN, info["epos"]))
+        for info in infos.values():
+            if can_accept(info):
+                cands.append((dist(mapid, pos, info["gpos"]) * W_ACCEPT, info["gpos"]))
+        if LOOKAHEAD and len(cands) > 1:
+            # un candidat entouré d'autres actions vaut plus : on retranche une part de leur proximité
+            pts_all = [c[1] for c in cands]
+            cands = [(c[0] - LOOKAHEAD * sum(1 for q in pts_all if q is not c[1] and dist(mapid, c[1], q) < 150), c[1])
+                     for c in cands]
         if not cands:
             soon = [i for i in infos.values() if i["gmap"] == mapid and i["id"] not in ch.done
                     and i["id"] not in ch.blocked and i["id"] not in log and reachable(i)
@@ -366,6 +402,7 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 continue
             break
         cands.sort(key=lambda c: c[0])
+        ch.walk(dist(mapid, pos, cands[0][1]))
         pos = cands[0][1]
     return steps, start_level, ch.level
 
@@ -411,8 +448,27 @@ def render(zone, steps, stop):
 def lua_str(s):
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
+def apply_sets():
+    for k, v in SETS:
+        globals()[k] = type(globals()[k])(float(v)) if isinstance(globals()[k], (int, float)) else v
+
+def metrics_of(pid, ch):
+    # temps restant jusqu'au 60 en farm si la route s'arrête avant
+    rest = 0.0
+    if ch.level < 60:
+        need = sum(XP_TO_LEVEL[l] for l in range(ch.level, 60)) - ch.xp
+        rest = need / mob_xp(ch.level) * T_MOB
+    hours = (ch.time + rest) / 3600
+    total_xp = sum(ch.src.values())
+    return {"path": pid, "level": ch.level, "hours_to_60": round(hours, 1),
+            "xp_per_hour": int(total_xp / max(1, ch.time) * 3600), "walk_km": round(ch.dist * 0.9144 / 1000, 1),
+            "grind_levels": ch.grind, "quests": ch.quests, "zones": ch.zones,
+            "grind_share": round(ch.src.get("grind", 0) / max(1, total_xp), 3)}
+
 def main():
+    apply_sets()
     os.makedirs(OUT, exist_ok=True)
+    metrics = []
     all_npcs = set()
     index = []
     stats = []
@@ -457,6 +513,9 @@ def main():
         for i, gd in enumerate(guides):
             gd["next"] = guides[i + 1]["id"] if i + 1 < len(guides) else None
         stats.append((pid, ch.level, len(guides), sum(gd["n"] for gd in guides), ch.grind, dict(ch.src)))
+        metrics.append(metrics_of(pid, ch))
+        if DRY:
+            continue
         # fichier par parcours
         out = ["local _, ns = ...", "",
                "-- GÉNÉRÉ AUTOMATIQUEMENT par tools/gen_routes.py à partir de QuestieDB (Forever).",
@@ -476,6 +535,9 @@ def main():
         fn = "Route_%s.lua" % pid.replace("-", "_")
         open(os.path.join(OUT, fn), "w", encoding="utf-8").write("\n".join(out))
         index.append(fn)
+    report_metrics(metrics)
+    if DRY:
+        return
     # noms de PNJ localisés
     names = ["local _, ns = ...", "", "-- GÉNÉRÉ : noms des PNJ utilisés par les routes (fr / en).", "ns.NpcNames = {"]
     for nid in sorted(all_npcs):
@@ -487,5 +549,24 @@ def main():
     print("files:", index)
     for s in stats:
         print("%-20s niveau final %d, %d segments, %d étapes, %d niveaux de farm" % s[:5], {k: v//1000 for k, v in s[5].items()})
+
+def report_metrics(metrics):
+    """Affiche les mesures et l'écart avec la dernière version enregistrée (tools/route_metrics.json)."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "route_metrics.json")
+    old = {}
+    if os.path.exists(path):
+        old = {m["path"]: m for m in json.load(open(path, encoding="utf-8"))}
+    print("%-20s %6s %8s %7s %6s %6s %6s" % ("parcours", "h->60", "XP/h", "km", "farm", "quêtes", "zones"))
+    for m in metrics:
+        o = old.get(m["path"], {})
+        def d(k):
+            return "" if k not in o else " (%+g)" % round(m[k] - o[k], 1)
+        print("%-20s %6s%s %8d%s %7s %6d %6d %6d" % (m["path"], m["hours_to_60"], d("hours_to_60"),
+              m["xp_per_hour"], d("xp_per_hour"), m["walk_km"], m["grind_levels"], m["quests"], m["zones"]))
+    avg = sum(m["hours_to_60"] for m in metrics) / len(metrics)
+    print("moyenne : %.2f h jusqu'au 60" % avg)
+    if not DRY:
+        json.dump(metrics, open(path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    return avg
 
 main()

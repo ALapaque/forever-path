@@ -1,5 +1,19 @@
 # ForeverPath
 
+## v0.2.0-beta8
+
+### Confort de jeu
+- **Maître de classe** : quand de nouveaux sorts t'attendent, un bouton (livre) dans le guide t'amène au maître de ta classe le plus proche. La flèche, le guidage 3D et l'itinéraire font le détour, puis reprennent le guide.
+- **Session de jeu** : bouton horloge ou `/fp session 45`. ForeverPath estime jusqu'où tu iras et propose de t'arrêter juste après un rendu de quête. À la fin, il te guide vers l'auberge la plus proche.
+- **Marchand automatique** : vend la camelote (objets gris) et répare l'équipement. Maj pour ne rien faire.
+- **Récolte sur la route** : pour les mineurs et herboristes, la carte du monde montre les filons et les herbes accessibles à ton niveau de métier, seulement le long du trajet des prochaines étapes.
+- **Conseil de récompense** : utilise Pawn s'il est installé (tes poids de statistiques). Option pour choisir tout seul quand le choix est évident.
+- **Détours** : tout détour (maître, auberge) s'affiche dans le guide avec un bouton pour l'annuler.
+
+### Route
+- Générateur mesuré (`tools/route_metrics.json`) : temps estimé jusqu'au 60, XP/h, distance, farm. Les réglages ont été optimisés à partir de ces mesures : environ 2 h de moins estimées par parcours, plus de quêtes, moins de farm.
+- Données du monde (maîtres de classe, aubergistes, filons, herbes) générées depuis QuestieDB (`tools/gen_world.py`).
+
 ## v0.2.0-beta7
 
 - **Carte plus lisible** : les étapes au même endroit (ou qui se chevauchent à ce niveau de zoom) sont regroupées en une seule pastille, par exemple « 2-4 ». Le survol liste toutes les étapes regroupées avec leur numéro et leur couleur. L'étape en cours est plus grande, entourée de blanc et toujours au-dessus des autres.

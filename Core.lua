@@ -38,6 +38,9 @@ local function applyDefaults(dst, src)
     end
 end
 
+-- Sous-commandes /fp ajoutées par les modules : ns.SlashExt.nom = function(arg) ... end
+ns.SlashExt = {}
+
 function ns.Print(fmt, ...)
     local msg = select("#", ...) > 0 and fmt:format(...) or fmt
     DEFAULT_CHAT_FRAME:AddMessage("|cffd4af37ForeverPath|r " .. msg)

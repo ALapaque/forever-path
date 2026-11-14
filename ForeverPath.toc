@@ -20,6 +20,7 @@ Core.lua
 UI\Widgets.lua
 UI\DaylightUI.lua
 Data\Zones.lua
+Data\World.lua
 Parser.lua
 Geo.lua
 Engine.lua
@@ -28,6 +29,7 @@ Nav\Network.lua
 Nav\Transport.lua
 Nav\Planner.lua
 Nav\Terrain.lua
+Nav\Places.lua
 Guides\_NpcNames.lua
 
 Modules\Guide.lua
@@ -51,6 +53,11 @@ Modules\Reminders.lua
 Modules\GroupSync.lua
 Modules\Danger.lua
 Modules\Recorder.lua
+Modules\Detour.lua
+Modules\Trainer.lua
+Modules\Session.lua
+Modules\Merchant.lua
+Modules\Gather.lua
 
 UI\ExportFrame.lua
 UI\Options.lua

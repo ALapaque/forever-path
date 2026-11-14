@@ -3,24 +3,14 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "reminders", category = "comfort", default = true,
     name = "Rappels utiles",
-    desc = "Petits rappels à l'écran : nouveaux sorts à apprendre, équipement à réparer, sacs presque pleins.",
+    desc = "Petits rappels à l'écran : équipement à réparer, sacs presque pleins. (Les nouveaux sorts sont gérés par le module « Maître de classe ».)",
     options = {
-        { key = "train", label = "Sorts à apprendre (niveaux pairs)", type = "check", default = true },
         { key = "repair", label = "Réparation (< 30 %)", type = "check", default = true },
         { key = "bags", label = "Sacs presque pleins", type = "check", default = true },
     },
 })
 
 local lastRepair, lastBags = 0, 0
-
-M:On("PLAYER_LEVEL_UP", function(lvl)
-    if M:Opt("train") and lvl % 2 == 0 then
-        C_Timer.After(2, function()
-            ns.Toast(("Niveau %d : de nouveaux sorts t'attendent chez ton maître de classe."):format(lvl),
-                "Interface\\Icons\\INV_Misc_Book_09", 0.6, 0.85, 1, 6)
-        end)
-    end
-end)
 
 M:On("UPDATE_INVENTORY_DURABILITY", function()
     if not M:Opt("repair") or GetTime() - lastRepair < 600 then return end

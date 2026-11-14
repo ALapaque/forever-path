@@ -1,5 +1,9 @@
 # ForeverPath
 
+## v0.2.0-beta7
+
+- **Carte plus lisible** : les étapes au même endroit (ou qui se chevauchent à ce niveau de zoom) sont regroupées en une seule pastille, par exemple « 2-4 ». Le survol liste toutes les étapes regroupées avec leur numéro et leur couleur. L'étape en cours est plus grande, entourée de blanc et toujours au-dessus des autres.
+
 ## v0.2.0-beta6
 
 - **Correctif** : la fenêtre du guide pouvait s'afficher sans aucun texte (erreur « Invalid font height »). Les polices de l'addon partent maintenant des polices Blizzard, avec une taille de secours si une interface renvoie une taille nulle.

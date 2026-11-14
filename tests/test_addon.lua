@@ -109,4 +109,12 @@ SlashCmdList.FOREVERPATH("where"); SlashCmdList.FOREVERPATH("config"); SlashCmdL
 TICK()
 local miss = {} for k in pairs(MISSING) do miss[#miss+1]=k end table.sort(miss)
 print("GLOBALS STUBBÉS:", table.concat(miss, " "))
+-- carte : étiquettes des pastilles regroupées
+local L = ns.Modules.maproute.Label
+assert(L, "MapRoute.Label introuvable")
+assert(L({ 3 }) == "3", "pastille seule")
+assert(L({ 8, 2, 3, 4 }) == "2-4,8", "regroupement trié : "..L({ 8, 2, 3, 4 }))
+assert(L({ 1, 2 }) == "1,2", "deux étapes consécutives")
+assert(L({ 1, 3, 5 }) == "1+", "trop de morceaux : "..L({ 1, 3, 5 }))
+print("ok - étiquettes des pastilles regroupées")
 print("ALL TESTS PASSED")

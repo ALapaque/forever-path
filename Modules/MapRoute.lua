@@ -152,21 +152,67 @@ function M:Draw()
         end
     end
 
-    -- étapes numérotées
+    -- étapes numérotées : les étapes au même endroit (ou qui se chevauchent à ce zoom) sont
+    -- regroupées en une seule pastille « 2-4 » ; la liste complète est dans l'infobulle.
+    local groups = {}
+    local near = size * 0.9
     for _, p in ipairs(pts) do
         if p.step then
-            local pi = pin(p.n)
-            local c = COLORS[p.step.type] or COLORS.default
-            pi:SetSize(size, size)
-            pi:ClearAllPoints()
-            pi:SetPoint("CENTER", overlay, "TOPLEFT", p.x * W, -p.y * H)
-            pi.bg:SetVertexColor(c[1], c[2], c[3])
-            pi.num:SetText(p.n)
-            pi.num:SetScale(1 / scale)
-            pi.label = ns.Guide and ns.Guide.StepLabel(p.step) or ""
-            pi:Show()
+            local sx, sy = p.x * W, p.y * H
+            local into
+            for _, gr in ipairs(groups) do
+                if math.abs(gr.x - sx) < near and math.abs(gr.y - sy) < near then into = gr break end
+            end
+            if into then
+                into.items[#into.items + 1] = p
+            else
+                groups[#groups + 1] = { x = sx, y = sy, items = { p } }
+            end
         end
     end
+    for gi, gr in ipairs(groups) do
+        local first = gr.items[1]
+        local nums = {}
+        for _, it in ipairs(gr.items) do nums[#nums + 1] = it.n end
+        local pi = pin(gi)
+        local c = COLORS[first.step.type] or COLORS.default
+        local current = first.n == 1
+        pi.num:SetScale(1 / scale)
+        pi.num:SetText(M.Label(nums))
+        local textW = (pi.num:GetStringWidth() or 0) / scale
+        local h = current and size * 1.25 or size
+        pi:SetSize(math.max(h, textW + 10 / scale), h)
+        pi:ClearAllPoints()
+        pi:SetPoint("CENTER", overlay, "TOPLEFT", gr.x, -gr.y)
+        pi:SetFrameLevel(overlay:GetFrameLevel() + 100 - gi)      -- l'étape en cours au-dessus
+        pi.bg:SetVertexColor(c[1], c[2], c[3])
+        pi.ring:SetVertexColor(current and 1 or 0, current and 1 or 0, current and 1 or 0, current and 1 or 0.8)
+        local lines = {}
+        for _, it in ipairs(gr.items) do
+            local ic = COLORS[it.step.type] or COLORS.default
+            lines[#lines + 1] = ("|cff%02x%02x%02x%d.|r %s"):format(ic[1] * 255, ic[2] * 255, ic[3] * 255, it.n,
+                ns.Guide and ns.Guide.StepLabel(it.step) or "")
+        end
+        pi.label = table.concat(lines, "\n")
+        pi:Show()
+    end
+end
+
+-- { 2, 3, 4, 8 } -> "2-4, 8" (au-delà de deux morceaux : "2-4+")
+function M.Label(nums)
+    table.sort(nums)
+    local parts, a, b = {}, nums[1], nums[1]
+    for k = 2, #nums + 1 do
+        local v = nums[k]
+        if v and v == b + 1 then
+            b = v
+        else
+            parts[#parts + 1] = a == b and tostring(a) or (b == a + 1 and (a .. "," .. b) or (a .. "-" .. b))
+            a, b = v, v
+        end
+    end
+    if #parts > 2 then return parts[1] .. "+" end
+    return table.concat(parts, ",")
 end
 
 -- La carte zoome / change : on redessine régulièrement tant qu'elle est ouverte (léger : < 20 éléments + pointillés)

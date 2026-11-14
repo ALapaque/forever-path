@@ -29,6 +29,7 @@ A 757 @42.5,90.1 id=2982
 C 750 @43.6,88.3 mobs=2961
 T 750 @44.5,77.5 id=2980
 A 780 @44.5,77.5 id=2980
+B "Lie ta pierre de foyer à l'auberge" @45.9,64.2 id=6747
 T 1656 @45.9,64.2 id=6747
 A 745 @46.7,63.4 id=2993
 A 748 @47.5,63.6 race=Tauren id=2948
@@ -70,8 +71,9 @@ C 765 @61.2,49.3 mobs=3051
 T 765 @54.8,64.3 id=2988
 C 766 @38.3,58.7 mobs=3246,2959,2958,2960,2957
 C 745 @33.2,64.1 mobs=2949,2950,2951
-T 766 @46.2,60.8 id=3055
+H "Utilise ta pierre de foyer" @45.9,64.2 id=6747
 T 745 @46.7,63.4 id=2993
+T 766 @46.2,60.8 id=3055
 T 772 @34.3,43.3 id=2984
 A 773 @34.3,43.3 id=2984
 T 773 @58.3,30.7 id=2994
@@ -87,6 +89,7 @@ ns.RegisterGuide({
     text = [[
 M barrens
 G "Rejoins Les Tarides" @51.9,30.3 r=40 upto=21
+B "Lie ta pierre de foyer à l'auberge" @52.0,29.9 id=3934
 A 844 @52.2,31.0 id=3338
 A 869 @51.9,30.3 id=3464
 A 871 @51.5,30.9 id=3429
@@ -126,6 +129,7 @@ C 895 @63.1,49.4 mobs=3467
 C 888 @63.1,49.4
 T 895 @62.7,36.2 id=3391
 T 888 @62.7,36.2 id=3391
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 869 @51.9,30.3 id=3464
 T 5041 @51.5,30.9 id=3429
 T 872 @51.5,30.9 id=3429
@@ -167,6 +171,7 @@ C 896 @60.7,3.9 mobs=3283,3286,9336
 T 3922 @49.0,11.2 id=9316
 C 875 @39.2,15.7 mobs=3278
 A 1062 @35.3,27.9 id=4049
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 875 @51.6,30.9 id=3449
 T 896 @63.4,38.5 id=3453
 A 854 @44.9,58.6 race=Tauren id=3418
@@ -186,6 +191,7 @@ T 4921 @52.0,31.6 id=3432
 T 891 @62.3,39.0 id=3339
 T 6541 @48.1,5.4 id=8582
 C 876 @39.2,12.2 mobs=3452
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 876 @51.6,30.9 id=3449
 A 1060 @51.6,30.9 id=3449
 A 1483 @63.0,37.2 id=3442
@@ -198,6 +204,7 @@ T 5052 @44.5,59.3 id=3430
 L 19 "Tue des monstres autour de toi jusqu'au niveau 19"
 A 868 @51.1,29.6 id=3428
 C 868 @43.1,70.8 mobs=3252,3250,3251,3503
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 868 @51.1,29.6 id=3428
 ]],
 })
@@ -251,7 +258,7 @@ ns.RegisterGuide({
     next = "horde-tauren-24-stonetalon",
     text = [[
 M barrens
-G "Rejoins Les Tarides" @45.1,57.7 r=40 upto=26
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 A 893 @45.1,57.7 id=3433
 A 6382 @44.9,59.1 id=3387
 A 843 @45.9,77.0 id=3341
@@ -264,6 +271,7 @@ A 879 @44.5,59.3 id=3430
 C 879 @45.1,80.1 mobs=3436,3434,3435
 T 879 @44.5,59.3 id=3430
 A 906 @44.5,59.3 id=3430
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 906 @51.5,30.9 id=3429
 L 23 "Tue des monstres autour de toi jusqu'au niveau 23"
 A 846 @45.9,77.0 id=3341
@@ -363,11 +371,11 @@ ns.RegisterGuide({
     next = "horde-tauren-30-hillsbrad",
     text = [[
 M barrens
-G "Rejoins Les Tarides" @35.2,27.8 r=40 upto=32
-T 6548 @35.2,27.8 id=11857
-T 1062 @35.3,27.9 id=4049
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 1069 @62.4,37.6 id=3446
 T 1094 @63.0,37.2 id=3442
+T 6548 @35.2,27.8 id=11857
+T 1062 @35.3,27.9 id=4049
 L 27 "Tue des monstres autour de toi jusqu'au niveau 27"
 A 857 @49.0,86.3 id=3421
 C 857 @49.1,84.2

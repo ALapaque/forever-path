@@ -25,6 +25,7 @@ M.STYLE = {
     hearth     = { verb = "HEARTH",   icon = "Interface\\Icons\\INV_Misc_Rune_01",         color = "ff66ccff" },
     fly        = { verb = "FLY",      icon = "Interface\\Icons\\Ability_Mount_Gryphon_01", color = "ff66ccff" },
     flightpath = { verb = "FLIGHTPATH", icon = "Interface\\Icons\\Ability_Mount_Wyvern_01", color = "ff66ccff" },
+    bind       = { verb = "BIND",     icon = "Interface\\Icons\\INV_Misc_Rune_01",         color = "ff66ccff" },
 }
 
 -- « » » dessiné en texture : les flèches Unicode (→) ne sont pas dans la police du jeu

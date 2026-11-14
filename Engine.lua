@@ -74,9 +74,29 @@ function E.IsDone(step, idx)
     elseif t == "goto" then
         local d = E.Distance(step)
         return d ~= nil and d <= (step.radius or 15)
+    elseif t == "hearth" then
+        -- arrivé à l'auberge (pierre utilisée, ou venu à pied)
+        local d = step.x and E.Distance(step)
+        return d ~= nil and d <= 60
     end
-    return false -- note / hearth / fly / flightpath : validation manuelle (bouton >)
+    return false -- note / bind / fly / flightpath : validées par un événement ou le bouton >
 end
+
+-- Étapes validées par un événement du jeu : on les marque comme faites
+local function markCurrent(kind)
+    local g, step, i = E.Current()
+    if g and step and step.type == kind then
+        ns.cdb.skipped[g.id] = ns.cdb.skipped[g.id] or {}
+        ns.cdb.skipped[g.id][i] = true
+        E.Refresh()
+    end
+end
+E.MarkCurrent = markCurrent
+ns.On("HEARTHSTONE_BOUND", function() markCurrent("bind") end)
+ns.On("PLAYER_CONTROL_LOST", function()
+    C_Timer.After(1, function() if UnitOnTaxi and UnitOnTaxi("player") then markCurrent("fly") end end)
+end)
+ns.On("TAXIMAP_OPENED", function() markCurrent("flightpath") end)
 
 function E.Current()
     local g = ns.Guides[ns.cdb.guideId or ""]

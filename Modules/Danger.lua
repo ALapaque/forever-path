@@ -20,14 +20,14 @@ M:On("PLAYER_TARGET_CHANGED", function()
     local guid = UnitGUID("target")
     if guid == last then return end
     local reason
-    if lvl == -1 then reason = "niveau ??"
-    elseif lvl - ns.PlayerLevel() >= (M:Opt("diff") or 3) then reason = ("niveau %d"):format(lvl) end
+    if lvl == -1 then reason = ns.Tr("niveau ??")
+    elseif lvl - ns.PlayerLevel() >= (M:Opt("diff") or 3) then reason = ns.Tr("niveau %d"):format(lvl) end
     if okC and not ns.IsSecret(class) and (class == "elite" or class == "rareelite" or class == "worldboss") then
         reason = (reason and reason .. ", " or "") .. ns.Tr("élite")
     end
     if reason then
         last = guid
-        ns.Toast("Danger : " .. (UnitName("target") or "?") .. " (" .. reason .. ")",
+        ns.Toast(("Danger : %s (%s)"):format(UnitName("target") or "?", reason),
             "Interface\\TargetingFrame\\UI-TargetingFrame-Skull", 1, 0.25, 0.2, 3)
         if M:Opt("sound") then PlaySound(SOUNDKIT.RAID_WARNING) end
     end

@@ -260,6 +260,7 @@ class Char:
         self.log = {}
         self.src = defaultdict(int)
         self.time = 0.0
+        self.bind, self.hearth_cd, self.hearths = None, 0.0, 0
         self.dist = 0.0
         self.zones = 0
         self.quests = 0
@@ -317,7 +318,15 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 and reachable(info))
 
     ch.zones += 1
-    ch.time += T_ZONE
+    arrive_by_hearth = ch.bind and ch.bind["map"] == mapid and ch.time >= ch.hearth_cd
+    if arrive_by_hearth:
+        steps.append(("H", ch.bind))
+        ch.time += 15
+        ch.hearth_cd = ch.time + HEARTH_CD
+        ch.hearths += 1
+        pos = ch.bind["pos"]
+    else:
+        ch.time += T_ZONE
 
     def T(info):
         steps.append(("T", info))
@@ -358,6 +367,13 @@ def visit(zone, stop, ch, infos, remaining_maps):
             pos = max(targets, key=lambda p: sum(1 for t in targets if dist(mapid, p, t) < 150))
             steps.append(("G", pos))
             ch.walk(250)        # arrivée dans la zone jusqu'au premier hub (moyenne)
+        # lier la pierre à l'auberge du hub (si on va rester dans la zone)
+        if not (ch.bind and ch.bind["map"] == mapid) and stop - ch.level >= 2:
+            inn = inn_near(mapid, pos, ch.faction, 120)
+            if inn:
+                steps.append(("B", inn))
+                ch.time += 15
+                ch.bind = inn
         changed = True
         while changed:
             changed = False
@@ -402,11 +418,42 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 continue
             break
         cands.sort(key=lambda c: c[0])
-        ch.walk(dist(mapid, pos, cands[0][1]))
-        pos = cands[0][1]
+        target = cands[0][1]
+        far = dist(mapid, pos, target)
+        b = ch.bind
+        if (b and b["map"] == mapid and far > HEARTH_MIN and ch.time >= ch.hearth_cd
+                and dist(mapid, b["pos"], target) < 150):
+            steps.append(("H", b))
+            ch.time += 15
+            ch.hearth_cd = ch.time + HEARTH_CD
+            ch.hearths += 1
+            pos = b["pos"]
+            continue
+        ch.walk(far)
+        pos = target
     return steps, start_level, ch.level
 
 # ---------------------------------------------------------------- sortie DSL
+# ---------------------------------------------------------------- auberges (pierre de foyer)
+HEARTH_CD = 3600        # secondes de jeu entre deux pierres
+HEARTH_MIN = 700        # yards : en dessous, on marche
+INNS = defaultdict(list)    # map -> [(npc, pos, faction)]
+for _nid, _n in N.items():
+    if g(_n, 14) == "Innkeeper":
+        _f = g(_n, 13) or ""
+        for _m, _pts in all_pts(g(_n, 7)).items():
+            if _pts:
+                INNS[_m].append((_nid, _pts[0], _f))
+
+def inn_near(mapid, pos, faction, radius):
+    best = None
+    for nid, p, f in INNS.get(mapid, []):
+        if faction[0] in f:
+            d = dist(mapid, pos, p)
+            if d <= radius and (not best or d < best[0]):
+                best = (d, nid, p)
+    return best and {"map": mapid, "npc": best[1], "pos": best[2]}
+
 def npc_name(nid):
     fr = g(NPCFR.get(nid), 1)
     en = g(N.get(nid), 1)
@@ -421,6 +468,13 @@ def render(zone, steps, stop):
     for kind, x in steps:
         if kind == "G":
             lines.append('G "Rejoins %s" %s r=40 upto=%d' % (ZONE_FR[zone], fmt(x), stop + 2))
+            continue
+        if kind in ("B", "H"):
+            used_npcs.add(x["npc"])
+            if kind == "B":
+                lines.append('B "Lie ta pierre de foyer à l\'auberge" %s id=%d' % (fmt(x["pos"]), x["npc"]))
+            else:
+                lines.append('H "Utilise ta pierre de foyer" %s id=%d' % (fmt(x["pos"]), x["npc"]))
             continue
         if kind == "L":
             if lines and lines[-1].startswith("L "):
@@ -462,7 +516,7 @@ def metrics_of(pid, ch):
     total_xp = sum(ch.src.values())
     return {"path": pid, "level": ch.level, "hours_to_60": round(hours, 1),
             "xp_per_hour": int(total_xp / max(1, ch.time) * 3600), "walk_km": round(ch.dist * 0.9144 / 1000, 1),
-            "grind_levels": ch.grind, "quests": ch.quests, "zones": ch.zones,
+            "grind_levels": ch.grind, "quests": ch.quests, "zones": ch.zones, "hearths": ch.hearths,
             "grind_share": round(ch.src.get("grind", 0) / max(1, total_xp), 3)}
 
 def main():

@@ -43,6 +43,7 @@ T 21 @48.9,41.6 id=197
 A 54 @48.9,41.6 id=197
 C 6 @57.5,48.2 mobs=103
 T 6 @48.2,42.9 id=823
+B "Lie ta pierre de foyer à l'auberge" @43.8,65.8 id=295
 T 2158 @43.8,65.8 id=295
 T 54 @42.1,65.9 id=240
 A 40 @42.1,67.3 id=241
@@ -88,6 +89,7 @@ T 71 @74.0,72.2 id=261
 A 39 @74.0,72.2 id=261
 C 52 @79.7,79.5 mobs=118,822
 T 52 @74.0,72.2 id=261
+H "Utilise ta pierre de foyer" @43.8,65.8 id=295
 T 112 @43.3,65.7 id=253
 T 39 @42.1,65.9 id=240
 A 59 @42.1,65.9 id=240
@@ -238,6 +240,7 @@ ns.RegisterGuide({
     text = [[
 M redridge
 G "Rejoins Les Carmines" @22.6,47.4 r=40 upto=27
+B "Lie ta pierre de foyer à l'auberge" @21.9,44.8 id=6727
 T 65 @21.4,45.4 id=266
 A 125 @27.1,48.6 id=341
 A 127 @22.6,47.4 id=381
@@ -260,10 +263,11 @@ C 92 @47.5,39.9 mobs=2349,2563,3819,930,4007
 C 127 @52.6,57.5 mobs=422,548,545,578,14270
 C 150 @52.6,57.5 mobs=46,1418,732,422,548
 C 91 @73.5,48.0 mobs=568,429,431,433,432
+H "Utilise ta pierre de foyer" @21.9,44.8 id=6727
 T 127 @22.6,47.4 id=381
+T 92 @17.6,43.8 id=343
 T 91 @24.6,44.3 id=900
 T 150 @22.6,47.4 id=381
-T 92 @17.6,43.8 id=343
 A 34 @16.8,46.3 id=342
 C 34 @10.6,49.3 mobs=345
 T 34 @16.8,46.3 id=342
@@ -284,6 +288,7 @@ T 128 @26.4,57.9 id=903
 L 23 "Tue des monstres autour de toi jusqu'au niveau 23"
 A 180 @21.7,46.4
 C 180 @75.1,37.1 mobs=703
+H "Utilise ta pierre de foyer" @21.9,44.8 id=6727
 T 180 @24.9,44.5 id=344
 L 25 "Tue des monstres autour de toi jusqu'au niveau 25"
 ]],
@@ -569,6 +574,7 @@ T 194 @35.7,10.8 id=715
 T 187 @35.6,10.6 id=717
 T 191 @35.5,10.6 id=718
 T 200 @43.7,9.4
+B "Lie ta pierre de foyer à l'auberge" @27.0,77.3 id=6807
 A 189 @27.0,77.1 id=737
 A 198 @26.9,77.2 id=773
 A 575 @28.3,77.6 id=2495
@@ -577,6 +583,7 @@ C 605 @43.1,47.8 mobs=1551,690,689,1550,688
 C 575 @40.2,12.9 mobs=1150
 T 198 @38.0,3.4 id=738
 C 189 @24.8,10.9 mobs=701,588,671,597,595
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 T 189 @27.0,77.1 id=737
 T 575 @28.3,77.6 id=2495
 T 605 @27.1,77.2 id=2498
@@ -605,6 +612,7 @@ A 331 @37.7,3.4 id=1422
 T 331 @38.0,3.0 id=469
 C 188 @32.2,17.4 mobs=729
 T 188 @35.6,10.6 id=717
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 T 210 @26.9,77.2 id=773
 A 627 @26.9,77.2 id=773
 L 35 "Tue des monstres autour de toi jusqu'au niveau 35"
@@ -825,7 +833,7 @@ ns.RegisterGuide({
     next = "alliance-human-47-tanaris",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=49
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 T 627 @26.9,77.2 id=773
 A 209 @27.0,77.1 id=737
 A 595 @28.1,76.2 id=2490

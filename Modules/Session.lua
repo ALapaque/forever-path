@@ -14,7 +14,7 @@ local M = ns.RegisterModule({
 })
 
 -- temps estimé d'une étape (secondes), hors trajet
-local T = { accept = 10, turnin = 10, complete = 150, ["goto"] = 0, level = 600, note = 5, fly = 60, hearth = 15, flightpath = 15 }
+local T = { accept = 10, turnin = 10, complete = 150, ["goto"] = 0, level = 600, note = 5, fly = 60, hearth = 15, flightpath = 15, bind = 15 }
 M.T = T
 
 local function stepTime(s)

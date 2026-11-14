@@ -11,6 +11,7 @@ Format de guide (DSL) — une étape par ligne :
   L 6 "Tue des loups jusqu'au niveau 6"
   N "Achète des sacs"
   H "Pierre de foyer"      F "Vol vers Hurlevent"     P "Prends le point de vol" @..
+  B "Lie ta pierre de foyer" @.. id=<aubergiste>
   # commentaire
 
 Options (après le texte, sans espaces dans la valeur, _ = espace) :
@@ -25,7 +26,7 @@ Options (après le texte, sans espaces dans la valeur, _ = espace) :
 
 local TYPES = {
     A = "accept", C = "complete", T = "turnin", G = "goto",
-    L = "level", N = "note", H = "hearth", F = "fly", P = "flightpath",
+    L = "level", N = "note", H = "hearth", F = "fly", P = "flightpath", B = "bind",
 }
 ns.STEP_TYPES = TYPES
 

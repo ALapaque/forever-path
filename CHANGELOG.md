@@ -1,5 +1,14 @@
 # ForeverPath
 
+## v0.2.0-beta11
+
+### Gagner du temps sur la route
+- **Pierre de foyer planifiée** : les routes lient ta pierre à l'auberge des grands relais (par exemple La Croisée pour la Horde), puis l'utilisent quand elle fait gagner du temps, par exemple pour revenir rendre des quêtes. L'étape « Lier » se valide toute seule, et l'étape « Foyer » à l'arrivée.
+- **Vols automatiques** : chez le maître de vol, la carte des vols s'ouvre, et le vol qui rapproche le plus de l'étape est pris tout seul s'il fait gagner du temps. Maj pour choisir toi-même.
+- **Dialogues accélérés** : option de dialogue choisie toute seule avec le PNJ de l'étape (option unique, auberge pour lier la pierre, confirmation comprise).
+- **Achats automatiques** (désactivé par défaut) : nourriture, boisson (classes à mana) et munitions (chasseurs), meilleur article de ton niveau, avec un budget.
+- **Journal de quêtes plein** : alerte avant la limite, suggestions de quêtes à abandonner (hors route, les plus basses d'abord) et bouton pour le faire.
+
 ## v0.2.0-beta10
 
 - **Anglais** : toute l'interface (modules, réglages, messages, guides et noms de zones) est traduite pour les clients non francophones. Une vérification automatique bloque toute version avec un texte non traduit.

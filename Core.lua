@@ -38,6 +38,22 @@ local function applyDefaults(dst, src)
     end
 end
 
+-- Option de dialogue d'un type donné (« taxi », « binder ») : par icône, sinon par mots-clés
+local GOSSIP = {
+    taxi = { icons = { [132057] = true }, words = { "vol", "voyag", "fly", "flight", "travel" } },
+    binder = { icons = { [132052] = true }, words = { "auberge", "foyer", "inn", "home" } },
+}
+function ns.GossipOption(kind, opts)
+    local k = GOSSIP[kind]
+    for _, o in ipairs(opts or C_GossipInfo.GetOptions() or {}) do
+        if k.icons[o.icon] then return o end
+    end
+    for _, o in ipairs(opts or C_GossipInfo.GetOptions() or {}) do
+        local name = (o.name or ""):lower()
+        for _, w in ipairs(k.words) do if name:find(w, 1, true) then return o end end
+    end
+end
+
 -- Sous-commandes /fp ajoutées par les modules : ns.SlashExt.nom = function(arg) ... end
 ns.SlashExt = {}
 

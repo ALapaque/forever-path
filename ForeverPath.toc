@@ -61,6 +61,10 @@ Modules\Merchant.lua
 Modules\Gather.lua
 Modules\GroupHint.lua
 Modules\Chrono.lua
+Modules\Flights.lua
+Modules\Dialogue.lua
+Modules\Supplies.lua
+Modules\QuestLog.lua
 
 UI\ExportFrame.lua
 UI\Options.lua

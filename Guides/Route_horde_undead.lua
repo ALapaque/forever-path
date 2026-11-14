@@ -50,6 +50,7 @@ A 367 @59.5,52.4 race=Scourge id=1518
 A 404 @58.2,51.5 id=1496
 A 407 @59.5,52.4 id=1518
 A 5482 @57.4,48.9 id=10665
+B "Lie ta pierre de foyer à l'auberge" @61.7,52.0 id=5688
 T 8 @61.7,52.0 id=5688
 T 383 @60.6,51.8 id=1515
 T 407 @62.0,51.3 id=1931
@@ -97,8 +98,9 @@ T 370 @60.6,51.8 id=1515
 A 371 @60.6,51.8 id=1515
 C 368 @60.7,28.2 race=Scourge mobs=1545,1544,1909,1767,1958
 C 408 @52.5,28.2 mobs=1530,1534,1658
-T 368 @59.5,52.4 race=Scourge id=1518
+H "Utilise ta pierre de foyer" @61.7,52.0 id=5688
 T 408 @61.3,50.8 id=1499
+T 368 @59.5,52.4 race=Scourge id=1518
 A 369 @59.5,52.4 race=Scourge id=1518
 C 356 @76.2,60.5 mobs=1529,1532
 C 371 @79.3,56.0 mobs=1538,1664
@@ -125,6 +127,7 @@ ns.RegisterGuide({
     text = [[
 M silverpine
 G "Rejoins Forêt des Pins-Argentés" @44.2,39.8 r=40 upto=21
+B "Lie ta pierre de foyer à l'auberge" @43.2,41.3 id=6739
 T 445 @42.8,40.9 id=1937
 A 421 @44.2,39.8 id=1938
 A 428 @43.4,40.9 id=1952
@@ -152,6 +155,7 @@ T 430 @53.4,12.6 id=1951
 A 425 @53.5,13.4 id=1950
 C 425 @51.5,13.9 mobs=1971
 T 425 @53.5,13.4 id=1950
+H "Utilise ta pierre de foyer" @43.2,41.3 id=6739
 T 422 @44.2,39.8 id=1938
 A 423 @44.2,39.8 id=1938
 C 423 @42.3,29.9 mobs=1779,1782
@@ -164,6 +168,7 @@ T 424 @44.2,39.8 id=1938
 L 18 "Tue des monstres autour de toi jusqu'au niveau 18"
 A 516 @44.0,40.9 id=2121
 C 516 @58.7,71.2 mobs=1973,1974
+H "Utilise ta pierre de foyer" @43.2,41.3 id=6739
 T 516 @44.0,40.9 id=2121
 L 19 "Tue des monstres autour de toi jusqu'au niveau 19"
 A 480 @44.0,40.9 id=2121
@@ -182,6 +187,7 @@ ns.RegisterGuide({
     text = [[
 M barrens
 G "Rejoins Les Tarides" @51.4,30.1 r=40 upto=26
+B "Lie ta pierre de foyer à l'auberge" @52.0,29.9 id=3934
 A 844 @52.2,31.0 id=3338
 A 848 @51.4,30.1 id=3390
 A 867 @51.6,30.9 id=3449
@@ -240,13 +246,14 @@ T 892 @62.7,36.2 id=3391
 A 888 @62.7,36.2 id=3391
 C 888 @63.1,49.4
 T 888 @62.7,36.2 id=3391
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
+T 868 @51.1,29.6 id=3428
 T 869 @51.9,30.3 id=3464
-T 899 @52.0,31.6 id=3432
-T 4921 @52.0,31.6 id=3432
 T 872 @51.5,30.9 id=3429
 T 5041 @51.5,30.9 id=3429
 A 3281 @51.9,30.3 id=3464
-T 868 @51.1,29.6 id=3428
+T 899 @52.0,31.6 id=3432
+T 4921 @52.0,31.6 id=3432
 C 855 @45.0,38.7 mobs=3272,3273,3397,3275,3274
 T 855 @45.3,28.4 id=3389
 A 1062 @35.3,27.9 id=4049
@@ -294,6 +301,7 @@ T 849 @45.9,77.0 id=3341
 T 879 @44.5,59.3 id=3430
 A 906 @44.5,59.3 id=3430
 T 893 @45.1,57.7 id=3433
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 3281 @51.9,30.3 id=3464
 T 906 @51.5,30.9 id=3429
 T 3921 @49.0,11.2 id=9316
@@ -396,7 +404,7 @@ ns.RegisterGuide({
     next = "horde-undead-30-hillsbrad",
     text = [[
 M barrens
-G "Rejoins Les Tarides" @62.4,37.6 r=40 upto=32
+H "Utilise ta pierre de foyer" @52.0,29.9 id=3934
 T 1069 @62.4,37.6 id=3446
 T 1094 @63.0,37.2 id=3442
 T 1062 @35.3,27.9 id=4049

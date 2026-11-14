@@ -47,6 +47,7 @@ A 315 @30.2,45.7 id=1374
 C 315 @41.8,35.3 mobs=1397
 A 400 @46.0,51.7 id=1872
 A 412 @45.9,49.4 id=1269
+B "Lie ta pierre de foyer à l'auberge" @47.4,52.5 id=1247
 T 2160 @47.2,52.2 id=6806
 T 420 @46.7,53.8 id=1252
 T 310 @47.7,52.7
@@ -108,6 +109,7 @@ ns.RegisterGuide({
     text = [[
 M lochmodan
 G "Rejoins Loch Modan" @34.2,47.8 r=40 upto=19
+B "Lie ta pierre de foyer à l'auberge" @35.5,48.4 id=6734
 T 414 @34.2,47.8 id=1340
 A 416 @34.2,47.8 id=1340
 A 418 @34.8,49.3 id=1963
@@ -146,6 +148,7 @@ T 2038 @63.6,47.9 id=6577
 T 385 @81.8,61.7 id=1154
 A 258 @83.5,65.5 id=1187
 C 258 @62.9,38.5 mobs=1192
+H "Utilise ta pierre de foyer" @35.5,48.4 id=6734
 T 298 @37.2,47.4 id=1105
 A 217 @23.2,73.7 id=1092
 C 217 @34.7,90.6 mobs=1205,1206,1207
@@ -562,6 +565,7 @@ T 194 @35.7,10.8 id=715
 T 187 @35.6,10.6 id=717
 T 191 @35.5,10.6 id=718
 T 200 @43.7,9.4
+B "Lie ta pierre de foyer à l'auberge" @27.0,77.3 id=6807
 A 189 @27.0,77.1 id=737
 A 198 @26.9,77.2 id=773
 A 575 @28.3,77.6 id=2495
@@ -570,6 +574,7 @@ C 605 @43.1,47.8 mobs=1551,690,689,1550,688
 C 575 @40.2,12.9 mobs=1150
 T 198 @38.0,3.4 id=738
 C 189 @24.8,10.9 mobs=701,588,671,597,595
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 T 189 @27.0,77.1 id=737
 T 575 @28.3,77.6 id=2495
 T 605 @27.1,77.2 id=2498
@@ -598,6 +603,7 @@ A 331 @37.7,3.4 id=1422
 T 331 @38.0,3.0 id=469
 C 188 @32.2,17.4 mobs=729
 T 188 @35.6,10.6 id=717
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 T 210 @26.9,77.2 id=773
 A 627 @26.9,77.2 id=773
 L 35 "Tue des monstres autour de toi jusqu'au niveau 35"
@@ -818,7 +824,7 @@ ns.RegisterGuide({
     next = "alliance-dwarf-47-tanaris",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=49
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 T 627 @26.9,77.2 id=773
 A 209 @27.0,77.1 id=737
 A 595 @28.1,76.2 id=2490

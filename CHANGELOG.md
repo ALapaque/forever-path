@@ -1,5 +1,13 @@
 # ForeverPath
 
+## v0.2.0-beta9
+
+### Groupe et communauté
+- **Progression du groupe** : chaque membre est affiché avec son niveau et son avance ou son retard en étapes. Le guide signale qui n'a pas la quête de l'étape, avec un bouton pour la partager.
+- **Quêtes de groupe** : les quêtes de groupe ou élites sont signalées dans le guide, avec le nombre de joueurs conseillé.
+- **Chrono** : temps de jeu par niveau, comparé à ton record (tous personnages du même parcours). `/fp chrono` affiche le tableau par tranche de 10 niveaux, à partager.
+- **Rapport de parcours** : `/fp rapport` produit un rapport anonyme (temps par segment, morts, étapes passées) à coller sur GitHub ou Discord. `tools/analyze_reports.py` en tire les segments les plus lents ou mortels et les étapes souvent passées, pour corriger la route avec de vraies parties.
+
 ## v0.2.0-beta8
 
 ### Confort de jeu

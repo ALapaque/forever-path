@@ -35,5 +35,6 @@ jobs:
           python3 tools/bake_terrain.py --out /tmp/fp_terrain --map Kalimdor=1 /tmp/fakeadt/Kalimdor
           python3 tests/harness.py . tests/test_terrain.lua
           python3 tests/harness.py . tests/test_comfort.lua
+          python3 tests/harness.py . tests/test_social.lua
       - name: Caractères affichables par les polices du jeu
         run: python3 tools/check_glyphs.py

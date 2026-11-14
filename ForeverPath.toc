@@ -58,6 +58,8 @@ Modules\Trainer.lua
 Modules\Session.lua
 Modules\Merchant.lua
 Modules\Gather.lua
+Modules\GroupHint.lua
+Modules\Chrono.lua
 
 UI\ExportFrame.lua
 UI\Options.lua

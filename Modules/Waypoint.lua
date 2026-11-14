@@ -20,31 +20,52 @@ local function clear()
     tomtomUid = nil
 end
 
+-- pose le point (map, x/y 0..1). M.placing permet aux autres modules de reconnaître nos propres poses.
+local function setPoint(map, x, y)
+    clear()
+    if C_Map.CanSetUserWaypointOnMap(map) then
+        M.placing = true
+        C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, x, y))
+        C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+        M.placing = false
+        ours = true
+    end
+end
+
+function M:PlaceAt(map, x, y)
+    if not self.enabled then return end
+    setPoint(map, x, y)
+    if M:Opt("tomtom") and TomTom and TomTom.AddWaypoint then
+        tomtomUid = TomTom:AddWaypoint(map, x, y, { title = "ForeverPath", persistent = false, minimap = true, world = true })
+    end
+end
+
 local function set(step)
     local map = ns.Geo.StepMap(step)
     if not (map and step and step.x) then return false end
-    clear()
     local x, y = step.x / 100, step.y / 100
-    if C_Map.CanSetUserWaypointOnMap(map) then
-        C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, x, y))
-        C_SuperTrack.SetSuperTrackedUserWaypoint(true)
-        ours = true
-    end
+    setPoint(map, x, y)
     if M:Opt("tomtom") and TomTom and TomTom.AddWaypoint then
         tomtomUid = TomTom:AddWaypoint(map, x, y, { title = "ForeverPath", persistent = false, minimap = true, world = true })
     end
     return ours or tomtomUid ~= nil
 end
 
--- (Re)pose le point sur l'étape visée, à la demande
-function M:Place(openMap)
+-- (Re)pose le point sur l'étape visée, à la demande (quiet : sans message si pas de position)
+function M:Place(openMap, quiet)
+    if not openMap and not quiet and ns.Journeys and ns.Journeys:Driving() then
+        ns.Journeys:Replan("bouton")       -- itinéraire actif : on repart du virage en cours
+        return true
+    end
     local step = ns.Engine.NavStep()
     if set(step) then
         lastStep = step
         if openMap and OpenWorldMap then OpenWorldMap(ns.Geo.StepMap(step)) end
         return true
     end
-    ns.Toast("Pas de position pour cette étape.", "Interface\\Icons\\INV_Misc_Map_01", 1, 0.8, 0.4, 2)
+    if not quiet then
+        ns.Toast("Pas de position pour cette étape.", "Interface\\Icons\\INV_Misc_Map_01", 1, 0.8, 0.4, 2)
+    end
 end
 
 local btn
@@ -70,6 +91,8 @@ function M:OnDisable() clear(); lastStep = nil; updateButton() end
 function M:OnOptionChanged() updateButton() end
 
 M:On("FP_STEP_CHANGED", function()
+    -- les itinéraires pilotent le point virage par virage
+    if ns.Journeys and ns.Journeys.enabled and ns.Journeys:Opt("corners") then return end
     local step = ns.Engine.NavStep()
     if step == lastStep then return end
     lastStep = step

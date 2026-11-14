@@ -97,6 +97,7 @@ jobs:
           pip install lupa
           python3 tests/harness.py
           python3 tests/harness.py . tests/test_daylight.lua
+          python3 tests/harness.py . tests/test_journeys.lua
           python3 tools/check_glyphs.py
 
       - name: Créer le tag

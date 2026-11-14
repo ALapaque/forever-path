@@ -54,6 +54,34 @@ SlashCmdList.FOREVERPATH = function(msg)
     elseif cmd == "reset" then
         local id = ns.cdb.guideId
         if id then ns.cdb.skipped[id] = {}; ns.Engine.Load(id) end
+    elseif cmd == "paths" then
+        local Net = ns.Nav and ns.Nav.Net
+        if not (Net and ns.Nav.db) then return end
+        if arg == "export" then
+            ns.ShowExport(Net.Export(), "Chemins appris (Ctrl+A, Ctrl+C) — à partager")
+        elseif arg == "import" then
+            ns.ShowImport("Colle des chemins partagés (FPN1...) puis Importer", function(text)
+                local ok, res = Net.Import(text)
+                if ok then ns.Print("%d nouveaux points de chemin importés.", res)
+                else ns.Print("Import impossible : %s", tostring(res)) end
+                if ns.Journeys then ns.Journeys:Replan("import") end
+            end)
+        elseif arg == "reset" then
+            Net.Reset()
+            ns.Print("Chemins appris effacés.")
+        elseif arg == "here" then
+            local p = ns.Nav.Player()
+            if p then
+                ns.Print("%d liaisons oubliées autour de toi (40 m).", Net.Forget(p.c, p.x, p.y, 40))
+                if ns.Journeys then ns.Journeys:Replan("oubli") end
+            end
+        else
+            local nodes, edges, conts = Net.Stats()
+            local flights = #ns.Nav.Transport.Flights()
+            ns.Print("Chemins appris : %d points, %d liaisons, %d continent(s). Vols connus : %d. Foyer : %s.",
+                nodes, edges, conts, flights, ns.Nav.char and ns.Nav.char.hearth and "connu" or "à apprendre")
+            ns.Print("/fp paths export | import | here (oublier autour de moi) | reset")
+        end
     elseif cmd == "where" then
         local mapID, x, y = ns.PlayerMapPos()
         local info = mapID and C_Map.GetMapInfo(mapID)

@@ -1,0 +1,387 @@
+local _, ns = ...
+local Nav = ns.Nav
+
+-- Itinéraires : le chemin le plus rapide vers l'étape (marche sur les chemins appris, vols,
+-- bateaux, zeppelins, tram, pierre de foyer), guidé virage par virage : le waypoint du jeu
+-- est déplacé de virage en virage, donc la flèche et le guidage 3D suivent le chemin.
+local M = ns.RegisterModule({
+    id = "journeys", category = "nav", default = true,
+    name = "Itinéraires (chemin le plus rapide)",
+    desc = "Calcule le trajet le plus rapide vers l'étape : chemins déjà parcourus, vols, bateaux, zeppelins, tram, pierre de foyer. Guidage virage par virage (la flèche et la 3D suivent), tracé sur la carte et la minimap.",
+    options = {
+        { key = "learn", label = "Apprendre les chemins en jouant", type = "check", default = true },
+        { key = "corners", label = "Guider virage par virage", type = "check", default = true },
+        { key = "flights", label = "Utiliser les vols connus", type = "check", default = true },
+        { key = "boats", label = "Utiliser bateaux, zeppelins et tram", type = "check", default = true },
+        { key = "hearth", label = "Utiliser la pierre de foyer", type = "check", default = true },
+        { key = "card", label = "Détail du trajet dans le guide", type = "check", default = true },
+        { key = "minimap", label = "Tracé sur la minimap", type = "check", default = true },
+        { key = "yield", label = "Laisser un autre addon guider s'il pose son point (Naowh...)", type = "check", default = true },
+    },
+})
+ns.Journeys = M
+
+local ARRIVE = 12          -- yards : virage atteint
+local DEVIATE = 60         -- yards : trop loin du chemin -> nouveau calcul
+local ARRIVE_TRANSPORT = 30
+
+M.COLORS = {
+    known = { 0.3, 0.9, 0.35 }, risky = { 1, 0.55, 0.15 }, flight = { 0.35, 0.7, 1 },
+    boat = { 0.3, 0.9, 0.9 }, zeppelin = { 0.85, 0.45, 1 }, tram = { 0.8, 0.8, 0.8 }, hearth = { 1, 0.5, 0.8 },
+}
+local LABEL = {
+    walk = "Marcher", flight = "Vol", boat = "Bateau", zeppelin = "Zeppelin", tram = "Tram", hearth = "Pierre de foyer",
+}
+
+local journey, leg, corner, target
+local external = false
+local lastPlan = 0
+
+---------------------------------------------------------------------------
+-- API publique (pour Naowh Forever, Daylight UI, ou tout autre addon)
+---------------------------------------------------------------------------
+local callbacks = { DestinationChanged = {}, JourneyChanged = {} }
+local function fire(event, ...)
+    for _, fn in ipairs(callbacks[event]) do pcall(fn, ...) end
+    if EventRegistry and EventRegistry.TriggerEvent then
+        pcall(EventRegistry.TriggerEvent, EventRegistry, "ForeverPath." .. event, ...)
+    end
+end
+
+ForeverPathAPI = {
+    version = 1,
+    -- Destination de l'étape en cours : { mapID, x, y (0..1), title, questID, type }
+    GetDestination = function()
+        local step = ns.Engine.NavStep()
+        local map = step and ns.Geo.StepMap(step)
+        if not (map and step.x) then return end
+        local label = ns.Guide and ns.Guide.StepLabel(step) or ""
+        return { mapID = map, x = step.x / 100, y = step.y / 100, title = (label:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")),
+                 questID = step.quest, type = step.type }
+    end,
+    -- Itinéraire calculé : { total = secondes, legs = { { mode, time, toName } ... } }
+    GetJourney = function()
+        if not journey then return end
+        local legs = {}
+        for _, l in ipairs(journey.legs) do legs[#legs + 1] = { mode = l.mode, time = l.time, toName = l.toName } end
+        return { total = journey.total, legs = legs }
+    end,
+    -- Événements : "DestinationChanged", "JourneyChanged". Aussi via EventRegistry ("ForeverPath.<event>").
+    RegisterCallback = function(event, fn)
+        if callbacks[event] and type(fn) == "function" then table.insert(callbacks[event], fn) return true end
+    end,
+}
+
+---------------------------------------------------------------------------
+-- Waypoint sur un point monde
+---------------------------------------------------------------------------
+local function placeWorld(p)
+    if not (p and ns.Waypoint) then return end
+    local candidates = { (ns.PlayerMapPos()), target and target.map, p.map }
+    for _, map in ipairs(candidates) do
+        if map then
+            local m, x, y = Nav.ToMap(p.c, p.x, p.y, map)
+            if x and x >= 0 and x <= 1 and y >= 0 and y <= 1 then
+                ns.Waypoint:PlaceAt(m, x, y)
+                return
+            end
+        end
+    end
+end
+
+local function currentPoint()
+    if not journey then return end
+    local l = journey.legs[leg]
+    if not l then return end
+    if l.mode == "walk" then return l.pts[corner] or l.pts[#l.pts] end
+    return l.from
+end
+
+local function drive()
+    if not (M:Opt("corners") and journey) then return end
+    if external and M:Opt("yield") then return end
+    placeWorld(currentPoint())
+end
+
+function M:Driving()
+    return self.enabled and self:Opt("corners") and journey ~= nil and not (external and self:Opt("yield"))
+end
+
+---------------------------------------------------------------------------
+-- Calcul
+---------------------------------------------------------------------------
+function M:Replan(reason)
+    lastPlan = GetTime()
+    local step = ns.Engine.NavStep()
+    local goal = Nav.StepPoint(step)
+    local start = Nav.Player()
+    target = goal
+    if not (self.enabled and goal and start and Nav.db) then
+        journey = nil
+        if self.enabled and ns.Waypoint and ns.Waypoint.enabled then ns.Waypoint:Place(false, true) end
+        self:Render()
+        return
+    end
+    journey = Nav.Planner.Plan(start, goal, {
+        flights = self:Opt("flights"), boats = self:Opt("boats"), hearth = self:Opt("hearth"),
+        speed = Nav.RunSpeed(),
+    })
+    leg, corner = 1, 2
+    self.reason = reason
+    if journey then
+        drive()
+    elseif ns.Waypoint and ns.Waypoint.enabled then
+        ns.Waypoint:Place(false)     -- pas d'itinéraire : point directement sur l'étape
+    end
+    self:Render()
+    fire("JourneyChanged", ForeverPathAPI.GetJourney())
+end
+
+---------------------------------------------------------------------------
+-- Suivi de la progression
+---------------------------------------------------------------------------
+local function advance(p)
+    local l = journey and journey.legs[leg]
+    if not l then return end
+    if l.mode == "walk" then
+        local c = l.pts[corner]
+        if not c then leg, corner = leg + 1, 2; drive(); M:Render(); return end
+        if c.c == p.c and Nav.Dist(c, p) <= ARRIVE then
+            corner = corner + 1
+            if corner > #l.pts then leg, corner = leg + 1, 2 end
+            drive()
+            M:Render()
+            return
+        end
+        -- trop loin du segment en cours : on recalcule
+        local a = l.pts[corner - 1]
+        if a and a.c == p.c and Nav.SegDist(p, a, c) > DEVIATE and GetTime() - lastPlan > 4 then
+            M:Replan("écart")
+        end
+    else
+        -- transport : arrivé à destination (ou changement de continent) -> étape suivante
+        if (l.to.c == p.c and Nav.Dist(l.to, p) <= ARRIVE_TRANSPORT) or (l.from.c ~= p.c and l.to.c == p.c) then
+            leg, corner = leg + 1, 2
+            drive()
+            M:Render()
+        end
+    end
+end
+
+function M:Tick()
+    if not self.enabled then return end
+    if self:Opt("learn") then Nav.Net.Sample() end
+    if not journey or UnitOnTaxi("player") then return end
+    local p = Nav.Player()
+    if not p then return end
+    advance(p)
+    if not journey.legs[leg] then journey = nil; self:Render() end
+end
+
+---------------------------------------------------------------------------
+-- Affichage : détail du trajet dans le guide
+---------------------------------------------------------------------------
+local function fmtTime(s)
+    if s < 60 then return ("%d s"):format(math.max(1, math.floor(s))) end
+    return ("%d min"):format(math.floor(s / 60 + 0.5))
+end
+local function dot(c)
+    return ("|T%sdot:10:10:0:0:32:32:0:32:0:32:%d:%d:%d|t"):format(ns.MEDIA,
+        math.floor(c[1] * 255), math.floor(c[2] * 255), math.floor(c[3] * 255))
+end
+
+function M:Render()
+    ns.Fire("FP_JOURNEY_CHANGED")
+    if not ns.Guide then return end
+    if not (self.enabled and self:Opt("card") and journey) then
+        ns.Guide:SetSection("journey", 5, nil)
+        return
+    end
+    local lines = { ("|cffffd100Itinéraire|r  ~%s"):format(fmtTime(journey.total)) }
+    if external and self:Opt("yield") then
+        lines[#lines + 1] = "|cff888888Un autre addon guide le point (Naowh ?)|r"
+    end
+    for i = leg, math.min(#journey.legs, leg + 3) do
+        local l = journey.legs[i]
+        local col, text
+        if l.mode == "walk" then
+            local risky = false
+            for _, p in ipairs(l.pts) do if p.risky then risky = true end end
+            col = risky and M.COLORS.risky or M.COLORS.known
+            text = LABEL.walk .. (risky and " |cff999999(en partie inconnu)|r" or "")
+        else
+            col = M.COLORS[l.mode] or M.COLORS.known
+            text = LABEL[l.mode] .. (l.toName and (" vers " .. l.toName) or "")
+        end
+        local cur = i == leg and "|cffffffff" or "|cffaaaaaa"
+        lines[#lines + 1] = ("%s %s%s|r  |cff888888%s|r"):format(dot(col), cur, text, fmtTime(l.time))
+    end
+    ns.Guide:SetSection("journey", 5, table.concat(lines, "\n"))
+end
+
+-- Polylignes à dessiner (monde) : { pts = { {c,x,y} }, color }
+function M:Polylines()
+    if not (self.enabled and journey) then return {} end
+    local out = {}
+    local p = Nav.Player()
+    for i = leg, #journey.legs do
+        local l = journey.legs[i]
+        if l.mode == "walk" then
+            local startIdx = i == leg and corner or 2
+            local prev = (i == leg and p) or l.pts[startIdx - 1]
+            for j = startIdx, #l.pts do
+                local q = l.pts[j]
+                if prev then
+                    out[#out + 1] = { pts = { prev, q }, color = q.risky and M.COLORS.risky or M.COLORS.known }
+                end
+                prev = q
+            end
+        elseif l.mode ~= "hearth" then
+            out[#out + 1] = { pts = { l.from, l.to }, color = M.COLORS[l.mode] or M.COLORS.known }
+        end
+    end
+    return out
+end
+
+function M:Journey() return journey, leg, corner end
+
+---------------------------------------------------------------------------
+-- Tracé sur la minimap
+---------------------------------------------------------------------------
+local MINIMAP_YARDS = {
+    outdoor = { [0] = 466 + 2 / 3, 400, 333 + 1 / 3, 266 + 2 / 3, 200, 133 + 1 / 3 },
+    indoor = { [0] = 300, 240, 180, 120, 80, 50 },
+}
+local mm = { dots = {} }
+
+local function minimapDot(i)
+    local d = mm.dots[i]
+    if not d then
+        d = Minimap:CreateTexture(nil, "OVERLAY")
+        d:SetTexture(ns.MEDIA .. "dot")
+        d:SetSize(5, 5)
+        mm.dots[i] = d
+    end
+    return d
+end
+
+-- Position (px) sur la minimap d'un point monde, relativement au joueur
+function M.MinimapOffset(p, player, zoom, indoor, rotate, facing, radiusPx)
+    local yards = (indoor and MINIMAP_YARDS.indoor or MINIMAP_YARDS.outdoor)[zoom or 0] or 466
+    local scale = radiusPx * 2 / yards
+    -- monde : x = nord, y = ouest -> écran : droite = est, haut = nord
+    local east, north = -(p.y - player.y), p.x - player.x
+    if rotate and facing then
+        local s, c = math.sin(facing), math.cos(facing)
+        east, north = east * c - north * s, east * s + north * c
+    end
+    return east * scale, north * scale
+end
+
+function M:DrawMinimap()
+    for _, d in ipairs(mm.dots) do d:Hide() end
+    if not (self.enabled and self:Opt("minimap") and journey and Minimap and Minimap:IsShown()) then return end
+    local player = Nav.Player()
+    if not player then return end
+    local radius = Minimap:GetWidth() / 2
+    local zoom = Minimap:GetZoom()
+    local indoor = IsIndoors and IsIndoors() or false
+    local rotate = GetCVar and GetCVar("rotateMinimap") == "1"
+    local facing = rotate and GetPlayerFacing and GetPlayerFacing() or nil
+    if facing and ns.IsSecret(facing) then return end
+    local n = 0
+    for _, seg in ipairs(self:Polylines()) do
+        local a, b = seg.pts[1], seg.pts[2]
+        if a.c == player.c and b.c == player.c then
+            local len = Nav.Dist(a, b)
+            local steps = math.max(1, math.floor(len / 14))
+            for k = 0, steps do
+                local t = k / steps
+                local q = { x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t }
+                local ox, oy = M.MinimapOffset(q, player, zoom, indoor, rotate, facing, radius)
+                if ox * ox + oy * oy < (radius - 4) ^ 2 then
+                    n = n + 1
+                    if n > 250 then return end
+                    local d = minimapDot(n)
+                    d:ClearAllPoints()
+                    d:SetPoint("CENTER", Minimap, "CENTER", ox, oy)
+                    d:SetVertexColor(seg.color[1], seg.color[2], seg.color[3], 0.95)
+                    d:Show()
+                end
+            end
+        end
+    end
+end
+
+---------------------------------------------------------------------------
+-- Événements
+---------------------------------------------------------------------------
+local mmTicker = CreateFrame("Frame")
+local acc = 0
+mmTicker:SetScript("OnUpdate", function(_, dt)
+    acc = acc + dt
+    if acc < 0.1 then return end
+    acc = 0
+    if M.enabled and journey then M:DrawMinimap() end
+end)
+
+function M:OnEnable()
+    Nav.Net.learning = self:Opt("learn")
+    C_Timer.After(1, function() M:Replan("début") end)
+end
+function M:OnDisable()
+    journey = nil
+    self:Render()
+    self:DrawMinimap()
+    ns.Fire("FP_STEP_CHANGED", true)    -- le module Waypoint reprend la main
+end
+function M:OnOptionChanged(key)
+    Nav.Net.learning = self:Opt("learn")
+    if key ~= "learn" and key ~= "card" and key ~= "minimap" then self:Replan("option") else self:Render() end
+end
+
+local lastTargetKey
+M:On("FP_STEP_CHANGED", function()
+    local step = ns.Engine.NavStep()
+    local key = step and (tostring(step.map) .. step.x .. ":" .. step.y) or "none"
+    if key ~= lastTargetKey then
+        lastTargetKey = key
+        external = false
+        M:Replan("étape")
+        fire("DestinationChanged", ForeverPathAPI.GetDestination())
+    end
+end)
+M:On("FP_TICK", function() M:Tick() end)
+M:On("PLAYER_ENTERING_WORLD", function() Nav.Net.Break(); C_Timer.After(2, function() M:Replan("chargement") end) end)
+M:On("PLAYER_REGEN_ENABLED", function() if GetTime() - lastPlan > 3 then M:Replan("fin de combat") end end)
+M:On("PLAYER_CONTROL_GAINED", function() Nav.Net.Break(); C_Timer.After(1, function() M:Replan("atterrissage") end) end)
+M:On("PLAYER_DEAD", function() Nav.Net.Break() end)
+M:On("FP_NAV_CHANGED", function() if GetTime() - lastPlan > 2 then M:Replan("nouveau transport") end end)
+M:On("USER_WAYPOINT_UPDATED", function()
+    if ns.Waypoint and ns.Waypoint.placing then return end
+    -- un autre addon a posé son propre point (ex. Naowh Journeys)
+    if C_Map.HasUserWaypoint() then external = true; M:Render() end
+end)
+
+function M.preview(p)
+    local bg = p:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints()
+    bg:SetColorTexture(0.33, 0.27, 0.16, 1)
+    local pts = { { 18, 72 }, { 40, 60 }, { 52, 38 }, { 80, 30 }, { 132, 20 } }
+    local cols = { M.COLORS.known, M.COLORS.known, M.COLORS.risky, M.COLORS.flight }
+    for k = 2, #pts do
+        local a, b, c = pts[k - 1], pts[k], cols[k - 1]
+        for t = 1, 6 do
+            local d = p:CreateTexture(nil, "ARTWORK")
+            d:SetTexture(ns.MEDIA .. "dot")
+            d:SetSize(4, 4)
+            local f = t / 7
+            d:SetPoint("CENTER", p, "TOPLEFT", a[1] + (b[1] - a[1]) * f, -(a[2] + (b[2] - a[2]) * f))
+            d:SetVertexColor(c[1], c[2], c[3])
+        end
+    end
+    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    fs:SetPoint("BOTTOMRIGHT", -4, 4)
+    fs:SetJustifyH("RIGHT")
+    fs:SetText("|cff4de65aconnu|r  |cffff8c26inconnu|r  |cff59b3ffvol|r")
+end

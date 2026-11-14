@@ -1,5 +1,18 @@
 # ForeverPath
 
+## v0.2.0-beta4
+
+### Nouveau : Itinéraires
+Le chemin le plus rapide vers l'étape, guidé virage par virage.
+- **Chemins appris** : en marchant, à cheval ou à la nage (hors combat, hors instance, hors vol), ForeverPath note les chemins que tu empruntes réellement et les relie en réseau. Les chemins souvent pris sont préférés.
+- **Transports** : vols (appris en ouvrant la carte d'un maître de vol), bateaux, zeppelins et tram (positions des quais estimées), pierre de foyer (destination apprise en l'utilisant).
+- **Calcul** du trajet le plus rapide (A*) en combinant marche, vols, bateaux et foyer. Sur un terrain encore inconnu, le trajet passe en ligne droite et l'affiche en orange.
+- **Guidage virage par virage** : le waypoint du jeu avance de virage en virage, donc la flèche et le guidage 3D suivent le chemin.
+- **Affichage** : détail du trajet dans le guide (étapes et durées), tracé coloré sur la carte du monde et sur la minimap (vert : connu, orange : inconnu, bleu : vol...).
+- **Partage** : `/fp paths export` / `import` pour échanger des chemins, `/fp paths here` pour oublier un passage impraticable, `/fp paths reset`.
+- **Cohabitation** avec Naowh Forever : si un autre addon pose son propre point, ForeverPath lui laisse la main.
+- **API publique** `ForeverPathAPI` (destination, itinéraire, événements) pour Naowh, Daylight UI et les autres addons : voir INTEGRATIONS.md.
+
 ## v0.2.0-beta3
 
 ### Nouveau

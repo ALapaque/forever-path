@@ -41,6 +41,7 @@ local fr = {
         "/fp auto — activer/désactiver l'auto-accept/rendu",
         "/fp config — panneau d'options (modules, aperçus)",
         "/fp lock — verrouiller les fenêtres",
+        "/fp paths [export|import|reset] — chemins appris (itinéraires)",
         "/fp where — infos de position (debug)",
     },
 }

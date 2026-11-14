@@ -82,9 +82,37 @@ function M:Draw()
     local scale = (WorldMapFrame.GetCanvasScale and WorldMapFrame:GetCanvasScale()) or 1
     local size = 20 / scale
 
+    -- itinéraire calculé (module Itinéraires) : tracé coloré jusqu'à l'étape en cours
+    local nd = 0
+    local gap = 9 / scale
+    local journeyLines = ns.Journeys and ns.Journeys:Polylines() or {}
+    for _, seg in ipairs(journeyLines) do
+        local a, b = seg.pts[1], seg.pts[2]
+        local _, ax, ay = ns.Nav.ToMap(a.c, a.x, a.y, mapID)
+        local _, bx, by = ns.Nav.ToMap(b.c, b.x, b.y, mapID)
+        if ax and bx and math.max(ax, bx) > -0.05 and math.min(ax, bx) < 1.05
+            and math.max(ay, by) > -0.05 and math.min(ay, by) < 1.05 then
+            local x1, y1, x2, y2 = ax * W, ay * H, bx * W, by * H
+            local len = math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+            local steps = math.max(1, math.floor(len / gap))
+            for t = 0, steps do
+                nd = nd + 1
+                if nd > 600 then break end
+                local d = dot(nd)
+                local f = t / steps
+                d:SetSize(6 / scale, 6 / scale)
+                d:ClearAllPoints()
+                d:SetPoint("CENTER", overlay, "TOPLEFT", x1 + (x2 - x1) * f, -(y1 + (y2 - y1) * f))
+                d:SetVertexColor(seg.color[1], seg.color[2], seg.color[3], 1)
+                d:Show()
+            end
+        end
+    end
+
     -- points à relier : position du joueur (si sur cette carte) puis étapes suivantes
+    -- (avec un itinéraire, le premier tronçon est déjà tracé ci-dessus)
     local pts = {}
-    if self:Opt("fromPlayer") then
+    if self:Opt("fromPlayer") and #journeyLines == 0 then
         local pos = C_Map.GetPlayerMapPosition(mapID, "player")
         if pos then
             local px, py = pos:GetXY()
@@ -104,9 +132,7 @@ function M:Draw()
         end
     end
 
-    -- pointillés
-    local nd = 0
-    local gap = 9 / scale
+    -- pointillés entre les étapes suivantes
     for k = 2, #pts do
         local a, b = pts[k - 1], pts[k]
         local ax, ay, bx, by = a.x * W, a.y * H, b.x * W, b.y * H

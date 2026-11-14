@@ -58,6 +58,9 @@ function UnitXPMax() return 400 end
 function UnitExists() return false end
 function UnitIsPlayer() return false end
 Enum={UIMapType={Zone=3}, TooltipDataLineType={QuestObjective=8}}
+WORLD = { [1429] = { c = 0, ox = 0, oy = 0, w = 3000, h = 2000 }, [1436] = { c = 0, ox = -2000, oy = 0, w = 3000, h = 2000 },
+          [1411] = { c = 1, ox = 0, oy = 0, w = 3000, h = 2000 } }
+function CreateVector2D(x, y) return { x = x, y = y, GetXY = function(self) return self.x, self.y end } end
 SOUNDKIT={RAID_WARNING=1}
 function PlaySound() end
 
@@ -93,7 +96,17 @@ C_Map = {
   GetPlayerMapPosition=function(m) if m~=PLAYER.map then return nil end return {GetXY=function() return PLAYER.x, PLAYER.y end} end,
   GetMapWorldSize=function() return 3500, 2300 end,
   GetMapInfo=function(m) if m==1429 then return {name="Forêt d'Elwynn", mapType=3} elseif m==1411 then return {name="Durotar", mapType=3} end end,
-  GetWorldPosFromMapPos=function() return nil end,
+  -- monde simulé : continent 0, x = nord, y = ouest (yards)
+  GetWorldPosFromMapPos=function(m, v)
+    local t = WORLD[m]; if not t then return nil end
+    local mx, my = v:GetXY()
+    return t.c, CreateVector2D(t.ox - my * t.h, t.oy - mx * t.w)
+  end,
+  GetMapPosFromWorldPos=function(c, v, m)
+    local t = WORLD[m]; if not t or t.c ~= c then return nil end
+    local wx, wy = v:GetXY()
+    return m, CreateVector2D((t.oy - wy) / t.w, (t.ox - wx) / t.h)
+  end,
   CanSetUserWaypointOnMap=function() return true end,
   SetUserWaypoint=function(p) WAYPOINT=p end,
   HasUserWaypoint=function() return WAYPOINT~=nil end,

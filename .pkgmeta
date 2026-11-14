@@ -10,6 +10,7 @@ ignore:
   - .luacheckrc
   - .gitignore
   - CONTRIBUTING.md
+  - INTEGRATIONS.md
 
 manual-changelog:
   filename: CHANGELOG.md

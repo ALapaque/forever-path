@@ -33,6 +33,7 @@ Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin offici
 | Point sur la carte et la minimap, bouton épingle (+ TomTom) | ✔ |
 | Tracé de la route sur la carte du monde | ✔ |
 | Guidage 3D dans le monde (faisceau, distance, flèche de bord d'écran) | ✔ |
+| Itinéraires : chemin le plus rapide (chemins appris, vols, bateaux, foyer), virage par virage, carte et minimap | ✔ |
 | Flèche de direction | ✔ |
 | Repérage sur les barres de nom (PNJ, monstres de l'étape, monstres de quête) | ✔ |
 | Bouton « Cibler » (clic droit : poser un symbole) + raccourci | ✔ |
@@ -70,6 +71,9 @@ python3 -I load.py <QuestieDB>/data/Forever/
 python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides
 ```
 Les données sont lues comme de simples données : aucun code Lua téléchargé n'est exécuté.
+
+## Intégrations
+API publique `ForeverPathAPI`, Naowh Forever, Daylight UI, TomTom : voir [INTEGRATIONS.md](INTEGRATIONS.md).
 
 ## Contribuer
 Bugs, routes des nouvelles zones, nouveaux modules : voir [CONTRIBUTING.md](CONTRIBUTING.md). Chaque push lance luacheck et les tests. Une nouvelle section `## vX.Y.Z` en tête du `CHANGELOG.md` publie automatiquement la version.

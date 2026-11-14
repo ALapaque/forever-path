@@ -11,7 +11,7 @@ ignore = {
     "212/_.*",   -- arguments préfixés par _
 }
 globals = {
-    "ForeverPathDB", "ForeverPathCharDB",
+    "ForeverPathDB", "ForeverPathCharDB", "ForeverPathNavDB", "ForeverPathAPI",
     "SLASH_FOREVERPATH1", "SLASH_FOREVERPATH2", "SlashCmdList",
     "BINDING_HEADER_FOREVERPATH", "BINDING_NAME_FOREVERPATH_NEXT", "BINDING_NAME_FOREVERPATH_PREV",
     "BINDING_NAME_FOREVERPATH_TOGGLE", "BINDING_NAME_CLICK_ForeverPathTargetButton_LeftButton",

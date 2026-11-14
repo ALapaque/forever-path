@@ -29,5 +29,6 @@ jobs:
         run: |
           python3 tests/harness.py
           python3 tests/harness.py . tests/test_daylight.lua
+          python3 tests/harness.py . tests/test_journeys.lua
       - name: Caractères affichables par les polices du jeu
         run: python3 tools/check_glyphs.py

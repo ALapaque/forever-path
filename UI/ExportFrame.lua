@@ -1,14 +1,12 @@
 local _, ns = ...
 local L = ns.L
 
--- Fenêtre de copie pour exporter un guide enregistré
+-- Fenêtre de copie / collage (export d'une route, import de chemins partagés)
 local f = CreateFrame("Frame", "ForeverPathExport", UIParent, "BackdropTemplate")
 f:SetSize(520, 380)
 f:SetPoint("CENTER")
 f:SetFrameStrata("DIALOG")
-f:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1 })
-f:SetBackdropColor(0.05, 0.05, 0.07, 0.95)
-f:SetBackdropBorderColor(0.83, 0.69, 0.22, 0.9)
+ns.Skin(f, 0.96)
 f:EnableMouse(true)
 f:SetMovable(true)
 f:RegisterForDrag("LeftButton")
@@ -26,7 +24,7 @@ close:SetPoint("TOPRIGHT", 2, 2)
 
 local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
 scroll:SetPoint("TOPLEFT", 10, -30)
-scroll:SetPoint("BOTTOMRIGHT", -30, 10)
+scroll:SetPoint("BOTTOMRIGHT", -30, 38)
 
 local edit = CreateFrame("EditBox", nil, scroll)
 edit:SetMultiLine(true)
@@ -36,9 +34,28 @@ edit:SetWidth(470)
 edit:SetScript("OnEscapePressed", function() f:Hide() end)
 scroll:SetScrollChild(edit)
 
-function ns.ShowExport(text)
+local ok = ns.Button(f, "Importer", 100, 22)
+ok:SetPoint("BOTTOMRIGHT", -10, 10)
+ok:Hide()
+
+function ns.ShowExport(text, title)
+    f.title:SetText(title or L.EXPORT_TITLE)
+    ok:Hide()
     edit:SetText(text)
     f:Show()
     edit:SetFocus()
     edit:HighlightText()
+end
+
+-- Fenêtre de collage : onImport(text) est appelé au clic sur « Importer »
+function ns.ShowImport(title, onImport)
+    f.title:SetText(title)
+    edit:SetText("")
+    ok:SetScript("OnClick", function()
+        onImport(edit:GetText())
+        f:Hide()
+    end)
+    ok:Show()
+    f:Show()
+    edit:SetFocus()
 end

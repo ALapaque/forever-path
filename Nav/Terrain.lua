@@ -23,10 +23,11 @@ T.MAX_EXPAND = 150000
 ---------------------------------------------------------------------------
 -- Données
 ---------------------------------------------------------------------------
-local loaded = false
+local loaded, tried = false, false
 function T.Load()
     if loaded or ForeverPathTerrainData then loaded = true return true end
-    if InCombatLockdown() then return false end
+    if tried or InCombatLockdown() then return false end
+    tried = true
     local load = C_AddOns and C_AddOns.LoadAddOn or LoadAddOn
     if load then
         local ok = pcall(load, "ForeverPath_Terrain")

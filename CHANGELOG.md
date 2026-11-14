@@ -1,8 +1,8 @@
 # ForeverPath
 
-## À venir
+## v0.2.0-beta5
 
-- **Terrain** : les itinéraires contournent les falaises, trous et lacs grâce à une grille des zones praticables. Elle est construite à partir des fichiers de terrain du jeu (wow.export, puis `tools/bake_terrain.py`) et chargée à la demande depuis l'addon `ForeverPath_Terrain`. Le calcul est étalé sur plusieurs images pour ne jamais figer le jeu. Voir TERRAIN.md.
+- **Terrain (moteur)** : les itinéraires savent contourner les falaises, trous et lacs grâce à une grille des zones praticables, chargée à la demande depuis l'addon `ForeverPath_Terrain`. Le calcul est étalé sur plusieurs images pour ne jamais figer le jeu. Les données des continents arrivent dans une prochaine version : d'ici là, rien ne change en jeu (lignes droites en orange, chemins appris en vert). Voir TERRAIN.md.
 
 ## v0.2.0-beta4
 

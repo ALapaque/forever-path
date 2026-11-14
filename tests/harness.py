@@ -78,7 +78,8 @@ tinsert=table.insert
 UISpecialFrames={}
 UIParent=mockobj()
 DEFAULT_CHAT_FRAME={AddMessage=function(_,m) print("CHAT: "..m) end}
-function geterrorhandler() return function(e) print("ERR: "..tostring(e)) end end
+LUA_ERRORS={}
+function geterrorhandler() return function(e) print("ERR: "..tostring(e)) table.insert(LUA_ERRORS, tostring(e)) end end
 PLAYER = {level=1, race="Human", class="WARRIOR", faction="Alliance", map=1429, x=0.482, y=0.429}
 function UnitLevel() return PLAYER.level end
 function UnitRace() return "Humain", PLAYER.race end
@@ -140,3 +141,7 @@ for fn in files:
     lua.eval("function(f) f('ForeverPath', NS) end")(chunk)
 print("Loaded", len(files), "files OK")
 lua.execute(open(TEST, encoding="utf-8").read())
+n_err = lua.eval("(function() return table.getn(LUA_ERRORS) - (tonumber(EXPECTED_ERRORS) or 0) end)")()
+if n_err > 0:
+    print(f"FAIL: {n_err} erreur(s) Lua inattendue(s) remontée(s) par l'addon")
+    raise SystemExit(1)

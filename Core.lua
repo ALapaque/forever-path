@@ -266,7 +266,9 @@ function ns.MakeMovable(frame, key, defaultPoint)
         ns.db.frames[key] = { p, rp, x, y }
     end)
     local function restore()
-        local p = ns.db.frames[key] or defaultPoint
+        local p = ns.db.frames[key]
+        if type(p) ~= "table" or type(p[1]) ~= "string" then p = defaultPoint end
+        if not p then return end  -- pas de position connue : on garde celle posée à la création
         frame:ClearAllPoints()
         frame:SetPoint(p[1], UIParent, p[2], p[3], p[4])
     end

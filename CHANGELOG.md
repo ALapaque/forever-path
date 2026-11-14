@@ -1,5 +1,10 @@
 # ForeverPath
 
+## v1.0.1
+
+- **Correctif** : erreur au lancement du jeu (`Core.lua:271`) quand le cadre des splits n'avait encore jamais été déplacé. Les fenêtres sans position enregistrée gardent maintenant leur place par défaut.
+- Les tests échouent désormais dès que l'addon remonte une erreur Lua, même attrapée.
+
 ## v1.0.0
 
 Première version stable.

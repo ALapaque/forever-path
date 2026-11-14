@@ -16,6 +16,8 @@ UnitCanAttack = function() return true end
 C_GossipInfo.GetAvailableQuests = function() return { { questID = 20001, title = "Les sangliers", questLevel = 8 }, { questID = 783, title = "Connue" } } end
 C_GossipInfo.GetActiveQuests = function() return {} end
 C_GossipInfo.GetOptions = function() return {} end
+C_GossipInfo.SelectAvailableQuest = function() end
+C_GossipInfo.SelectActiveQuest = function() end
 FireEvent("GOSSIP_SHOW")
 local e = ns.db.collect.quests[20001]
 check(e and e.lvl == 8 and e.giver.npc == 99001 and e.giver.x == 52.1, "donneur noté (PNJ 99001 à 52.1, 43.2)")

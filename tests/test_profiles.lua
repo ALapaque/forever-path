@@ -30,6 +30,7 @@ P.ShowWizard()
 check(_G.ForeverPathWizard ~= nil, "assistant créé")
 
 -- rapport de bug
+EXPECTED_ERRORS = 1
 ns.ReportError("boom de test")
 local txt = ns.BugReport.Text()
 check(txt:find("ForeverPath ") and txt:find("Modules actifs") and txt:find("boom de test"), "rapport de bug complet")

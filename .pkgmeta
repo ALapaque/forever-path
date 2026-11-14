@@ -18,6 +18,7 @@ ignore:
   - TERRAIN.md
   - LISTING.md
   - Routes
+  - site
 
 manual-changelog:
   filename: CHANGELOG.md

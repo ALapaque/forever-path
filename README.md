@@ -1,5 +1,7 @@
 # ForeverPath — guide de leveling 1-60 gratuit et modulaire pour WoW Forever
 
+**Site et documentation des modules (FR/EN) : https://alapaque.github.io/forever-path/**
+
 ForeverPath te donne un chemin rapide et simple de 1 à 60, Horde et Alliance : quelle quête prendre, où aller, quoi tuer, où rendre. Chaque fonction est un module que tu actives ou non depuis un panneau d'options avec aperçu.
 
 ## Installation

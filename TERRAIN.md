@@ -4,6 +4,8 @@ ForeverPath peut charger une grille des zones praticables : pentes trop raides, 
 
 Les données vivent dans un second addon, `ForeverPath_Terrain`, chargé à la demande (hors combat) au premier itinéraire. Il est livré dans le même zip que ForeverPath.
 
+Depuis la v1.0.0, Kalimdor (continent 1) et les Royaumes de l'Est (continent 0) sont inclus. Aperçus : `media/preview_Kalimdor.png`, `media/preview_Azeroth.png` (vert praticable, rouge bloqué, bleu eau).
+
 ## Produire les données
 
 1. **Export** avec [wow.export](https://github.com/Kruithne/wow.export) (MIT) :

@@ -1,5 +1,14 @@
 # ForeverPath
 
+## v1.0.0
+
+Première version stable.
+
+- **Itinéraires sur le vrai terrain** : les données de Kalimdor et des Royaumes de l'Est sont incluses (cuites depuis le client Forever, 1 724 tuiles). Les flèches et tracés contournent maintenant falaises, montagnes et lacs au lieu d'aller tout droit. Le calcul se fait en arrière-plan, sans à-coups.
+- Données chargées à la demande (addon `ForeverPath_Terrain`, 1,7 Mo), seulement au premier itinéraire et hors combat.
+- Pas encore couvert : les îles instanciées (Zéphras) et les bâtiments ou le décor (arbres, rochers).
+- Rassemble toutes les nouveautés des bêtas 0.2 : routes 1-60 Alliance, Horde et Éolides, nouveau contenu de Forever, modules de confort, groupe, hardcore, bibliothèque et éditeur de routes, collecteur de quêtes, traductions anglaise, allemande et espagnole.
+
 ## v0.2.0-beta16
 
 - **Nouveau contenu de Forever dans les routes** : le générateur lit maintenant aussi les corrections Forever de QuestieDB (base générée, corrections et traces QuestieTrace). Ça ajoute environ 1 650 quêtes propres à Forever et 5 400 PNJ. Les routes passent de ~370 à 450-600 quêtes, pour environ 2,7 h de moins estimées jusqu'au 60.

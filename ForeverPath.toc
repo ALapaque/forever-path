@@ -87,12 +87,13 @@ Modules\Collector.lua
 UI\ExportFrame.lua
 UI\Options.lua
 
-Guides\Skyborne.lua
 Guides\Route_alliance_human.lua
 Guides\Route_alliance_dwarf.lua
 Guides\Route_alliance_nightelf.lua
 Guides\Route_horde_orc.lua
 Guides\Route_horde_tauren.lua
 Guides\Route_horde_undead.lua
+Guides\Route_alliance_skyborne.lua
+Guides\Route_horde_skyborne.lua
 
 Slash.lua

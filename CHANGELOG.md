@@ -1,5 +1,12 @@
 # ForeverPath
 
+## v0.2.0-beta16
+
+- **Nouveau contenu de Forever dans les routes** : le générateur lit maintenant aussi les corrections Forever de QuestieDB (base générée, corrections et traces QuestieTrace). Ça ajoute environ 1 650 quêtes propres à Forever et 5 400 PNJ. Les routes passent de ~370 à 450-600 quêtes, pour environ 2,7 h de moins estimées jusqu'au 60.
+- **Nouvelles zones dans les parcours** : Shen'dralas (40-45), Rives Claires (38-44) et Mont Hyjal (56-60).
+- **Routes Éolides complètes** : Île de Zéphras (environ 200 étapes), puis le parcours de la faction, pour l'Alliance et la Horde.
+- Maîtres, aubergistes, rares et quêtes de donjon des nouvelles zones ajoutés aux données du monde.
+
 ## v0.2.0-beta15
 
 - **Collecteur de quêtes** : le nouveau contenu de WoW Forever (plus de 1 000 quêtes) n'est pas encore dans QuestieDB. ForeverPath le note maintenant tout seul pendant que tu joues : donneur, rendu, objectifs, niveau, XP, monstres, et les quêtes disponibles affichées par le jeu sur la carte. Rien n'est envoyé. `/fp collecte export` produit le texte à partager (dossier `Collected/` du dépôt). `tools/merge_collected.py` fusionne les collectes de tous les joueurs, et le générateur ajoute ces quêtes aux routes.

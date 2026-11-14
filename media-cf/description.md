@@ -6,7 +6,7 @@
 
 ## Highlights
 
-- **6 complete 1-60 routes** (Human, Dwarf/Gnome, Night Elf, Orc/Troll, Tauren, Undead), about 370 quests each, generated and measured for XP per hour: planned hearthstone use, quests grouped by hub, automatic skipping of what got too low.
+- **8 complete 1-60 routes** (Human, Dwarf/Gnome, Night Elf, Orc/Troll, Tauren, Undead, Skyborne Alliance and Horde), 450 to 600 quests each, including Forever's new content, generated and measured for XP per hour: planned hearthstone use, quests grouped by hub, automatic skipping of what got too low.
 - **Guidance**: on-screen arrow, map and minimap waypoint, a 3D beam in the world, the route drawn on the world map.
 - **Journeys**: the fastest way to the step through learned paths, flights, boats, zeppelins and hearthstone, turn by turn.
 - **Targeting**: step monsters and NPCs highlighted on nameplates, a « Target » button that works in a crowd, a quest item button.
@@ -33,7 +33,7 @@ Quest data: QuestieDB (GPL-3.0). Not affiliated with Blizzard Entertainment.
 
 **Gratuit, open source, Horde et Alliance.** ForeverPath te dit quelle quête prendre, où aller, quoi tuer et où rendre.
 
-- **6 routes complètes de 1 à 60**, environ 370 quêtes chacune, optimisées pour l'XP par heure.
+- **8 routes complètes de 1 à 60** (dont les deux Éolides), de 450 à 600 quêtes chacune, nouveau contenu de Forever compris, optimisées pour l'XP par heure.
 - **Guidage** : flèche, point sur la carte et la minimap, faisceau 3D dans le monde, route tracée sur la carte.
 - **Itinéraires** : le chemin le plus rapide (chemins appris, vols, bateaux, pierre de foyer), virage par virage.
 - **Repérage** : monstres et PNJ de l'étape surlignés, bouton « Cibler », bouton d'objet de quête.

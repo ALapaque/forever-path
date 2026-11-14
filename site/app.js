@@ -75,8 +75,8 @@
   };
   const FEATURES = [
     { i: "route", a: "rgba(212,175,55,.25)",
-      fr: ["Des routes optimisées", "6 routes complètes de 1 à 60, environ 370 quêtes chacune, générées et mesurées pour l'XP par heure : pierre de foyer planifiée, quêtes groupées par relais, saut automatique de ce qui est devenu trop bas."],
-      en: ["Optimized routes", "6 complete 1-60 routes, about 370 quests each, generated and measured for XP per hour: planned hearthstone, quests grouped by hub, automatic skipping of what got too low."] },
+      fr: ["Des routes optimisées", "8 routes complètes de 1 à 60, de 450 à 600 quêtes chacune, nouveau contenu de Forever compris, générées et mesurées pour l'XP par heure : pierre de foyer planifiée, quêtes groupées par relais, saut automatique de ce qui est devenu trop bas."],
+      en: ["Optimized routes", "8 complete 1-60 routes, 450 to 600 quests each, including Forever's new content, generated and measured for XP per hour: planned hearthstone, quests grouped by hub, automatic skipping of what got too low."] },
     { i: "beam", a: "rgba(95,212,196,.22)",
       fr: ["Guidage 3D et itinéraires", "Un faisceau dans le monde, une flèche, le point sur la carte et la minimap. Le chemin le plus rapide par vols, bateaux et chemins appris, virage par virage."],
       en: ["3D guidance and journeys", "A beam in the world, an arrow, the waypoint on map and minimap. The fastest way through flights, boats and learned paths, turn by turn."] },

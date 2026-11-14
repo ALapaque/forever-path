@@ -13,7 +13,7 @@ ns.Zones = {
     { key = "durotar",    fr = "Durotar",                   en = "Durotar",                min = 1,  max = 10, faction = "Horde",     cont = "KA", mapID = 1411, start = { Orc = true, Troll = true } },
     { key = "mulgore",    fr = "Mulgore",                   en = "Mulgore",                min = 1,  max = 10, faction = "Horde",     cont = "KA", mapID = 1412, start = { Tauren = true } },
     { key = "tirisfal",   fr = "Clairières de Tirisfal",    en = "Tirisfal Glades",        min = 1,  max = 10, faction = "Horde",     cont = "EK", mapID = 1420, start = { Scourge = true } },
-    { key = "zephras",    fr = "Île de Zéphras",            en = "Zephras Isle",           min = 1,  max = 12, faction = "Contested", cont = "IS", mapID = nil,  start = { Skyborne = true }, new = true, note = "Éolides uniquement" },
+    { key = "zephras",    fr = "Île de Zéphras",            en = "Zephras Isle",           min = 1,  max = 12, faction = "Contested", cont = "IS", mapID = 2521,  start = { Skyborne = true }, new = true, note = "Éolides uniquement" },
 
     -- 10-20
     { key = "westfall",   fr = "Marche de l'Ouest",         en = "Westfall",               min = 10, max = 20, faction = "Alliance",  cont = "EK", mapID = 1436 },
@@ -39,8 +39,8 @@ ns.Zones = {
     { key = "dustwallow", fr = "Marécage d'Âprefange",      en = "Dustwallow Marsh",       min = 35, max = 45, faction = "Contested", cont = "KA", mapID = 1445 },
     { key = "badlands",   fr = "Terres ingrates",           en = "Badlands",               min = 35, max = 45, faction = "Contested", cont = "EK", mapID = 1418 },
     { key = "swamp",      fr = "Marais des Chagrins",       en = "Swamp of Sorrows",       min = 35, max = 45, faction = "Contested", cont = "EK", mapID = 1435 },
-    { key = "riverglades", fr = "Rives Claires",            en = "The Riverglades",        min = 36, max = 44, faction = "Contested", cont = "EK", mapID = nil, new = true, note = "Accès : Col de Rochenoire (Carmines) ou bateau de Tanaris vers Port-Poudrefuse" },
-    { key = "shendralas", fr = "Shen'dralas",               en = "Shen'dralas",            min = 30, max = 42, faction = "Contested", cont = "KA", mapID = nil, new = true, unconfirmed = true, note = "Accès : Vallée des Ossements, sud de Désolace" },
+    { key = "riverglades", fr = "Rives Claires",            en = "The Riverglades",        min = 38, max = 44, faction = "Contested", cont = "EK", mapID = 2548, new = true, note = "Accès : Col de Rochenoire (Carmines) ou bateau de Tanaris vers Port-Poudrefuse" },
+    { key = "shendralas", fr = "Shen'dralas",               en = "Shen'dralas",            min = 40, max = 45, faction = "Contested", cont = "KA", mapID = 2652, new = true, note = "Accès : Vallée des Ossements, sud de Désolace" },
 
     -- 40-50
     { key = "feralas",    fr = "Féralas",                   en = "Feralas",                min = 40, max = 50, faction = "Contested", cont = "KA", mapID = 1444 },
@@ -58,7 +58,7 @@ ns.Zones = {
     { key = "epl",        fr = "Maleterres de l'Est",       en = "Eastern Plaguelands",    min = 53, max = 60, faction = "Contested", cont = "EK", mapID = 1423 },
     { key = "winterspring", fr = "Berceau-de-l'Hiver",      en = "Winterspring",           min = 53, max = 60, faction = "Contested", cont = "KA", mapID = 1452 },
     { key = "silithus",   fr = "Silithus",                  en = "Silithus",               min = 55, max = 60, faction = "Contested", cont = "KA", mapID = 1451 },
-    { key = "hyjal",      fr = "Mont Hyjal",                en = "Mount Hyjal",            min = 55, max = 60, faction = "Contested", cont = "KA", mapID = nil, new = true, unconfirmed = true, note = "Zone de leveling de fin de parcours" },
+    { key = "hyjal",      fr = "Mont Hyjal",                en = "Mount Hyjal",            min = 56, max = 60, faction = "Contested", cont = "KA", mapID = 2482, new = true, note = "Zone de leveling de fin de parcours" },
 }
 
 -- Les 9 nouveaux donjons de Forever (niveaux annoncés).

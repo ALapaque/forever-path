@@ -23,6 +23,7 @@ for t in conv["geometry"]["transforms"]:
         MAPSIZE[t["ui_map_id"]] = (abs(b["left"] - b["right"]), abs(b["top"] - b["bottom"]))
 
 ZONES = {  # clé -> uiMapID (identique à Data/Zones.lua)
+    "zephras": 2521, "riverglades": 2548, "shendralas": 2652, "hyjal": 2482,
     "elwynn": 1429, "dunmorogh": 1426, "teldrassil": 1438, "durotar": 1411, "mulgore": 1412, "tirisfal": 1420,
     "westfall": 1436, "lochmodan": 1432, "darkshore": 1439, "barrens": 1413, "silverpine": 1421, "redridge": 1433,
     "stonetalon": 1442, "ashenvale": 1440, "duskwood": 1431, "wetlands": 1437, "hillsbrad": 1424, "needles": 1441,
@@ -43,18 +44,19 @@ ZONE_FR = {
     "searing": "Gorge des Vents brûlants", "azshara": "Azshara", "blasted": "Terres foudroyées",
     "ungoro": "Cratère d'Un'Goro", "felwood": "Gangrebois", "burning": "Steppes ardentes",
     "wpl": "Maleterres de l'Ouest", "epl": "Maleterres de l'Est", "winterspring": "Berceau-de-l'Hiver",
-    "silithus": "Silithus",
+    "silithus": "Silithus", "zephras": "Île de Zéphras", "riverglades": "Rives Claires", "shendralas": "Shen'dralas",
+    "hyjal": "Mont Hyjal",
 }
 
 # --- parcours : (zone, niveau de sortie). Une zone peut revenir plus tard (2e passage).
 COMMON_A = [("redridge", 22), ("duskwood", 25), ("wetlands", 27), ("ashenvale", 28), ("duskwood", 30),
-            ("hillsbrad", 31), ("stv", 34), ("arathi", 36), ("desolace", 38), ("dustwallow", 40),
-            ("badlands", 41), ("swamp", 42), ("stv", 44), ("tanaris", 46), ("feralas", 47), ("hinterlands", 49),
+            ("hillsbrad", 31), ("stv", 34), ("arathi", 36), ("desolace", 38), ("shendralas", 41), ("dustwallow", 42),
+            ("badlands", 42), ("riverglades", 44), ("swamp", 44), ("stv", 45), ("tanaris", 46), ("feralas", 47), ("hinterlands", 49),
             ("searing", 50), ("ungoro", 52), ("azshara", 53), ("felwood", 54), ("burning", 55),
-            ("winterspring", 56), ("wpl", 57), ("epl", 59), ("silithus", 60), ("winterspring", 60), ("epl", 60)]
+            ("winterspring", 56), ("hyjal", 58), ("wpl", 59), ("epl", 60), ("silithus", 60), ("winterspring", 60), ("epl", 60)]
 COMMON_H = [("stonetalon", 23), ("ashenvale", 26), ("barrens", 27), ("hillsbrad", 29), ("needles", 31),
-            ("stv", 34), ("arathi", 36), ("desolace", 38), ("dustwallow", 40), ("badlands", 41), ("swamp", 42),
-            ("stv", 44), ("tanaris", 46), ("feralas", 47), ("hinterlands", 49), ("searing", 50), ("ungoro", 52),
+            ("stv", 34), ("arathi", 36), ("desolace", 38), ("shendralas", 41), ("dustwallow", 42), ("badlands", 42),
+            ("riverglades", 44), ("swamp", 44), ("stv", 45), ("tanaris", 46), ("feralas", 47), ("hinterlands", 49), ("searing", 50), ("ungoro", 52),
             ("azshara", 53), ("felwood", 54), ("burning", 55), ("winterspring", 56), ("wpl", 57), ("epl", 59),
             ("silithus", 60), ("winterspring", 60), ("epl", 60)]
 PATHS = {
@@ -64,10 +66,16 @@ PATHS = {
     "horde-orc":         ("Horde", ["Orc", "Troll"], [("durotar", 11), ("barrens", 16), ("silverpine", 18), ("barrens", 21)] + COMMON_H),
     "horde-tauren":      ("Horde", ["Tauren"], [("mulgore", 11), ("barrens", 16), ("silverpine", 18), ("barrens", 21)] + COMMON_H),
     "horde-undead":      ("Horde", ["Scourge"], [("tirisfal", 11), ("silverpine", 16), ("barrens", 21)] + COMMON_H),
+    # Skyborne : Île de Zéphras, puis l'aéronef vers les terres de la faction
+    "alliance-skyborne": ("Alliance", ["SkyborneAlliance"], [("zephras", 12), ("westfall", 18)] + COMMON_A),
+    "horde-skyborne":    ("Horde", ["SkyborneHorde"], [("zephras", 12), ("barrens", 21)] + COMMON_H),
 }
 
-RACE_BITS = {1: "Human", 2: "Orc", 4: "Dwarf", 8: "NightElf", 16: "Scourge", 32: "Tauren", 64: "Gnome", 128: "Troll"}
+RACE_BITS = {1: "Human", 2: "Orc", 4: "Dwarf", 8: "NightElf", 16: "Scourge", 32: "Tauren", 64: "Gnome", 128: "Troll",
+             2 ** 32: "SkyborneAlliance", 2 ** 33: "SkyborneHorde"}
 FACTION_MASK = {"Alliance": 1 | 4 | 8 | 64, "Horde": 2 | 16 | 32 | 128}
+SKY_BIT = {"Alliance": 2 ** 32, "Horde": 2 ** 33}
+SKY_RACES = {"SkyborneAlliance", "SkyborneHorde"}
 RACE_BIT = {v: k for k, v in RACE_BITS.items()}
 CLASS_BITS = {1: "WARRIOR", 2: "PALADIN", 4: "HUNTER", 8: "ROGUE", 16: "PRIEST", 64: "SHAMAN", 128: "MAGE",
               256: "WARLOCK", 1024: "DRUID"}
@@ -136,14 +144,20 @@ def obj_pts(oid, mapid):
 
 # ---------------------------------------------------------------- analyse d'une quête
 def races_for(mask, faction):
-    fm = FACTION_MASK[faction]
+    """Races de la faction autorisées par le masque. Un masque « toutes les races Classic de la
+    faction » vaut aussi pour les Skyborne de cette faction (données héritées de Classic)."""
+    fm, sky = FACTION_MASK[faction], SKY_BIT[faction]
     if not mask:
         return True, None
-    if mask & fm == 0:
+    classic, has_sky = mask & fm, bool(mask & sky)
+    if not classic and not has_sky:
         return False, None
-    if mask & fm == fm:
+    if classic == fm:
         return True, None
-    return True, [RACE_BITS[b] for b in RACE_BITS if mask & b and fm & b]
+    names = [RACE_BITS[b] for b in RACE_BITS if b <= 128 and classic & b]
+    if has_sky:
+        names.append(RACE_BITS[sky])
+    return True, names
 
 def all_pts(spawns):
     """{mapid: [pts]} pour un dict de spawns."""
@@ -466,6 +480,8 @@ def npc_name(nid):
 def fmt(p):
     return "@%.1f,%.1f" % (p[0], p[1])
 
+SKY_PATH = [False]
+
 def render(zone, steps, stop):
     lines = ["M " + zone]
     used_npcs = set()
@@ -487,8 +503,11 @@ def render(zone, steps, stop):
             continue
         info = x
         opts = []
-        if info["races"]:
-            opts.append("race=" + ",".join(info["races"]))
+        # parcours Skyborne : pas de filtre de race sur les étapes (le jeton de race du client est inconnu,
+        # et la route est déjà filtrée pour cette race) ; ailleurs : races Classic seulement
+        shown = [r for r in (info["races"] or []) if r not in SKY_RACES]
+        if shown and not SKY_PATH[0]:
+            opts.append("race=" + ",".join(shown))
         if kind in ("A", "T"):
             who = info["giver"] if kind == "A" else info["ender"]
             p = info["gpos"] if kind == "A" else info["epos"]
@@ -581,6 +600,7 @@ def main():
     index = []
     stats = []
     for pid, (faction, races, path) in PATHS.items():
+        SKY_PATH[0] = any(r in SKY_RACES for r in races)
         ch = Char(faction, races)
         guides = []
         visits = defaultdict(int)
@@ -642,11 +662,14 @@ def main():
                "-- GÉNÉRÉ AUTOMATIQUEMENT par tools/gen_routes.py à partir de QuestieDB (Forever).",
                "-- Ne pas modifier à la main : régénérer. Parcours : " + pid, ""]
         for gd in guides:
-            race_tbl = ", ".join("%s = true" % r for r in races)
+            sky = any(r in SKY_RACES for r in races)
+            race_tbl = "Skyborne = true, SkyborneElf = true, Eolid = true" if sky else ", ".join("%s = true" % r for r in races)
             out.append("ns.RegisterGuide({")
             out.append('    id = "%s",' % gd["id"])
             out.append('    name = %s,' % lua_str("%s %d-%d" % (ZONE_FR[gd["zone"]], gd["min"], gd["max"])))
             out.append('    faction = "%s", race = { %s }, path = "%s",' % (faction, race_tbl, pid))
+            if gd["zone"] == "zephras":
+                out.append('    startZone = "zephras",')
             out.append('    minLevel = %d, maxLevel = %d,' % (gd["min"], gd["max"]))
             if gd["next"]:
                 out.append('    next = "%s",' % gd["next"])

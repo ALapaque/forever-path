@@ -11,17 +11,19 @@ ForeverPath te donne un chemin rapide et simple de 1 à 60, Horde et Alliance : 
 ## Routes
 | Parcours | Départ | Quêtes |
 |---|---|---|
-| Humain | Elwynn → Marche de l'Ouest → Loch Modan → Carmines… | ~373 |
-| Nain / Gnome | Dun Morogh → Loch Modan → Marche de l'Ouest… | ~367 |
-| Elfe de la nuit | Teldrassil → Sombrivage → Orneval… | ~372 |
-| Orc / Troll | Durotar → Tarides → Pins-Argentés… | ~357 |
-| Tauren | Mulgore → Tarides → Pins-Argentés… | ~354 |
-| Mort-vivant | Tirisfal → Pins-Argentés → Tarides… | ~363 |
-| Éolide | Île de Zéphras (route minimale) puis parcours de la faction | — |
+| Humain | Elwynn → Marche de l'Ouest → Loch Modan → Carmines… | ~598 |
+| Nain / Gnome | Dun Morogh → Loch Modan → Marche de l'Ouest… | ~599 |
+| Elfe de la nuit | Teldrassil → Sombrivage → Orneval… | ~595 |
+| Orc / Troll | Durotar → Tarides → Pins-Argentés… | ~463 |
+| Tauren | Mulgore → Tarides → Pins-Argentés… | ~458 |
+| Mort-vivant | Tirisfal → Pins-Argentés → Tarides… | ~487 |
+| Éolide Alliance / Horde | Île de Zéphras → parcours de la faction | ~602 / ~488 |
 
-Les routes sont générées à partir de **QuestieDB (données Forever)** par `tools/gen_routes.py`. Le script simule un personnage (niveau, XP, journal de 20 quêtes, prérequis) et enchaîne à chaque fois l'action la plus proche : prendre, faire, rendre. Il écarte les quêtes élites, de classe, de métier et de réputation, ainsi que les objets de quête. La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées, et le bon segment se charge tout seul si tu montes plus vite. Les paliers « Monte au niveau X » se valident d'eux-mêmes si tu as déjà le niveau.
+Les nouvelles zones de Forever font partie des parcours : Shen'dralas (40-45), Rives Claires (38-44) et Mont Hyjal (56-60).
 
-**Limite :** les quêtes ajoutées par Forever (nouvelles zones, nouveaux donjons) ne sont pas encore dans QuestieDB. Utilise l'enregistreur pour les ajouter.
+Les routes sont générées à partir de **QuestieDB (données Forever, nouveau contenu compris : base générée, corrections et traces QuestieTrace)** par `tools/gen_routes.py`. Le script simule un personnage (niveau, XP, journal de 20 quêtes, prérequis) et enchaîne à chaque fois l'action la plus proche : prendre, faire, rendre. Il écarte les quêtes élites, de classe, de métier et de réputation, ainsi que les objets de quête. La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées, et le bon segment se charge tout seul si tu montes plus vite. Les paliers « Monte au niveau X » se valident d'eux-mêmes si tu as déjà le niveau.
+
+Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/fp collecte`, dossier `Collected/`).
 
 ## Apparence
 Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin officiel : couleurs et police de Daylight UI en direct, si installé), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
@@ -78,6 +80,7 @@ Options : race=  class=  r=  upto=  danger=1  npc=  target=
 git clone https://github.com/Questie/QuestieDB
 cd tools
 python3 -I load.py <QuestieDB>/data/Forever/
+python3 -I load_corrections.py <QuestieDB> db.pkl db.pkl          # nouveau contenu de Forever
 python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides     # --dry : mesure seulement
 python3 -I gen_world.py ../Data/World.lua                        # maîtres, auberges, récolte
 ```

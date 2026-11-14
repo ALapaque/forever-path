@@ -12,7 +12,7 @@
 
 ForeverPath te donne un chemin rapide et simple de 1 à 60 : quelle quête prendre, où aller, quoi tuer, où rendre. **Gratuit, sans abonnement.**
 
-- **6 routes complètes** (Humain, Nain/Gnome, Elfe de la nuit, Orc/Troll, Tauren, Mort-vivant), environ 370 quêtes chacune, optimisées pour l'XP/h.
+- **8 routes complètes** (Humain, Nain/Gnome, Elfe de la nuit, Orc/Troll, Tauren, Mort-vivant, Éolides Alliance et Horde), de 450 à 600 quêtes chacune, nouveau contenu de Forever compris, optimisées pour l'XP/h.
 - **Guidage** : flèche, point sur la carte et la minimap, faisceau 3D dans le monde, tracé de la route sur la carte.
 - **Itinéraires** : le chemin le plus rapide (chemins appris, vols, bateaux, zeppelins, foyer), virage par virage.
 - **Repérage** : monstres et PNJ de l'étape surlignés, bouton « Cibler », bouton d'objet de quête.
@@ -28,7 +28,7 @@ ForeverPath te donne un chemin rapide et simple de 1 à 60 : quelle quête prend
 
 ForeverPath gives you a fast, simple path from 1 to 60: which quest to take, where to go, what to kill, where to turn in. **Free, no subscription.**
 
-- **6 complete routes** (Human, Dwarf/Gnome, Night Elf, Orc/Troll, Tauren, Undead), about 370 quests each, tuned for XP/hour.
+- **8 complete routes** (Human, Dwarf/Gnome, Night Elf, Orc/Troll, Tauren, Undead, Skyborne Alliance and Horde), 450 to 600 quests each, including Forever's new content, tuned for XP/hour.
 - **Guidance**: arrow, map and minimap waypoint, in-world 3D beam, route drawn on the map.
 - **Journeys**: the fastest way (learned paths, flights, boats, zeppelins, hearthstone), turn by turn.
 - **Targeting**: step monsters and NPCs highlighted, « Target » button, quest item button.

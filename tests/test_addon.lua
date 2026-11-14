@@ -90,8 +90,8 @@ check(ns.Modules.marker == nil, "plus de module marqueur automatique")
 ns.ActionBar:Layout(); check(true, "mise en page de la barre d'actions")
 
 -- navigation : une note sans position vise la prochaine étape positionnée
-local g2 = ns.Guides["skyborne-horde-01-zephras"]
-check(g2 ~= nil, "guide éolide présent")
+local g2 = ns.Guides["horde-skyborne-01-zephras"]
+check(g2 ~= nil and g2.startZone == "zephras" and #g2.steps > 50, "route éolide générée (Île de Zéphras, "..(g2 and #g2.steps or 0).." étapes)")
 PLAYER.faction, PLAYER.race, PLAYER.level = "Alliance", "Human", 1
 ns.cdb.path = nil
 ns.Engine.Load("alliance-human-01-elwynn")

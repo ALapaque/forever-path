@@ -1,6 +1,6 @@
 # Quêtes collectées en jeu
 
-Le nouveau contenu de WoW Forever (plus de 1 000 nouvelles quêtes) n'est pas encore dans QuestieDB. Le module **Collecteur** de ForeverPath le note pendant que tu joues : donneur, rendu, objectifs, niveau, XP, monstres. Rien n'est envoyé automatiquement.
+QuestieDB intègre déjà une bonne partie du nouveau contenu de WoW Forever (environ 1 650 quêtes, via ses corrections et les traces QuestieTrace), mais pas tout. Le module **Collecteur** de ForeverPath le note pendant que tu joues : donneur, rendu, objectifs, niveau, XP, monstres. Rien n'est envoyé automatiquement.
 
 **Partager ta collecte** : en jeu, `/fp collecte export`, copie le texte, puis propose-le ici dans un fichier `pseudo-date.txt` (pull request) ou dans une issue GitHub.
 

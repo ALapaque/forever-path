@@ -11,7 +11,7 @@ N, O, A2M, NPCFR = db["Npc"], db["Object"], db["area2map"], db["npcFR"]
 
 # Cartes gardées : continents classiques (uiMapID 1411..1458)
 def keep(m):
-    return isinstance(m, int) and 1411 <= m <= 1458
+    return isinstance(m, int) and (1411 <= m <= 1458 or m in (2482, 2521, 2524, 2548, 2652))
 
 CLASSES = {"Warrior": "WARRIOR", "Paladin": "PALADIN", "Hunter": "HUNTER", "Rogue": "ROGUE", "Priest": "PRIEST",
            "Shaman": "SHAMAN", "Mage": "MAGE", "Warlock": "WARLOCK", "Druid": "DRUID"}

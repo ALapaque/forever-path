@@ -12,6 +12,8 @@ assert q["giver"]["map"] == 1411 and 52 <= q["giver"]["x"] <= 52.3, q["giver"]
 assert q["objective"]["x"] < 60, "position aberrante écartée par la médiane"
 assert q["mobs"][0] == 3098
 assert d["quests"]["20002"]["elite"] is True
+assert d["pre"]["20002"] == [20001], "ordre de déblocage relevé en jeu"
+assert 79192 in d["seen"] and 20001 in d["seen"], "quêtes vues en jeu (confirme les IDs partagés avec d'autres versions)"
 if len(files) == 3:
     assert q["reports"] == 3, "l'export du jeu est relu par l'outil"
     assert "20010" in d["quests"]

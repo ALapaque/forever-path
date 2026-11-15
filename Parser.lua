@@ -22,6 +22,7 @@ Options (après le texte, sans espaces dans la valeur, _ = espace) :
   upto=<niv>   étape ignorée si le joueur a déjà ce niveau (routes adaptatives)
   danger=1     étape signalée comme dangereuse (élites, PvP...)
   opt=1        étape optionnelle
+  group=1      quête de groupe / élite : passée sauf si l'option « Inclure les quêtes de groupe » est cochée
   lvl=<niv>    niveau de la quête (rattrapage : prise sautée si elle est devenue grise)
 ]==]
 
@@ -76,6 +77,7 @@ function ns.ParseGuide(text)
                     elseif k == "lvl" then step.qlvl = tonumber(v)
                     elseif k == "danger" then step.danger = true
                     elseif k == "opt" then step.optional = true
+                    elseif k == "group" then step.group = true
                     elseif k == "map" then step.map = tonumber(v) or v
                     end
                 end

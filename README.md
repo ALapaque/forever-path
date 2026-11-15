@@ -21,7 +21,14 @@ Questweaver te donne un chemin rapide et simple de 1 à 60, Horde et Alliance : 
 
 Les nouvelles zones de Forever font partie des parcours : Shen'dralas (40-45), Rives Claires (38-44) et Mont Hyjal (56-60).
 
-Les routes sont générées à partir de **QuestieDB (données Forever, nouveau contenu compris : base générée, corrections et traces QuestieTrace)** par `tools/gen_routes.py`. Le script simule un personnage (niveau, XP, journal de 20 quêtes, prérequis) et enchaîne à chaque fois l'action la plus proche : prendre, faire, rendre. Il écarte les quêtes élites, de classe, de métier et de réputation, ainsi que les objets de quête. La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées, et le bon segment se charge tout seul si tu montes plus vite. Les paliers « Monte au niveau X » se valident d'eux-mêmes si tu as déjà le niveau.
+Les routes sont générées à partir de **QuestieDB (données Forever, nouveau contenu compris : base générée, corrections et traces QuestieTrace)** par `tools/gen_routes.py`. Le script simule un personnage (niveau, XP, journal de 20 quêtes, prérequis) :
+
+- **Choix de la zone** : à chaque fois, la zone qui rapporte le plus d'XP par heure à ce niveau (quêtes prenables, quêtes du journal à y faire ou y rendre, trajet compris). Il revient dans une zone quand de nouvelles quêtes s'y débloquent au lieu de farmer sur place, passe par les capitales, et ne change de continent que si ça rapporte nettement plus.
+- **Choix des quêtes** : jamais plus d'un niveau au-dessus du joueur pour une quête à objectif (deux pour une quête à livrer), monstres au plus deux niveaux au-dessus, quêtes jusqu'à six niveaux en dessous. Les quêtes de classe, de métier et de réputation sont écartées ; les quêtes élites sont marquées `group=1` et restent hors de la route sauf option « Inclure les quêtes de groupe ».
+- **Données assainies** : la base Forever de Questie est une base Classic convertie, encore incomplète. Le script écarte les quêtes d'autres versions du jeu (IDs 9666-89999 non confirmés en jeu), estime les niveaux requis provisoires, complète les chaînes (suite de chaîne, ordre relevé par le collecteur) et applique les corrections manuelles de `tools/overrides.json`.
+- **En jeu** : si le PNJ d'une étape ne propose pas la quête, l'étape est passée et signalée ; le bouton drapeau du guide (`/qw signalements`) permet de signaler une étape à corriger.
+
+La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées, et le bon segment se charge tout seul si tu montes plus vite. Les paliers « Monte au niveau X » se valident d'eux-mêmes si tu as déjà le niveau. `tests/test_routes.py` bloque toute régression (quête prise trop haut, part de farm, quêtes d'autres versions).
 
 Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/qw collecte`, dossier `Collected/`).
 
@@ -84,7 +91,7 @@ python3 -I load_corrections.py <QuestieDB> db.pkl db.pkl          # nouveau cont
 python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides     # --dry : mesure seulement
 python3 -I gen_world.py ../Data/World.lua                        # maîtres, auberges, récolte
 ```
-Chaque génération affiche ses mesures (temps estimé jusqu'au 60, XP/h, distance, farm) et l'écart avec `tools/route_metrics.json`. Des réglages peuvent être testés sans rien écrire : `gen_routes.py … --dry GREY=9 HUB=100`.
+Chaque génération affiche ses mesures (temps estimé jusqu'au 60, XP/h, distance, farm) et l'écart avec `tools/route_metrics.json`. Des réglages peuvent être testés sans rien écrire : `gen_routes.py … --dry GREY=7 FAR_EDGE=2`. Diagnostics : `--order` (ordre des zones), `--unused` (quêtes non faites par zone), `--why` (quêtes écartées et pourquoi).
 
 Les rapports des joueurs (`/qw rapport`) s'analysent avec `python3 -I tools/analyze_reports.py rapports/*.txt`.
 Les données sont lues comme de simples données : aucun code Lua téléchargé n'est exécuté.

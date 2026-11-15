@@ -1,5 +1,20 @@
 # Questweaver
 
+## v1.8.0
+
+Refonte des routes, après vérification avec les sources propres à WoW Forever. Les deux reproches étaient fondés : des quêtes prises trop haut, et trop de quêtes sautées.
+
+- **Plus de quêtes trop hautes.** Une quête à objectif n'est plus prise à plus d'un niveau au-dessus du tien (deux pour une simple livraison), et ses monstres ont au plus deux niveaux de plus que toi. Avant, la limite était de trois niveaux.
+- **Beaucoup moins de farm, plus de quêtes.** La part d'XP venant du farm passe de 46 % à 21 % en moyenne ; les routes comptent 548 à 658 quêtes. L'ordre des zones n'est plus écrit à la main : la route va là où les quêtes rapportent le plus à ton niveau, revient dans une zone quand de nouvelles quêtes s'y débloquent, passe par les capitales (près de 500 quêtes y commencent) et ne change de continent que si ça vaut le trajet (10 à 17 fois sur tout le leveling).
+- **Nouvelles zones mieux placées** : Rives Claires de 36 à 44-45 en plusieurs passages, Mont Hyjal de 54 à 60 (il manquait côté Horde).
+- **Données nettoyées** : 211 quêtes venues d'autres versions du jeu sont écartées (41 étaient dans les routes), 399 niveaux requis provisoires sont estimés, les chaînes sont complétées quand c'est possible, et un fichier de corrections manuelles (`tools/overrides.json`) est en place.
+- **Quêtes de groupe** : les quêtes élites sont maintenant dans les routes, marquées, et passées par défaut. Option « Inclure les quêtes de groupe dans la route » dans le module Quêtes de groupe.
+- **Garde-fou en jeu** : si le PNJ d'une étape ne propose pas la quête (prérequis manquant dans la base), l'étape est passée toute seule au lieu de te bloquer.
+- **Signaler une étape** : bouton drapeau dans le guide (trop haute, pas disponible, mauvais endroit, trop dangereuse). `/qw signalements` donne le texte à envoyer.
+- **Collecteur** : il note aussi l'ordre dans lequel les quêtes se débloquent chez un PNJ, pour reconstruire les chaînes de Forever.
+- **Donjons de Forever** ajoutés aux rappels de quêtes de donjon : Ruines de Lordaeron, Excavations des Paluns, Cité de Dalaran.
+- Limites connues : au-delà du niveau 30, la base de quêtes de Forever reste incomplète ; Shen'dralas est peu couvert, car ses quêtes dépendent des chaînes centaures de Désolace, mal renseignées. Tes signalements et ta collecte servent à corriger ça.
+
 ## v1.7.0
 
 - **Nouveau panneau des quêtes** (bouton livre dans le guide, `/qw quetes` ou `/qw groupe`), deux onglets :

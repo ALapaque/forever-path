@@ -62,10 +62,32 @@ local function npcHere(unit)
     return id, p
 end
 
+-- Ordre de déblocage : une quête qui apparaît chez un PNJ juste après qu'on lui en a rendu une
+-- autre est très probablement sa suite. La base de Forever manque de ces prérequis.
+local offeredBy, lastTurnin = {}, nil
+local function noteUnlocks(npc)
+    if not (npc and C_GossipInfo.GetAvailableQuests) then return end
+    local cur = {}
+    for _, info in ipairs(C_GossipInfo.GetAvailableQuests() or {}) do
+        if info.questID and not ns.IsSecret(info.questID) then cur[info.questID] = true end
+    end
+    local prev = offeredBy[npc]
+    if prev and lastTurnin and lastTurnin.npc == npc and GetTime() - lastTurnin.time < 90 then
+        local d = db()
+        d.pre = d.pre or {}
+        for q in pairs(cur) do
+            if not prev[q] and q ~= lastTurnin.quest and q > KNOWN_MAX then d.pre[q] = lastTurnin.quest end
+        end
+    end
+    offeredBy[npc] = cur
+end
+M.NoteUnlocks = noteUnlocks
+
 -- quêtes proposées / à rendre chez un PNJ (fenêtre de dialogue)
 local function fromGossip()
     if not M.enabled then return end
     local npc, p = npcHere("npc")
+    noteUnlocks(npc)
     for _, info in ipairs(C_GossipInfo.GetAvailableQuests and C_GossipInfo.GetAvailableQuests() or {}) do
         if M.Wanted(info.questID) then
             local e = quest(info.questID)
@@ -113,6 +135,12 @@ M:On("QUEST_ACCEPTED", function(q)
     if type(size) == "number" and not ns.IsSecret(size) and size > 1 then e.group = size end
     e.lvlAccepted = ns.PlayerLevel()
     if not e.giver then local p = here(); if p then e.giver = p end end
+end)
+
+M:On("QUEST_TURNED_IN", function(q)
+    if M.enabled and q and not ns.IsSecret(q) then
+        lastTurnin = { quest = q, npc = ns.NpcIDFromUnit("npc"), time = GetTime() }
+    end
 end)
 
 M:On("QUEST_TURNED_IN", function(q, xp)
@@ -210,6 +238,7 @@ function M.Export()
         for _, p in ipairs(e.obj or {}) do out[#out + 1] = ("O;%d;%s"):format(q, pt(p)) end
     end
     for id, n in pairs(d.npcs) do out[#out + 1] = ("N;%d;%s;%s"):format(id, clean(n.name), pt(n)) end
+    for q, prev in pairs(d.pre or {}) do out[#out + 1] = ("P;%d;%d"):format(q, prev) end
     return table.concat(out, "\n")
 end
 

@@ -55,6 +55,8 @@ Q = defaultdict(lambda: {"titles": Counter(), "lvl": [], "lvlAcc": [], "xp": [],
                          "giverNpc": Counter(), "enders": [], "enderNpc": Counter(), "obj": [], "mobs": Counter(),
                          "elite": 0, "group": 0, "reports": 0})
 NPCS = {}
+SEEN = set()                    # toutes les quêtes vues en jeu (confirme les IDs 9666-89999 partagés avec d'autres versions)
+PRE = defaultdict(Counter)      # quête -> quêtes rendues juste avant qu'elle n'apparaisse chez le même PNJ
 runs = 0
 for f in files:
     for line in open(f, encoding="utf-8", errors="replace"):
@@ -63,6 +65,8 @@ for f in files:
             runs += 1
         elif p[0] == "Q" and len(p) >= 13:
             q = num(p[1], int)
+            if q:
+                SEEN.add(q)             # vue dans Forever, même si QuestieDB la connaît déjà
             if not q or q in known:
                 continue
             e = Q[q]
@@ -97,6 +101,10 @@ for f in files:
             q = num(p[1], int)
             if q and q not in known:
                 Q[q]["obj"].append(point(p[2]))
+        elif p[0] == "P" and len(p) >= 3:
+            q, prev = num(p[1], int), num(p[2], int)
+            if q and prev:
+                PRE[q][prev] += 1
         elif p[0] == "N" and len(p) >= 4:
             nid = num(p[1], int)
             if nid:
@@ -118,7 +126,8 @@ for q, e in sorted(Q.items()):
         "mobs": [m for m, _ in e["mobs"].most_common(5)],
         "elite": e["elite"] > 0, "group": e["group"], "reports": e["reports"],
     }
-json.dump({"runs": runs, "quests": out, "npcs": NPCS}, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+pre = {str(q): [c.most_common(1)[0][0]] for q, c in sorted(PRE.items())}
+json.dump({"runs": runs, "quests": out, "npcs": NPCS, "pre": pre, "seen": sorted(SEEN)}, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 complete = sum(1 for v in out.values() if v["giver"] and v["ender"] and v["lvl"])
 print("collectes : %d, quêtes nouvelles : %d (dont %d complètes : donneur, rendu, niveau), PNJ : %d"
       % (runs, len(out), complete, len(NPCS)))

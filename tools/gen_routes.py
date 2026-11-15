@@ -14,6 +14,86 @@ db = pickle.load(open(os.environ.get("FP_DB") or os.path.join(os.path.dirname(os
 Q, N, O, I = db["Quest"], db["Npc"], db["Object"], db["Item"]
 A2M, XPDB, NPCFR, QFR = db["area2map"], db["xp"], db["npcFR"], db["questFR"]
 
+# ---------------------------------------------------------------- assainissement des données
+# QuestieDB « Forever » est une base Classic Era convertie, complétée par des quêtes relevées en
+# jeu. Défauts connus (tickets Questie #7999, #8264, #8266 ; QuestieDB #78) et parades :
+#   - quêtes d'autres versions (Season of Discovery) qui fuient : IDs 9666-89999, écartées sauf si
+#     le collecteur les a vues dans Forever ;
+#   - niveau requis provisoire (1 ou absent) sur des quêtes Forever : estimé depuis le niveau de quête ;
+#   - chaînes sans prérequis : complétées par nextQuestInChain, puis par un ordre « souple »
+#     (suite donnée par le PNJ à qui on vient de rendre la quête d'ID voisin) ;
+#   - corrections manuelles : tools/overrides.json (niveau, niveau requis, prérequis, exclusion).
+from collections import Counter
+HERE = os.path.dirname(os.path.abspath(__file__))
+COLLECTED_PATH = os.environ.get("FP_COLLECTED") or os.path.join(HERE, "collected.json")
+_collected_doc = json.load(open(COLLECTED_PATH, encoding="utf-8")) if os.path.exists(COLLECTED_PATH) else {}
+COLLECTED = _collected_doc.get("quests", {})
+COLLECTED_PRE = _collected_doc.get("pre", {})        # { "quête": [quêtes rendues juste avant, vues en jeu] }
+OVERRIDES_PATH = os.path.join(HERE, "overrides.json")
+OVERRIDES = json.load(open(OVERRIDES_PATH, encoding="utf-8")).get("quests", {}) if os.path.exists(OVERRIDES_PATH) else {}
+SAN = Counter()
+FOREVER_MIN = 90000         # premiers IDs de quêtes propres à Forever
+ERA_MAX = 9665              # dernier ID de quête Classic Era
+
+def sanitize():
+    seen = (set(int(k) for k in COLLECTED) | set(_collected_doc.get("seen", []))
+            | set(int(k) for k, o in OVERRIDES.items() if o.get("confirm")))
+    for qid in list(Q):
+        if ERA_MAX < qid < FOREVER_MIN and qid not in seen:
+            del Q[qid]
+            SAN["autres versions (écartées)"] += 1
+    for key, o in OVERRIDES.items():
+        qid = int(key)
+        q = Q.get(qid)
+        if not q:
+            continue
+        if o.get("exclude"):
+            del Q[qid]
+            SAN["exclues à la main"] += 1
+            continue
+        if "lvl" in o: q[5] = o["lvl"]
+        if "req" in o: q[4] = o["req"]
+        if "pre" in o: q[13] = {i + 1: v for i, v in enumerate(o["pre"])}; q[12] = None
+        q["fixed"] = True
+        SAN["corrigées à la main"] += 1
+    for qid, q in Q.items():
+        nxt = g(q, 22)
+        if isinstance(nxt, int) and nxt in Q and nxt != qid and (qid >= FOREVER_MIN or nxt >= FOREVER_MIN):
+            t = Q[nxt]
+            if not lst(g(t, 12)) and not lst(g(t, 13)):
+                t[13] = {1: qid}
+                SAN["prérequis déduits (suite de chaîne)"] += 1
+    for key, pres in COLLECTED_PRE.items():
+        t = Q.get(int(key))
+        if t and not lst(g(t, 12)) and not lst(g(t, 13)) and pres and all(p in Q for p in pres):
+            t[13] = {i + 1: v for i, v in enumerate(pres)}
+            SAN["prérequis vus en jeu"] += 1
+    for qid, q in Q.items():
+        lvl, req = g(q, 5), g(q, 4)
+        if qid >= FOREVER_MIN and isinstance(lvl, int) and lvl > 1 and (not req or req <= 1) and not q.get("fixed"):
+            q[4] = max(1, lvl - 3)
+            q["estimated"] = True
+            SAN["niveau requis estimé"] += 1
+    # ordre souple : suite donnée par le PNJ à qui on rend la quête d'ID voisin (1 à 3 avant)
+    enders = defaultdict(set)
+    for qid, q in Q.items():
+        if qid >= FOREVER_MIN:
+            for n in lst(g(g(q, 3, {}), 1)):
+                enders[n].add(qid)
+    for qid, q in Q.items():
+        if qid < FOREVER_MIN or lst(g(q, 12)) or lst(g(q, 13)):
+            continue
+        lvl = g(q, 5) or 0
+        best = None
+        for n in lst(g(g(q, 2, {}), 1)):
+            for a in enders.get(n, ()):
+                if 1 <= qid - a <= 3 and (g(Q[a], 5) or 0) <= lvl and g(Q[a], 6) == g(q, 6):
+                    if best is None or a > best:
+                        best = a
+        if best:
+            q["soft"] = best
+            SAN["ordre souple (même PNJ)"] += 1
+
 # --- taille des cartes (yards) depuis le manifeste de conversion Forever
 conv = json.load(open(os.path.join(DATA_DIR, "conversion.json"), encoding="utf-8"))
 MAPSIZE = {}
@@ -31,6 +111,8 @@ ZONES = {  # clé -> uiMapID (identique à Data/Zones.lua)
     "swamp": 1435, "feralas": 1444, "tanaris": 1446, "hinterlands": 1425, "searing": 1427, "azshara": 1447,
     "blasted": 1419, "ungoro": 1449, "felwood": 1448, "burning": 1428, "wpl": 1422, "epl": 1423,
     "winterspring": 1452, "silithus": 1451,
+    # capitales : beaucoup de quêtes y commencent ou s'y rendent
+    "stormwind": 1453, "ironforge": 1455, "darnassus": 1457, "orgrimmar": 1454, "thunderbluff": 1456, "undercity": 1458,
 }
 ZONE_FR = {
     "elwynn": "Forêt d'Elwynn", "dunmorogh": "Dun Morogh", "teldrassil": "Teldrassil", "durotar": "Durotar",
@@ -45,31 +127,49 @@ ZONE_FR = {
     "ungoro": "Cratère d'Un'Goro", "felwood": "Gangrebois", "burning": "Steppes ardentes",
     "wpl": "Maleterres de l'Ouest", "epl": "Maleterres de l'Est", "winterspring": "Berceau-de-l'Hiver",
     "silithus": "Silithus", "zephras": "Île de Zéphras", "riverglades": "Rives Claires", "shendralas": "Shen'dralas",
-    "hyjal": "Mont Hyjal",
+    "hyjal": "Mont Hyjal", "stormwind": "Hurlevent", "ironforge": "Forgefer", "darnassus": "Darnassus",
+    "orgrimmar": "Orgrimmar", "thunderbluff": "Les Pitons-du-Tonnerre", "undercity": "Fossoyeuse",
 }
 
-# --- parcours : (zone, niveau de sortie). Une zone peut revenir plus tard (2e passage).
-COMMON_A = [("redridge", 22), ("duskwood", 25), ("wetlands", 27), ("ashenvale", 28), ("duskwood", 30),
-            ("hillsbrad", 31), ("stv", 34), ("arathi", 36), ("desolace", 38), ("shendralas", 41), ("dustwallow", 42),
-            ("badlands", 42), ("riverglades", 44), ("swamp", 44), ("stv", 45), ("tanaris", 46), ("feralas", 47), ("hinterlands", 49),
-            ("searing", 50), ("ungoro", 52), ("azshara", 53), ("felwood", 54), ("burning", 55),
-            ("winterspring", 56), ("hyjal", 58), ("wpl", 59), ("epl", 60), ("silithus", 60), ("winterspring", 60), ("epl", 60)]
-COMMON_H = [("stonetalon", 23), ("ashenvale", 26), ("barrens", 27), ("hillsbrad", 29), ("needles", 31),
-            ("stv", 34), ("arathi", 36), ("desolace", 38), ("shendralas", 41), ("dustwallow", 42), ("badlands", 42),
-            ("riverglades", 44), ("swamp", 44), ("stv", 45), ("tanaris", 46), ("feralas", 47), ("hinterlands", 49), ("searing", 50), ("ungoro", 52),
-            ("azshara", 53), ("felwood", 54), ("burning", 55), ("winterspring", 56), ("wpl", 57), ("epl", 59),
-            ("silithus", 60), ("winterspring", 60), ("epl", 60)]
+# --- parcours : la race fixe la zone de départ ; ensuite l'ordre des zones n'est plus écrit à la main.
+# Le planificateur choisit à chaque fois la zone qui rapporte le plus d'XP par heure à ce niveau
+# (quêtes prenables + quêtes du journal à y faire ou y rendre, trajet compris), d'après les niveaux
+# des quêtes de Forever. Il revient dans une zone quand de nouvelles quêtes s'y débloquent, au lieu
+# de farmer sur place.
 PATHS = {
-    "alliance-human":    ("Alliance", ["Human"], [("elwynn", 10), ("westfall", 14), ("lochmodan", 16), ("westfall", 18)] + COMMON_A),
-    "alliance-dwarf":    ("Alliance", ["Dwarf", "Gnome"], [("dunmorogh", 10), ("lochmodan", 14), ("westfall", 18)] + COMMON_A),
-    "alliance-nightelf": ("Alliance", ["NightElf"], [("teldrassil", 11), ("darkshore", 18), ("ashenvale", 21), ("westfall", 22)] + COMMON_A),
-    "horde-orc":         ("Horde", ["Orc", "Troll"], [("durotar", 11), ("barrens", 16), ("silverpine", 18), ("barrens", 21)] + COMMON_H),
-    "horde-tauren":      ("Horde", ["Tauren"], [("mulgore", 11), ("barrens", 16), ("silverpine", 18), ("barrens", 21)] + COMMON_H),
-    "horde-undead":      ("Horde", ["Scourge"], [("tirisfal", 11), ("silverpine", 16), ("barrens", 21)] + COMMON_H),
+    "alliance-human":    ("Alliance", ["Human"], "elwynn"),
+    "alliance-dwarf":    ("Alliance", ["Dwarf", "Gnome"], "dunmorogh"),
+    "alliance-nightelf": ("Alliance", ["NightElf"], "teldrassil"),
+    "horde-orc":         ("Horde", ["Orc", "Troll"], "durotar"),
+    "horde-tauren":      ("Horde", ["Tauren"], "mulgore"),
+    "horde-undead":      ("Horde", ["Scourge"], "tirisfal"),
     # Skyborne : Île de Zéphras, puis l'aéronef vers les terres de la faction
-    "alliance-skyborne": ("Alliance", ["SkyborneAlliance"], [("zephras", 12), ("westfall", 18)] + COMMON_A),
-    "horde-skyborne":    ("Horde", ["SkyborneHorde"], [("zephras", 12), ("barrens", 21)] + COMMON_H),
+    "alliance-skyborne": ("Alliance", ["SkyborneAlliance"], "zephras"),
+    "horde-skyborne":    ("Horde", ["SkyborneHorde"], "zephras"),
 }
+KAL = {"teldrassil", "durotar", "mulgore", "darkshore", "barrens", "stonetalon", "ashenvale", "needles", "desolace",
+       "dustwallow", "feralas", "tanaris", "azshara", "ungoro", "felwood", "winterspring", "silithus", "shendralas",
+       "hyjal", "darnassus", "orgrimmar", "thunderbluff"}
+def continent(zone):
+    return "IS" if zone == "zephras" else "KA" if zone in KAL else "EK"
+# zones où l'on n'envoie pas l'autre faction (départs, capitales et zones 10-20 adverses)
+ONLY = {"Alliance": {"elwynn", "dunmorogh", "teldrassil", "westfall", "lochmodan", "darkshore", "stormwind", "ironforge", "darnassus"},
+        "Horde": {"durotar", "mulgore", "tirisfal", "silverpine", "orgrimmar", "thunderbluff", "undercity"}}
+# niveau d'entrée habituel d'une zone : sert seulement à départager les lieux d'un PNJ présent sur plusieurs cartes
+ZLVL = {"elwynn": 1, "dunmorogh": 1, "teldrassil": 1, "durotar": 1, "mulgore": 1, "tirisfal": 1, "zephras": 1,
+        "westfall": 10, "lochmodan": 10, "darkshore": 11, "barrens": 10, "silverpine": 10, "redridge": 15, "stonetalon": 16,
+        "ashenvale": 19, "duskwood": 20, "wetlands": 21, "hillsbrad": 22, "needles": 26, "alterac": 30, "arathi": 30,
+        "desolace": 31, "stv": 31, "dustwallow": 35, "badlands": 36, "swamp": 36, "riverglades": 36, "shendralas": 38,
+        "feralas": 41, "tanaris": 41, "hinterlands": 42, "searing": 44, "azshara": 46, "blasted": 46, "ungoro": 48,
+        "felwood": 48, "burning": 50, "wpl": 51, "epl": 54, "winterspring": 54, "hyjal": 54, "silithus": 55,
+        "stormwind": 5, "ironforge": 5, "darnassus": 5, "orgrimmar": 5, "thunderbluff": 5, "undercity": 5}
+STARTS = {"elwynn", "dunmorogh", "teldrassil", "durotar", "mulgore", "tirisfal", "zephras"}
+FAR_EDGE = 2            # changer de continent seulement si ça rapporte nettement plus (divise le rendement)
+MIN_STEPS = 3           # en dessous, une zone ne vaut pas le déplacement (sauf si rien d'autre)
+T_NEAR, T_FAR = 600, 1500   # trajet vers une zone du même continent / de l'autre continent (secondes)
+GRIND_PREF = 0.6        # on part quêter ailleurs tant que ça rapporte au moins cette part du farm sur place
+SMALL_PEN = 0.3         # un passage de moins de MIN_STEPS actions ne compte qu'à moitié
+STALE = 10              # quête abandonnée si elle traîne dans le journal depuis ce nombre de zones
 
 RACE_BITS = {1: "Human", 2: "Orc", 4: "Dwarf", 8: "NightElf", 16: "Scourge", 32: "Tauren", 64: "Gnome", 128: "Troll",
              2 ** 32: "SkyborneAlliance", 2 ** 33: "SkyborneHorde"}
@@ -91,7 +191,15 @@ MAX_LOG = 20
 # Réglages de la recherche (balayés par --tune) : poids des candidats et anticipation
 W_TURNIN, W_ACCEPT = 0.95, 0.9
 LOOKAHEAD = 0           # 0 = glouton ; >0 : tient compte des actions voisines du candidat
-GREY = 9                # quête ignorée à partir de niveau + GREY
+GREY = 7                # quête ignorée à partir de niveau + GREY
+MAX_AHEAD = 2           # quête sans objectif sur le terrain (parler, livrer) : prise au plus tôt à niveau de quête - 2
+OBJ_AHEAD = 1           # quête avec objectif sur le terrain : au plus tôt à niveau de quête - 1
+CHAIN_W = 0.6           # poids, dans le choix d'une zone, des suites de chaîne qui se débloqueront sur place
+GROUP_NEAR = 400        # yards : objectif d'une quête de groupe proposé si la route passe à cette distance
+MOB_AHEAD = 2           # monstres de l'objectif : au plus 2 niveaux au-dessus (signalés danger à +2)
+UNUSED = []
+ORDER = []
+DROP = Counter()        # pourquoi une quête de la base n'entre pas dans un parcours (diagnostic)
 
 # --- modèle de temps (secondes) pour la mesure de qualité
 T_TALK = 8              # prendre / rendre une quête
@@ -188,11 +296,18 @@ def analyse(qid, faction, maps_order):
     ok, races = races_for(g(q, 6), faction)
     if not ok:
         return None
-    if g(q, 17, 0) < 0 or g(q, 18) or g(q, 19) or g(q, 30) or g(q, 31):
+    lvl = g(q, 5)
+    if not isinstance(lvl, int) or lvl == 0 or lvl < -1:
+        DROP["niveau inconnu"] += 1
+        return None
+    if (g(q, 17) or 0) < 0 or g(q, 18) or g(q, 19) or g(q, 30) or g(q, 31):
+        DROP["métier, réputation, événement ou classe"] += 1
         return None
     if (g(q, 24, 0) or 0) & 3:
+        DROP["répétable"] += 1
         return None
     if g(q, 7):
+        DROP["métier, réputation, événement ou classe"] += 1
         return None                       # quêtes de classe : hors route générique
     start, finish = g(q, 2, {}), g(q, 3, {})
     gc = [(("npc", n), all_pts(g(N.get(n), 7))) for n in lst(g(start, 1))] + \
@@ -201,7 +316,16 @@ def analyse(qid, faction, maps_order):
          [(("obj", o), all_pts(g(O.get(o), 4))) for o in lst(g(finish, 2))]
     gv, en = pick(gc, maps_order), pick(ec, maps_order)
     if not gv or not en:
+        DROP["donneur ou receveur hors du parcours" if (gc and ec and any(by for _, by in gc) and any(by for _, by in ec))
+             else "donneur ou receveur sans position"] += 1
         return None
+    # PNJ réservé à l'autre faction (données de faction parfois fausses sur les quêtes Forever)
+    for who in (gv[0], en[0]):
+        if who[0] == "npc":
+            fr = g(N.get(who[1]), 13)
+            if isinstance(fr, str) and fr and faction[0] not in fr:
+                DROP["PNJ de l'autre faction"] += 1
+                return None
     objs = g(q, 10, {})
     groups = []          # chaque objectif : ({map: pts}, mobs, elite)
     def npc_group(nids):
@@ -213,7 +337,6 @@ def analyse(qid, faction, maps_order):
             total += 1
             if (g(n, 6, 0) or 0) in (1, 2, 3):
                 elites += 1
-                continue
             for m, pts in all_pts(g(n, 7)).items():
                 by[m].extend(pts)
                 mobs[nid] = mobs.get(nid, 0) + len(pts)
@@ -237,14 +360,14 @@ def analyse(qid, faction, maps_order):
     trig = g(q, 9)
     if trig:
         groups.append((all_pts(g(trig, 2)), {}, False))
-    if any(el for _, _, el in groups):
-        return None                       # route solo : objectifs élites exclus
+    group = any(el for _, _, el in groups)     # objectif élite : quête de groupe, optionnelle
     omap, opos, mobs = None, None, []
     if groups:
         # carte d'objectif : celle du donneur si possible, sinon la 1re de la route
         maps = set.intersection(*[set(m for m in by if by[m]) for by, _, _ in groups]) if groups else set()
         maps = [m for m in maps if m in maps_order]
         if not maps:
+            DROP["objectif hors du parcours (donjon, autre zone)"] += 1
             return None
         omap = gv[1] if gv[1] in maps else min(maps, key=lambda m: maps_order[m])
         pts = [p for by, _, _ in groups for p in by[omap]]
@@ -255,12 +378,19 @@ def analyse(qid, faction, maps_order):
                 mm[k] += v
         mobs = [m for m, _ in sorted(mm.items(), key=lambda kv: -kv[1])[:5]]
     xp = g(XPDB.get(qid), 2, 0) or 0
+    req = g(q, 4, 1) or 1
+    scales = lvl == -1                    # quête au niveau du joueur
+    if scales:
+        lvl = req
+    if not xp:
+        xp = estimate_xp(lvl)
     return {
         "id": qid, "giver": gv[0], "gmap": gv[1], "gpos": gv[2], "ender": en[0], "emap": en[1], "epos": en[2],
         "omap": omap, "opos": opos, "mobs": mobs,
-        "req": g(q, 4, 1) or 1, "lvl": g(q, 5, 1) or 1, "xp": xp, "races": races,
+        "req": req, "lvl": lvl, "xp": xp, "races": races, "scales": scales,
         "preSingle": lst(g(q, 13)), "preGroup": lst(g(q, 12)), "exclusive": lst(g(q, 16)),
-        "kill": bool(mobs),
+        "kill": bool(mobs), "group": group, "soft": q.get("soft"), "estimated": bool(q.get("estimated")),
+        "moblvl": max([g(N.get(m), 5, 0) or 0 for m in mobs] or [0]),
     }
 
 # ---------------------------------------------------------------- simulation
@@ -276,6 +406,12 @@ class Char:
         self.time = 0.0
         self.bind, self.hearth_cd, self.hearths = None, 0.0, 0
         self.danger = set()
+        self.infos = {}
+        self.grindat = []
+        self.logage = {}
+        self.cross = 0
+        self.glog = {}          # quêtes de groupe (optionnelles) : qid -> 'todo' | 'ready' | 'done'
+        self.ahead = Counter()  # écart (niveau de quête - niveau du joueur) à la prise
         self.dist = 0.0
         self.zones = 0
         self.quests = 0
@@ -294,6 +430,8 @@ class Char:
             self.level += 1
 
 def quest_xp(info, lvl):
+    if info.get("scales"):
+        return info["xp"]
     d = lvl - info["lvl"]
     f = 1 if d <= 5 else {6: 0.8, 7: 0.6, 8: 0.4, 9: 0.2}.get(d, 0.1)
     return int(info["xp"] * f)
@@ -301,23 +439,30 @@ def quest_xp(info, lvl):
 def mob_xp(lvl):
     return 45 + 5 * lvl
 
-def available(info, ch, inlog):
+def available(info, ch, inlog, ignore_pre=False):
     qid = info["id"]
     if qid in ch.done or qid in inlog or qid in ch.blocked:
         return False
     if info["req"] > ch.level:
         return False
-    if info["lvl"] > ch.level + 3:
-        return False                      # quête rouge : on attend
-    if info["lvl"] + GREY <= ch.level:
-        return False                      # quête grise : pas rentable
+    if not info.get("scales"):
+        if info["lvl"] > ch.level + (MAX_AHEAD if not info["opos"] else OBJ_AHEAD):
+            return False                  # quête trop haute : on attend
+        if info["lvl"] + GREY <= ch.level:
+            return False                  # quête grise : pas rentable
+    if info["moblvl"] > ch.level + MOB_AHEAD:
+        return False                      # monstres trop hauts : on attend
+    if not ignore_pre and info.get("soft") and info["soft"] in ch.infos and info["soft"] not in ch.done:
+        return False                      # suite probable d'une quête pas encore rendue (même PNJ)
+    if ignore_pre:
+        return True
     if info["preGroup"] and not all(p in ch.done for p in info["preGroup"]):
         return False
     if info["preSingle"] and not any(p in ch.done for p in info["preSingle"]):
         return False
     return True
 
-def visit(zone, stop, ch, infos, remaining_maps):
+def visit(zone, ch, infos, remaining_maps, travel_time, long_stay, grind_to=None):
     """Une visite de zone. ch.log persiste entre zones : qid -> 'todo' | 'ready'."""
     mapid = ZONES[zone]
     log = ch.log
@@ -329,8 +474,10 @@ def visit(zone, stop, ch, infos, remaining_maps):
         return all(m in remaining_maps for m in need)
 
     def can_accept(info):
-        return (info["gmap"] == mapid and len(log) < MAX_LOG and available(info, ch, log)
+        return (info["gmap"] == mapid and not info["group"] and len(log) < MAX_LOG and available(info, ch, log)
                 and reachable(info))
+
+    group_here = [i for i in infos.values() if i["group"] and mapid in (i["gmap"], i["omap"], i["emap"])]
 
     ch.zones += 1
     arrive_by_hearth = ch.bind and ch.bind["map"] == mapid and ch.time >= ch.hearth_cd
@@ -341,7 +488,9 @@ def visit(zone, stop, ch, infos, remaining_maps):
         ch.hearths += 1
         pos = ch.bind["pos"]
     else:
-        ch.time += T_ZONE
+        ch.time += travel_time
+    if grind_to:
+        steps.append(("L", grind_to))
 
     def T(info):
         steps.append(("T", info))
@@ -355,20 +504,12 @@ def visit(zone, stop, ch, infos, remaining_maps):
 
     def Aq(info):
         steps.append(("A", info))
+        ch.ahead[0 if info.get("scales") else info["lvl"] - ch.level] += 1
         ch.time += T_TALK
         log[info["id"]] = "ready" if not info["opos"] else "todo"
+        ch.logage[info["id"]] = ch.zones
         for e in info["exclusive"]:
             ch.blocked.add(e)
-
-    # trop bas pour cette zone ? petite session de farm avant d'y entrer
-    pending = [i for i in infos.values() if i["gmap"] == mapid and i["id"] not in ch.done and i["id"] not in ch.blocked
-               and reachable(i) and i["lvl"] + 7 > ch.level]
-    if pending and not any(available(i, ch, log) for i in pending):
-        need = min(max(i["req"], i["lvl"] - 3) for i in pending)
-        if ch.level < need <= ch.level + 3 and need <= 60:
-            steps.append(("L", need))
-            ch.grind += need - ch.level
-            ch.add_xp(sum(XP_TO_LEVEL[l] for l in range(ch.level, need)) - ch.xp)
 
     guard = 0
     while guard < 3000:
@@ -383,7 +524,7 @@ def visit(zone, stop, ch, infos, remaining_maps):
             steps.append(("G", pos))
             ch.walk(250)        # arrivée dans la zone jusqu'au premier hub (moyenne)
         # lier la pierre à l'auberge du hub (si on va rester dans la zone)
-        if not (ch.bind and ch.bind["map"] == mapid) and stop - ch.level >= 2:
+        if not (ch.bind and ch.bind["map"] == mapid) and long_stay:
             inn = inn_near(mapid, pos, ch.faction, 120)
             if inn:
                 steps.append(("B", inn))
@@ -403,13 +544,22 @@ def visit(zone, stop, ch, infos, remaining_maps):
                 info = infos[qid]
                 if log[qid] == "todo" and info["omap"] == mapid and dist(mapid, pos, info["opos"]) <= HUB:
                     steps.append(("C", info)); log[qid] = "ready"
-                    top = max([g(N.get(m), 5, 0) or 0 for m in info["mobs"]] or [0])
-                    if top >= ch.level + 3:
+                    if info["moblvl"] >= ch.level + 2:
                         ch.danger.add(info["id"])
                     ch.time += T_KILL if info["kill"] else T_OTHER
                     # XP des monstres tués pendant l'objectif (estimation)
                     ch.add_xp(mob_xp(min(info["lvl"], ch.level + 2)) * (22 if info["kill"] else 3), 'kills')
                     changed = True
+            # quêtes de groupe : proposées au passage (option en jeu), sans compter dans la simulation
+            for info in group_here:
+                qid, st = info["id"], ch.glog.get(info["id"])
+                if (st is None and qid not in ch.done and info["gmap"] == mapid and dist(mapid, pos, info["gpos"]) <= HUB
+                        and available(info, ch, ch.glog) and reachable(info)):
+                    steps.append(("A", info)); ch.glog[qid] = "todo" if info["opos"] else "ready"
+                elif st == "todo" and info["omap"] == mapid and dist(mapid, pos, info["opos"]) <= GROUP_NEAR:
+                    steps.append(("C", info)); ch.glog[qid] = "ready"
+                elif st == "ready" and info["emap"] == mapid and dist(mapid, pos, info["epos"]) <= HUB:
+                    steps.append(("T", info)); ch.glog[qid] = "done"
         cands = []
         for qid, st in log.items():
             info = infos[qid]
@@ -426,14 +576,6 @@ def visit(zone, stop, ch, infos, remaining_maps):
             cands = [(c[0] - LOOKAHEAD * sum(1 for q in pts_all if q is not c[1] and dist(mapid, c[1], q) < 150), c[1])
                      for c in cands]
         if not cands:
-            soon = [i for i in infos.values() if i["gmap"] == mapid and i["id"] not in ch.done
-                    and i["id"] not in ch.blocked and i["id"] not in log and reachable(i)
-                    and i["req"] <= ch.level + 2 and i["lvl"] <= ch.level + 5]
-            if len(soon) >= 3 and ch.level < min(stop + 3, 60):
-                steps.append(("L", ch.level + 1))
-                ch.grind += 1
-                ch.add_xp(XP_TO_LEVEL[ch.level] - ch.xp)
-                continue
             break
         cands.sort(key=lambda c: c[0])
         target = cands[0][1]
@@ -508,6 +650,8 @@ def render(zone, steps, stop):
         shown = [r for r in (info["races"] or []) if r not in SKY_RACES]
         if shown and not SKY_PATH[0]:
             opts.append("race=" + ",".join(shown))
+        if info.get("group"):
+            opts.append("group=1")
         if kind in ("A", "T"):
             who = info["giver"] if kind == "A" else info["ender"]
             p = info["gpos"] if kind == "A" else info["epos"]
@@ -528,8 +672,6 @@ def lua_str(s):
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 # ---------------------------------------------------------------- quêtes collectées en jeu
-COLLECTED_PATH = os.environ.get("FP_COLLECTED") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "collected.json")
-COLLECTED = json.load(open(COLLECTED_PATH, encoding="utf-8"))["quests"] if os.path.exists(COLLECTED_PATH) else {}
 collected_stats = []
 _xp_by_lvl = None
 
@@ -571,6 +713,7 @@ def collected_infos(faction, maps_order, infos):
             "omap": obj and obj["map"], "opos": obj and (obj["x"], obj["y"]), "mobs": c.get("mobs") or [],
             "req": max(1, lvl - 4), "lvl": lvl, "xp": c.get("xp") or estimate_xp(lvl), "races": [],
             "preSingle": [], "preGroup": [], "exclusive": [], "kill": bool(c.get("mobs")), "collected": True,
+            "group": False, "soft": None, "scales": False, "estimated": False, "moblvl": 0,
         }
         added += 1
     return added, dict(outside)
@@ -590,49 +733,167 @@ def metrics_of(pid, ch):
     return {"path": pid, "level": ch.level, "hours_to_60": round(hours, 1),
             "xp_per_hour": int(total_xp / max(1, ch.time) * 3600), "walk_km": round(ch.dist * 0.9144 / 1000, 1),
             "danger_quests": len(ch.danger), "grind_levels": ch.grind, "quests": ch.quests, "zones": ch.zones, "hearths": ch.hearths,
-            "grind_share": round(ch.src.get("grind", 0) / max(1, total_xp), 3)}
+            "grind_share": round(ch.src.get("grind", 0) / max(1, total_xp), 3),
+            "cross_continent": ch.cross, "max_ahead": max(ch.ahead or [0]), "at_plus2": ch.ahead.get(2, 0), "at_plus1": ch.ahead.get(1, 0),
+            "estimated_req": sum(1 for q in ch.done if ch.infos.get(q, {}).get("estimated")),
+            "group_quests": sum(1 for v in ch.glog.values() if v == "done")}
 
 def main():
     apply_sets()
+    sanitize()
     os.makedirs(OUT, exist_ok=True)
     metrics = []
     all_npcs = set()
     index = []
     stats = []
-    for pid, (faction, races, path) in PATHS.items():
+    for pid, (faction, races, start) in PATHS.items():
         SKY_PATH[0] = any(r in SKY_RACES for r in races)
         ch = Char(faction, races)
+        DROP.clear()
         guides = []
         visits = defaultdict(int)
-        maps_order = {}
-        for k, (zone, _) in enumerate(path):
-            maps_order.setdefault(ZONES[zone], k)
+        # zones de départ des autres races : on n'y envoie personne (quêtes trop basses, détour étrange)
+        allowed = [z for z in ZONES if z not in ONLY["Horde" if faction == "Alliance" else "Alliance"]
+                   and (z == start or z not in STARTS)]
+        allowed.sort(key=lambda z: (z != start, ZLVL.get(z, 30)))
+        maps_order = {ZONES[z]: k for k, z in enumerate(allowed)}
+        all_maps = set(maps_order)
         infos = {}
         for qid in Q:
             info = analyse(qid, faction, maps_order)
             if info and not (info["races"] and not set(info["races"]) & set(races)):
                 infos[qid] = info
+        ch.infos = infos
         # nouveau contenu de Forever collecté en jeu (tools/collected.json)
         added, outside = collected_infos(faction, maps_order, infos)
         collected_stats.append((pid, added, outside))
-        for k, (zone, stop) in enumerate(path):
-            remaining = set(ZONES[z] for z, _ in path[k:])
-            # quêtes devenues impossibles (zone déjà quittée pour de bon) : abandon
-            for qid in list(ch.log):
+        by_giver = defaultdict(list)
+        for i in infos.values():
+            if not i["group"]:
+                by_giver[i["gmap"]].append(i)
+
+        def kills(i):
+            return mob_xp(min(i["lvl"], ch.level + 2)) * (22 if i["kill"] else 3)
+
+        def zone_value(zone):
+            """(XP attendue, temps estimé, nombre d'actions) d'un passage dans la zone maintenant."""
+            m = ZONES[zone]
+            gain = t = n = 0.0
+            for qid, st in ch.log.items():
                 i = infos[qid]
-                st = ch.log[qid]
-                need = [i["emap"]] + ([i["omap"]] if st == "todo" and i["omap"] else [])
-                if not all(m in remaining for m in need):
-                    del ch.log[qid]
+                if st == "ready" and i["emap"] == m:
+                    gain += quest_xp(i, ch.level); t += 60; n += 1
+                elif st == "todo" and i["omap"] == m:
+                    here = i["emap"] == m
+                    gain += kills(i) + quest_xp(i, ch.level) * (1 if here else 0.5)
+                    t += (T_KILL if i["kill"] else T_OTHER) + (90 if here else 30); n += 1
+            cands = []
+            memo = {}
+
+            def startable(qid, depth=0):
+                """La quête pourra être prise pendant ce passage : ses prérequis se font dans la zone."""
+                if qid in ch.done or qid in ch.log:
+                    return True
+                if qid in memo:
+                    return memo[qid]
+                memo[qid] = False
+                j = infos.get(qid)
+                if (j and depth < 6 and not j["group"] and j["gmap"] == m and j["emap"] == m and j["omap"] in (None, m)
+                        and available(j, ch, ch.log, True)
+                        and all(startable(p, depth + 1) for p in j["preGroup"])
+                        and (not j["preSingle"] or any(startable(p, depth + 1) for p in j["preSingle"]))):
+                    memo[qid] = True
+                return memo[qid]
+
+            for i in by_giver.get(m, ()):
+                w = 1.0
+                if not available(i, ch, ch.log):
+                    # suite d'une chaîne qui se fait sur place : comptée en partie
+                    if not (CHAIN_W and (i["preGroup"] or i["preSingle"]) and available(i, ch, ch.log, True)
+                            and all(startable(p) for p in i["preGroup"])
+                            and (not i["preSingle"] or any(startable(p) for p in i["preSingle"]))):
+                        continue
+                    w = CHAIN_W
+                local_obj, local_end = i["omap"] in (None, m), i["emap"] == m
+                if local_obj and local_end:
+                    cands.append((w * (quest_xp(i, ch.level) + (kills(i) if i["omap"] else 0)),
+                                  w * (T_TALK * 2 + ((T_KILL if i["kill"] else T_OTHER) if i["omap"] else 0) + 120), w, w == 1.0))
+                elif local_obj:
+                    cands.append((w * (quest_xp(i, ch.level) * 0.5 + (kills(i) if i["omap"] else 0)),
+                                  w * (T_TALK + ((T_KILL if i["kill"] else T_OTHER) if i["omap"] else 0) + 90), 0.7 * w, w == 1.0))
+                else:
+                    cands.append((w * quest_xp(i, ch.level) * 0.3, w * (T_TALK + 40), 0.4 * w, w == 1.0))
+            cands.sort(key=lambda c: -c[0] / c[1])
+            now = n + sum(1 for c in cands if c[3])
+            for g_, t_, n_, _now in cands[:max(0, MAX_LOG - len(ch.log))]:
+                gain += g_; t += t_; n += n_
+            if now < 1:
+                return 0, 1, 0            # rien à faire tout de suite : les quêtes « bientôt » ne suffisent pas
+            return gain, t, n
+
+        def trip(a, b):
+            if a == b:
+                return 60
+            if a is None:
+                return 0
+            return T_NEAR if continent(a) == continent(b) else T_FAR
+
+        cur, pending_grind, stuck, empty = None, None, 0, {}
+        for _round in range(400):
+            if ch.level >= 60:
+                break
+            # quêtes qui traînent dans le journal : abandon (leur zone ne vaut plus le détour)
+            for qid in [q for q, age in ch.logage.items() if q in ch.log and ch.zones - age > STALE]:
+                del ch.log[qid]
+                ch.blocked.add(qid)        # abandonnée pour de bon (sa prise est retirée de la route)
+            best = None
+            grind_rate = mob_xp(ch.level) / T_MOB
+            for zone in allowed:
+                if (cur is None and zone != start) or empty.get(zone) == ch.level:
+                    continue
+                gain, t, n = zone_value(zone)
+                if n < 1:
+                    continue
+                rate = gain / (t + trip(cur, zone))
+                if n < MIN_STEPS and cur is not None:
+                    rate *= SMALL_PEN
+                if cur is not None and continent(cur) != continent(zone):
+                    rate /= FAR_EDGE
+                if best is None or rate > best[0]:
+                    best = (rate, zone, n)
+            if not best or (cur is not None and best[0] < grind_rate * GRIND_PREF):
+                # rien d'intéressant à ce niveau : un niveau de farm, puis on regarde à nouveau
+                if ch.level >= 60:
+                    break
+                ch.grindat.append(ch.level + 1)
+                ch.grind += 1
+                ch.add_xp(XP_TO_LEVEL[ch.level] - ch.xp)
+                pending_grind = ch.level
+                stuck += 1
+                if stuck > 12:
+                    break
+                continue
+            stuck = 0
+            zone = best[1]
             visits[zone] += 1
-            steps, l0, l1 = visit(zone, stop, ch, infos, remaining)
-            if len([s for s in steps if s[0] in "ACT"]) < 4:
+            if cur is not None and continent(cur) != continent(zone):
+                ch.cross += 1
+            steps, l0, l1 = visit(zone, ch, infos, all_maps, trip(cur, zone), best[2] >= 8, pending_grind)
+            if pending_grind:
+                l0 = min(l0, pending_grind - 1)
+            pending_grind = None
+            cur = zone
+            if not [x for x in steps if x[0] in "ACT"]:
+                empty[zone] = ch.level     # passage à vide : on n'y revient pas avant d'avoir monté
                 continue
             gid = "%s-%02d-%s%s" % (pid, l0, zone, "" if visits[zone] == 1 else "-%d" % visits[zone])
             text, used = render(zone, steps, l1)
             all_npcs |= used
             guides.append({"id": gid, "zone": zone, "min": l0, "max": max(l1, l0 + 1), "text": text,
                            "n": len(steps)})
+        if pending_grind and guides:
+            guides[-1]["text"] += '\nL %d "Tue des monstres autour de toi jusqu\'au niveau %d"' % (pending_grind, pending_grind)
+            guides[-1]["max"] = max(guides[-1]["max"], pending_grind)
         # quêtes prises mais jamais rendues sur ce parcours : on ne les prend pas
         import re as _re
         turned = set()
@@ -641,7 +902,20 @@ def main():
         for gd in guides:
             gd["text"] = "\n".join(l for l in gd["text"].split("\n")
                                    if not (_re.match(r"^[AC] (\d+)", l) and _re.match(r"^[AC] (\d+)", l).group(1) not in turned))
-        # quêtes dangereuses (monstres de 3 niveaux ou plus au-dessus du personnage) : danger=1
+        # segments vidés par ce nettoyage : supprimés ; deux passages d'affilée dans la même zone : fusionnés
+        merged = []
+        for gd in guides:
+            if not _re.search(r"^[ACT] ", gd["text"], _re.M):
+                continue
+            if merged and merged[-1]["zone"] == gd["zone"]:
+                body = [l for l in gd["text"].split("\n") if not l.startswith(("M ", "G "))]
+                merged[-1]["text"] += "\n" + "\n".join(body)
+                merged[-1]["max"] = max(merged[-1]["max"], gd["max"])
+                merged[-1]["n"] += gd["n"]
+            else:
+                merged.append(gd)
+        guides = merged
+        # quêtes dangereuses (monstres de 2 niveaux ou plus au-dessus du personnage) : danger=1
         if ch.danger:
             for gd in guides:
                 out_lines = []
@@ -653,6 +927,12 @@ def main():
                 gd["text"] = "\n".join(out_lines)
         for i, gd in enumerate(guides):
             gd["next"] = guides[i + 1]["id"] if i + 1 < len(guides) else None
+        for _t in [int(x) for x in os.environ.get("FP_TRACE", "").split(",") if x]:
+            _i = infos.get(_t)
+            print("TRACE", pid, _t, g(Q.get(_t), 1), "absente des données du parcours" if not _i else
+                  ("faite" if _t in ch.done else "pas faite"), _i and (_i["gmap"], _i["omap"], _i["emap"], "req", _i["req"], "lvl", _i["lvl"], "groupe", _i["group"], "mob", _i["moblvl"], "pre", _i["preSingle"], _i["preGroup"]))
+        UNUSED.append((pid, ch, [(z, 0) for z in set(gd["zone"] for gd in guides)], faction))
+        ORDER.append((pid, [(gd["zone"], gd["min"], len(_re.findall(r"^[ACT] ", gd["text"], _re.M))) for gd in guides]))
         stats.append((pid, ch.level, len(guides), sum(gd["n"] for gd in guides), ch.grind, dict(ch.src)))
         metrics.append(metrics_of(pid, ch))
         if DRY:
@@ -679,7 +959,35 @@ def main():
         fn = "Route_%s.lua" % pid.replace("-", "_")
         open(os.path.join(OUT, fn), "w", encoding="utf-8").write("\n".join(out))
         index.append(fn)
+    if "--unused" in sys.argv:
+        inv = {v: k for k, v in ZONES.items()}
+        for pid, ch, path, faction in UNUSED:
+            print("==", pid, "paliers de farm :", " ".join("%d" % l for l in ch.grindat))
+            by = defaultdict(list)
+            for qid, q in Q.items():
+                if qid in ch.done:
+                    continue
+                ok, _ = races_for(g(q, 6), faction)
+                lvl = g(q, 5)
+                if not ok or not isinstance(lvl, int) or lvl < 1 or g(q, 7) or (g(q, 17) or 0) < 0 or g(q, 18) or g(q, 19) or g(q, 30) or g(q, 31) or (g(q, 24, 0) or 0) & 3:
+                    continue
+                ms = set()
+                for n in lst(g(g(q, 2, {}), 1)):
+                    ms |= set(all_pts(g(N.get(n), 7)))
+                for m in ms:
+                    by[m].append(lvl)
+            onpath = set(ZONES[z] for z, _ in path)
+            for m, lv in sorted(by.items(), key=lambda kv: -len(kv[1]))[:40]:
+                lv.sort()
+                print("  %-14s %s  %3d quêtes non faites, niveaux %d-%d (médiane %d)" % (inv.get(m, m), "sur le parcours" if m in onpath else "HORS parcours  ", len(lv), lv[len(lv)//10], lv[-len(lv)//10 or -1], lv[len(lv)//2]))
+    if "--order" in sys.argv:
+        for pid, order in ORDER:
+            print("==", pid, "(%d segments)" % len(order))
+            print("  " + " > ".join("%s %d (%d)" % o for o in order))
     report_metrics(metrics)
+    print("assainissement :", ", ".join("%s %d" % kv for kv in sorted(SAN.items())))
+    if "--why" in sys.argv:
+        print("quêtes écartées (dernier parcours) :", ", ".join("%s %d" % kv for kv in DROP.most_common()))
     if COLLECTED:
         for pid, added, outside in collected_stats:
             print("%-20s quêtes collectées ajoutées : %d%s" % (pid, added,
@@ -712,7 +1020,11 @@ def report_metrics(metrics):
         print("%-20s %6s%s %8d%s %7s %6d %6d %6d" % (m["path"], m["hours_to_60"], d("hours_to_60"),
               m["xp_per_hour"], d("xp_per_hour"), m["walk_km"], m["grind_levels"], m["quests"], m["zones"]))
     avg = sum(m["hours_to_60"] for m in metrics) / len(metrics)
-    print("moyenne : %.2f h jusqu'au 60" % avg)
+    print("moyenne : %.2f h jusqu'au 60 ; changements de continent %.0f ; segments %.0f ; niveaux de farm %.1f ; part du farm %.0f %% ; quêtes %.0f ; prises à +2 : %.0f, au-delà : %d ; quêtes de groupe %.0f" % (
+        avg, sum(m["cross_continent"] for m in metrics) / len(metrics), sum(m["zones"] for m in metrics) / len(metrics), sum(m["grind_levels"] for m in metrics) / len(metrics),
+        100 * sum(m["grind_share"] for m in metrics) / len(metrics), sum(m["quests"] for m in metrics) / len(metrics),
+        sum(m["at_plus2"] for m in metrics) / len(metrics), sum(1 for m in metrics if m["max_ahead"] > MAX_AHEAD),
+        sum(m["group_quests"] for m in metrics) / len(metrics)))
     if not DRY:
         json.dump(metrics, open(path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     return avg

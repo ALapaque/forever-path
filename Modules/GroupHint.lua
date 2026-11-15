@@ -4,8 +4,10 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "grouphint", category = "safety", default = true,
     name = ns.Tr("Quêtes de groupe"),
-    desc = ns.Tr("Signale dans le guide les quêtes de groupe ou élites (nombre de joueurs conseillé), pour chercher de l'aide ou les passer."),
-    options = {},
+    desc = ns.Tr("Signale dans le guide les quêtes de groupe ou élites (nombre de joueurs conseillé), pour chercher de l'aide ou les passer. Les quêtes de groupe sont hors de la route par défaut : coche l'option pour les inclure."),
+    options = {
+        { key = "include", label = ns.Tr("Inclure les quêtes de groupe dans la route"), type = "check", default = false },
+    },
 })
 
 function M.Info(q)
@@ -39,3 +41,5 @@ function M.preview(p)
     fs:SetPoint("CENTER")
     fs:SetText(ns.Tr("|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:12|t |cffff7f3fQuête de groupe|r\n3 joueurs conseillés"))
 end
+
+function M:OnOptionChanged() if ns.Engine and ns.Engine.Refresh then ns.Engine.Refresh() end end

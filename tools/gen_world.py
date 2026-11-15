@@ -126,6 +126,10 @@ DUNGEONS = {  # zone Questie : (fr, en, min, max)
     1584: ("Profondeurs de Rochenoire", "Blackrock Depths", 52, 60), 1583: ("Pic Rochenoire", "Blackrock Spire", 55, 60),
     2557: ("Hache-Tripes", "Dire Maul", 55, 60), 2057: ("Scholomance", "Scholomance", 58, 60),
     2017: ("Stratholme", "Stratholme", 58, 60), 2437: ("Gouffre de Ragefeu", "Ragefire Chasm", 13, 18),
+    # nouveaux donjons de Forever (zones reconnues à l'emplacement de leurs donneurs de quêtes)
+    16611: ("Ruines de Lordaeron", "Ruins of Lordaeron", 15, 22),
+    16732: ("Excavations : les Paluns", "Excavation Site: Wetlands", 24, 31),
+    16544: ("Cité de Dalaran", "City of Dalaran", 28, 35),
 }
 ALLI, HORDE = 1 | 4 | 8 | 64, 2 | 16 | 32 | 128
 dq = defaultdict(list)

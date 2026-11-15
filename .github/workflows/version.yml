@@ -110,6 +110,8 @@ jobs:
           python3 tests/harness.py . tests/test_profiles.lua
           python3 tests/harness.py . tests/test_collector.lua
           python3 tests/harness.py . tests/test_questitems.lua
+          python3 tests/harness.py . tests/test_stepcare.lua
+          python3 tests/test_routes.py
           python3 tests/test_merge.py
           FP_LOCALE=deDE python3 tests/harness.py . tests/test_locale_de.lua
           FP_LOCALE=enUS python3 tests/harness.py . tests/test_locale.lua

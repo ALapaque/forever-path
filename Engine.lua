@@ -65,6 +65,13 @@ function E.IsDone(step, idx)
     -- mode Hardcore : quêtes dangereuses sautées (prise, objectif et rendu)
     local hc = ns.Modules.hardcore
     if step.danger and hc and hc.enabled and hc:Opt("skip") and step.quest and not questInLog(step.quest) then return true end
+    -- quêtes de groupe (élites) : hors route sauf si on les demande ou si la quête est déjà prise
+    if step.group and step.quest and not questInLog(step.quest) then
+        local gh = ns.Modules.grouphint
+        if not (gh and gh.enabled and gh:Opt("include")) then return true end
+    end
+    -- quête que son PNJ ne proposait pas (prérequis manquant, donnée fausse) : prise passée
+    if step.type == "accept" and step.quest and ns.cdb.notOffered and ns.cdb.notOffered[step.quest] then return true end
     -- rattrapage : quête devenue grise et pas encore prise
     local cu = ns.Modules.catchup
     if step.type == "accept" and step.qlvl and cu and cu.enabled
@@ -90,6 +97,28 @@ function E.IsDone(step, idx)
     return false -- note / bind / fly / flightpath : validées par un événement ou le bouton >
 end
 
+-- Garde-fou : on parle au PNJ de l'étape « prendre », sa fenêtre de dialogue liste ses quêtes, et la
+-- nôtre n'y est pas. La base de quêtes de Forever a encore des prérequis manquants : plutôt que de
+-- bloquer le joueur, on passe la prise (les étapes « faire » et « rendre » suivent d'elles-mêmes)
+-- et on le note pour les signalements.
+function E.CheckOffered()
+    local g, step, i = E.Current()
+    if not (g and step and step.type == "accept" and step.quest and step.npcID) then return end
+    if ns.NpcIDFromUnit("npc") ~= step.npcID then return end
+    if not (C_GossipInfo and C_GossipInfo.GetAvailableQuests) then return end
+    for _, list in ipairs({ C_GossipInfo.GetAvailableQuests() or {}, C_GossipInfo.GetActiveQuests and C_GossipInfo.GetActiveQuests() or {} }) do
+        for _, info in ipairs(list) do
+            if info.questID == step.quest then return end
+        end
+    end
+    ns.cdb.notOffered = ns.cdb.notOffered or {}
+    ns.cdb.notOffered[step.quest] = ns.PlayerLevel()
+    if ns.StepReport then ns.StepReport.Add("notoffered", g, step, i, true) end
+    ns.Toast(ns.Tr("Ce PNJ ne propose pas cette quête pour l'instant : étape passée."), "Interface\\Icons\\INV_Misc_QuestionMark", 1, 0.8, 0.3, 4)
+    E.Refresh()
+    return true
+end
+
 -- Étapes validées par un événement du jeu : on les marque comme faites
 local function markCurrent(kind)
     local g, step, i = E.Current()
@@ -101,6 +130,7 @@ local function markCurrent(kind)
 end
 E.MarkCurrent = markCurrent
 ns.On("HEARTHSTONE_BOUND", function() markCurrent("bind") end)
+ns.On("GOSSIP_SHOW", function() E.CheckOffered() end)
 ns.On("PLAYER_CONTROL_LOST", function()
     C_Timer.After(1, function() if UnitOnTaxi and UnitOnTaxi("player") then markCurrent("fly") end end)
 end)

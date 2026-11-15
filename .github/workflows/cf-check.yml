@@ -1,0 +1,32 @@
+name: Tester CurseForge
+
+# Lancement à la main (Actions → Tester CurseForge → Run workflow) : vérifie que le jeton
+# CURSE_FORGE_API_KEY est accepté et que la version de jeu de WoW Forever existe sur CurseForge.
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      CF_API_KEY: ${{ secrets.CURSE_FORGE_API_KEY || vars.CURSE_FORGE_API_KEY || secrets.CF_API_KEY }}
+    steps:
+      - name: Jeton et versions de jeu
+        run: |
+          if [[ -z "${CF_API_KEY}" ]]; then echo "::error::Aucun jeton (secret CURSE_FORGE_API_KEY vide)"; exit 1; fi
+          echo "Longueur du jeton : ${#CF_API_KEY} caractères"
+          code="$(curl -s -o versions.json -w '%{http_code}' -H "X-Api-Token: ${CF_API_KEY}" https://wow.curseforge.com/api/game/versions)"
+          echo "GET /api/game/versions : HTTP ${code}"
+          if [[ "${code}" != "200" ]]; then
+            head -c 300 versions.json; echo
+            echo "::error::Jeton refusé (HTTP ${code})"
+            exit 1
+          fi
+          echo "Versions qui ressemblent à Forever (1.60.x / 16xxx) :"
+          jq -r '.[] | select(.name|test("^1\\.6[0-9]")) | "\(.id)\t\(.name)\ttype \(.gameVersionTypeID)"' versions.json | head -20
+          echo "{\"ok\":true}" > /dev/null
+          {
+            echo "### Jeton CurseForge accepté"
+            echo ""
+            jq -r '.[] | select(.name|test("^1\\.6[0-9]")) | "- \(.name) (id \(.id), type \(.gameVersionTypeID))"' versions.json | head -20
+          } >> "$GITHUB_STEP_SUMMARY"

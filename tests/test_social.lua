@@ -2,7 +2,7 @@
 local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
 
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local E = ns.Engine
@@ -32,16 +32,16 @@ IsInGroup = function() return true end
 IsInRaid = function() return false end
 Ambiguate = function(n) return n end
 UnitInParty = function() return true end
-FireEvent("CHAT_MSG_ADDON", "FPATH1", "2:test-group:3:4:5:", "PARTY", "Jaina")
+FireEvent("CHAT_MSG_ADDON", "QWVR1", "2:test-group:3:4:5:", "PARTY", "Jaina")
 local q, missing = G.Missing()
 check(q == 501 and missing[1] == "Jaina", "Jaina n'a pas la quête de l'étape")
-FireEvent("CHAT_MSG_ADDON", "FPATH1", "2:test-group:2:4:5:501", "PARTY", "Jaina")
+FireEvent("CHAT_MSG_ADDON", "QWVR1", "2:test-group:2:4:5:501", "PARTY", "Jaina")
 q, missing = G.Missing()
 check(#missing == 0, "plus rien à partager quand elle l'a")
 local pushed
 C_QuestLog.SetSelectedQuest = function(id) pushed = id end
 QuestLogPushQuest = function() end
-FireEvent("CHAT_MSG_ADDON", "FPATH1", "2:test-group:1:4:5:", "PARTY", "Jaina")
+FireEvent("CHAT_MSG_ADDON", "QWVR1", "2:test-group:1:4:5:", "PARTY", "Jaina")
 G:Update()
 G:Share()
 check(pushed == 501, "partage de la quête de l'étape")

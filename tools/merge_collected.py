@@ -1,4 +1,4 @@
-"""Fusionne les collectes des joueurs (/fp collecte export, format FPC1) en tools/collected.json,
+"""Fusionne les collectes des joueurs (/qw collecte export, format FPC1) en tools/collected.json,
 que gen_routes.py ajoute aux quêtes de QuestieDB (nouveau contenu de WoW Forever).
 
 Usage : python3 -I tools/merge_collected.py Collected/*.txt [--questie <db.pkl>] [--out tools/collected.json]

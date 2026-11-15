@@ -50,13 +50,13 @@ ns.FONTS = {
 
 local FONT_OBJECTS = {
     -- nom                         modèle Blizzard             couleur   taille par défaut
-    { "ForeverPathFontNormal",     "GameFontNormal",           "accent", 12 },
-    { "ForeverPathFontHighlight",  "GameFontHighlight",        "text",   12 },
-    { "ForeverPathFontSmall",      "GameFontHighlightSmall",   "text",   10 },
-    { "ForeverPathFontSmallDim",   "GameFontDisableSmall",     "dim",    10 },
-    { "ForeverPathFontSmallGold",  "GameFontNormalSmall",      "accent", 10 },
-    { "ForeverPathFontLarge",      "GameFontNormalLarge",      "accent", 16 },
-    { "ForeverPathFontHuge",       "GameFontNormalHuge",       "accent", 20 },
+    { "QuestweaverFontNormal",     "GameFontNormal",           "accent", 12 },
+    { "QuestweaverFontHighlight",  "GameFontHighlight",        "text",   12 },
+    { "QuestweaverFontSmall",      "GameFontHighlightSmall",   "text",   10 },
+    { "QuestweaverFontSmallDim",   "GameFontDisableSmall",     "dim",    10 },
+    { "QuestweaverFontSmallGold",  "GameFontNormalSmall",      "accent", 10 },
+    { "QuestweaverFontLarge",      "GameFontNormalLarge",      "accent", 16 },
+    { "QuestweaverFontHuge",       "GameFontNormalHuge",       "accent", 20 },
 }
 local baseSize = {}
 for _, def in ipairs(FONT_OBJECTS) do
@@ -175,9 +175,9 @@ function ns.Button(parent, label, w, h, onClick, tooltip, icon)
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
     b:SetSize(w, h or 20)
     b:SetBackdrop({ bgFile = FLAT, edgeFile = FLAT, edgeSize = 1 })
-    b:SetNormalFontObject("ForeverPathFontSmallGold")
-    b:SetHighlightFontObject("ForeverPathFontSmall")
-    b:SetDisabledFontObject("ForeverPathFontSmallDim")
+    b:SetNormalFontObject("QuestweaverFontSmallGold")
+    b:SetHighlightFontObject("QuestweaverFontSmall")
+    b:SetDisabledFontObject("QuestweaverFontSmallDim")
     if label and label ~= "" then b:SetText(label) end
     if icon then
         b.icon = b:CreateTexture(nil, "ARTWORK")
@@ -218,7 +218,7 @@ end
 ---------------------------------------------------------------------------
 -- Toast : message temporaire en haut de l'écran
 ---------------------------------------------------------------------------
-local toast = CreateFrame("Frame", "ForeverPathToast", UIParent, "BackdropTemplate")
+local toast = CreateFrame("Frame", "QuestweaverToast", UIParent, "BackdropTemplate")
 toast:SetSize(420, 40)
 toast:SetPoint("TOP", 0, -140)
 toast:SetFrameStrata("HIGH")
@@ -227,7 +227,7 @@ ns.Skin(toast, 0.9)
 toast.icon = toast:CreateTexture(nil, "ARTWORK")
 toast.icon:SetSize(24, 24)
 toast.icon:SetPoint("LEFT", 8, 0)
-toast.text = toast:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
+toast.text = toast:CreateFontString(nil, "OVERLAY", "QuestweaverFontHighlight")
 toast.text:SetPoint("LEFT", toast.icon, "RIGHT", 8, 0)
 toast.text:SetPoint("RIGHT", -8, 0)
 toast.text:SetJustifyH("LEFT")
@@ -261,7 +261,7 @@ ns.On("FP_INIT", function()
 end)
 
 -- La police choisie peut venir d'un autre addon (pack LibSharedMedia, Daylight UI) chargé après
--- ForeverPath : au démarrage elle n'existe pas encore et on retombait sur Friz Quadrata pour de bon.
+-- Questweaver : au démarrage elle n'existe pas encore et on retombait sur Friz Quadrata pour de bon.
 -- On réapplique donc à la connexion, un peu après, et à chaque police enregistrée plus tard.
 local pendingFonts
 local function reapplyFonts()

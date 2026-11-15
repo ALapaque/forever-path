@@ -5,7 +5,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "editor", category = "community", default = true,
     name = "Éditeur de route",
-    desc = "Corrige la route en jouant : /fp edit pos (l'étape prend ta position), /fp edit suppr (retire l'étape), /fp edit note <texte> (ajoute une note après l'étape), /fp edit annuler, /fp edit export (route corrigée à partager).",
+    desc = "Corrige la route en jouant : /qw edit pos (l'étape prend ta position), /qw edit suppr (retire l'étape), /qw edit note <texte> (ajoute une note après l'étape), /qw edit annuler, /qw edit export (route corrigée à partager).",
     options = {},
 })
 
@@ -127,11 +127,11 @@ ns.SlashExt.edit = function(arg)
     elseif cmd == "note" then M.AddNote(rest)
     elseif cmd == "annuler" or cmd == "reset" then M.Reset()
     elseif cmd == "export" then ns.ShowExport(M.Export(), ns.Tr("Route corrigée (Ctrl+A, Ctrl+C) — à partager"))
-    else ns.Print("/fp edit pos | suppr | note <texte> | annuler | export") end
+    else ns.Print("/qw edit pos | suppr | note <texte> | annuler | export") end
 end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
-    fs:SetText("/fp edit pos\n|cff3fbf3fÉtape 12 : position corrigée|r\n/fp edit export")
+    fs:SetText("/qw edit pos\n|cff3fbf3fÉtape 12 : position corrigée|r\n/fp edit export")
 end

@@ -55,7 +55,7 @@ function M:OnDisable() self:Update() end
 function M:OnOptionChanged() self:Update() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cffffd100Monture|r 34 / 90 po\n12 po/h, objectif dans ~4h40")
 end

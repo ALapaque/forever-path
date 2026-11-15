@@ -86,7 +86,7 @@ function ns.ParseGuide(text)
                 elseif step.type == "accept" or step.type == "complete" or step.type == "turnin" then
                     step.quest = num
                     if not num then
-                        error(("ForeverPath: ligne %d sans questID"):format(lineNo))
+                        error(("Questweaver: ligne %d sans questID"):format(lineNo))
                     end
                 end
                 steps[#steps + 1] = step

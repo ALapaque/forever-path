@@ -43,6 +43,6 @@ M:On("FP_DETOUR_ARRIVED", function() M.Play("arrive") end)
 function M.preview(p)
     local t = p:CreateTexture(nil, "ARTWORK"); t:SetSize(30, 30); t:SetPoint("CENTER", 0, 8)
     t:SetTexture("Interface\\Common\\VoiceChat-Speaker")
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("TOP", t, "BOTTOM", 0, -4); fs:SetText("ding !")
 end

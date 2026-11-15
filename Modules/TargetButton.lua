@@ -5,7 +5,7 @@ local _, ns = ...
 --  clic droit  : pose un symbole sur ta cible (action sécurisée « raidtarget »).
 -- Depuis le patch 12.0 (repris par Forever), SetRaidTarget est protégé : un addon ne peut
 -- plus marquer tout seul, seul un clic du joueur sur un bouton sécurisé le peut.
--- Raccourci clavier dans Options > Raccourcis > ForeverPath.
+-- Raccourci clavier dans Options > Raccourcis > Questweaver.
 local ICONS = { ns.Tr("Étoile"), ns.Tr("Cercle"), ns.Tr("Losange"), ns.Tr("Triangle"), ns.Tr("Lune"), ns.Tr("Carré"), ns.Tr("Croix"), ns.Tr("Crâne") }
 
 local M = ns.RegisterModule({
@@ -17,7 +17,7 @@ local M = ns.RegisterModule({
     },
 })
 
-local b = CreateFrame("Button", "ForeverPathTargetButton", UIParent, "SecureActionButtonTemplate")
+local b = CreateFrame("Button", "QuestweaverTargetButton", UIParent, "SecureActionButtonTemplate")
 b:SetSize(32, 32)
 b:RegisterForClicks("AnyUp", "AnyDown")
 b:SetAttribute("type1", "macro")
@@ -84,7 +84,7 @@ function M.preview(p)
     mk:SetSize(22, 22)
     mk:SetPoint("LEFT", t, "RIGHT", 6, 0)
     mk:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_1")
-    local k = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+    local k = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
     k:SetPoint("TOP", 0, -56)
     k:SetText("Gauche : cibler · Droit : marquer")
 end

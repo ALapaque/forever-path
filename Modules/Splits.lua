@@ -11,17 +11,17 @@ local M = ns.RegisterModule({
     },
 })
 
-local f = CreateFrame("Frame", "ForeverPathSplits", UIParent, "BackdropTemplate")
+local f = CreateFrame("Frame", "QuestweaverSplits", UIParent, "BackdropTemplate")
 f:SetSize(220, 70)
 f:SetPoint("TOPRIGHT", -260, -220)
 f:Hide()
 ns.Skin(f, 0.85)
 ns.MakeMovable(f, "splits", { "TOPRIGHT", "TOPRIGHT", -260, -220 })
-f.title = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
+f.title = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallGold")
 f.title:SetPoint("TOPLEFT", 8, -6)
-f.time = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontLarge")
+f.time = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontLarge")
 f.time:SetPoint("TOPRIGHT", -8, -4)
-f.rows = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+f.rows = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
 f.rows:SetPoint("TOPLEFT", 8, -28)
 f.rows:SetPoint("RIGHT", -8, 0)
 f.rows:SetJustifyH("LEFT")
@@ -91,7 +91,7 @@ function M:OnDisable() f:Hide() end
 M.frame = f
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cffd4af37Les Tarides 16-21|r   42:10 |cff3fbf3f-1:32|r\nDurotar 1-11  1:12:40 |cffff5040+3:05|r")
 end

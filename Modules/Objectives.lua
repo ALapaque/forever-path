@@ -50,7 +50,7 @@ M:On("QUEST_LOG_UPDATE", function() M:Update() end)
 M:On("UNIT_QUEST_LOG_CHANGED", function() M:Update() end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("LEFT", 10, 0)
     fs:SetJustifyH("LEFT")
     fs:SetText(ns.Tr("|cffff7f3fFaire|r : Nettoyer le camp\n|cffffffff• Vermine kobold 6/10|r\n|cff3fbf3f• Bougie ramassée 4/4|r"))

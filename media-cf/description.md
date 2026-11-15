@@ -1,8 +1,8 @@
-# ForeverPath — Leveling Guide 1-60 for WoW Forever
+# Questweaver — Leveling Guide 1-60 for WoW Forever
 
-**Free, open source, Horde & Alliance.** ForeverPath tells you which quest to take, where to go, what to kill and where to turn in. No subscription, no locked features.
+**Free, open source, Horde & Alliance.** Questweaver tells you which quest to take, where to go, what to kill and where to turn in. No subscription, no locked features.
 
-📖 **Full documentation of every module: https://alapaque.github.io/forever-path/**
+📖 **Full documentation of every module: https://alapaque.github.io/quest-weaver/**
 
 ## Highlights
 
@@ -19,19 +19,19 @@
 
 ## Getting started
 
-Type `/fp` to show the guide and `/fp config` for options. On first launch, an assistant lets you pick a profile.
-Useful commands: `/fp session 45`, `/fp donjons`, `/fp profil`, `/fp bug` (bug report to paste on GitHub).
+Type `/qw` to show the guide and `/qw config` for options. On first launch, an assistant lets you pick a profile.
+Useful commands: `/qw session 45`, `/qw donjons`, `/qw profil`, `/qw bug` (bug report to paste on GitHub).
 
 ## Feedback
 
-Bugs and ideas: https://github.com/ALapaque/forever-path/issues — use `/fp bug` and paste the result.
+Bugs and ideas: https://github.com/ALapaque/quest-weaver/issues — use `/qw bug` and paste the result.
 Quest data: QuestieDB (GPL-3.0). Not affiliated with Blizzard Entertainment.
 
 ---
 
-# ForeverPath — guide de leveling 1-60 pour WoW Forever (FR)
+# Questweaver — guide de leveling 1-60 pour WoW Forever (FR)
 
-**Gratuit, open source, Horde et Alliance.** ForeverPath te dit quelle quête prendre, où aller, quoi tuer et où rendre.
+**Gratuit, open source, Horde et Alliance.** Questweaver te dit quelle quête prendre, où aller, quoi tuer et où rendre.
 
 - **8 routes complètes de 1 à 60** (dont les deux Éolides), de 450 à 600 quêtes chacune, nouveau contenu de Forever compris, optimisées pour l'XP par heure.
 - **Guidage** : flèche, point sur la carte et la minimap, faisceau 3D dans le monde, route tracée sur la carte.
@@ -42,4 +42,4 @@ Quest data: QuestieDB (GPL-3.0). Not affiliated with Blizzard Entertainment.
 - **Sécurité** : mode Hardcore, alertes de danger, rares sur la carte.
 - **À la carte** : 45 modules avec aperçu, 4 profils prêts à l'emploi, thèmes, couleurs pour daltoniens.
 
-Documentation complète : https://alapaque.github.io/forever-path/ · `/fp` pour le guide, `/fp config` pour les options.
+Documentation complète : https://alapaque.github.io/quest-weaver/ · `/qw` pour le guide, `/qw config` pour les options.

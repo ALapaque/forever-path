@@ -64,7 +64,7 @@ function M.preview(p)
         bar:SetPoint("TOP", 0, -6)
         x = x + 32
     end
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("BOTTOM", 0, 6)
     fs:SetText(ns.Tr("Aa — police au choix"))
 end

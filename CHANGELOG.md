@@ -1,4 +1,10 @@
-# ForeverPath
+# Questweaver
+
+## v1.1.0
+
+- **ForeverPath devient Questweaver.** Le nom était déjà pris sur CurseForge par un autre addon. Nouveau dossier `Questweaver` (et `Questweaver_Terrain`), nouvelle commande **`/qw`** (ou `/questweaver`), nouveau dépôt : https://github.com/ALapaque/quest-weaver.
+- **Mise à jour depuis ForeverPath** : supprime les dossiers `ForeverPath` et `ForeverPath_Terrain` de `Interface/AddOns`, puis installe Questweaver. Les réglages repartent de zéro (le jeu range les sauvegardes sous le nom de l'addon).
+- Messages de groupe et de version sur de nouveaux canaux, pour ne pas croiser ceux de l'autre addon ForeverPath.
 
 ## v1.0.2
 

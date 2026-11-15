@@ -18,10 +18,10 @@ DaylightUI = {
   RegisterPlugin = function(self, name, opts) registered = { name = name, opts = opts } end,
 }
 
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 
-check(registered and registered.name == "ForeverPath", "plugin enregistré auprès de Daylight UI")
+check(registered and registered.name == "Questweaver", "plugin enregistré auprès de Daylight UI")
 check(registered.opts.needs[1] == 1 and registered.opts.needs[2] == 4, "version d'API demandée 1.4")
 check(ns.Daylight.registered, "pont actif")
 check(ns.db.theme == "daylight", "thème Daylight UI adopté par défaut")
@@ -61,19 +61,19 @@ local function part() local o = { a = 1 } function o:SetAlpha(v) self.a = v end 
 SuperTrackedFrame = { Icon = part(), DistanceText = part(), Arrow = part() }
 IN_GAME_NAVIGATION_RANGE = "%s mètres"
 ns.Modules.guide3d:Refresh()
-local onUpdate = ForeverPathGuide3D._scripts and ForeverPathGuide3D._scripts.OnUpdate
+local onUpdate = QuestweaverGuide3D._scripts and QuestweaverGuide3D._scripts.OnUpdate
 check(onUpdate ~= nil, "boucle d'affichage du marqueur")
 check(SuperTrackedFrame.DistanceText.a == 0 and SuperTrackedFrame.Icon.a == 0, "marqueur de Blizzard masqué")
 SuperTrackedFrame.DistanceText.a = 1   -- le jeu le réaffiche
-onUpdate(ForeverPathGuide3D, 0.1)
+onUpdate(QuestweaverGuide3D, 0.1)
 check(SuperTrackedFrame.DistanceText.a == 0, "marqueur de Blizzard gardé masqué")
 check(ns.FormatDistance(64.6) == "65 mètres", "distance au format du jeu : "..ns.FormatDistance(64.6))
 ns.Modules.guide3d:SetOpt("hideBlizzard", false)
 check(SuperTrackedFrame.DistanceText.a == 1, "marqueur de Blizzard réaffiché sur demande")
-onUpdate(ForeverPathGuide3D, 0.1)
+onUpdate(QuestweaverGuide3D, 0.1)
 ns.Modules.guide3d:SetOpt("hideBlizzard", true)
 clamped = true
-onUpdate(ForeverPathGuide3D, 0.1)
+onUpdate(QuestweaverGuide3D, 0.1)
 check(true, "marqueur en champ et hors champ (flèche de bord)")
 ns.SetModuleEnabled("guide3d", false)
 check(not ns.IsEnabled("guide3d"), "désactivation du guidage 3D")

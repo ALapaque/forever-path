@@ -6,7 +6,7 @@ local Places = ns.Nav.Places
 local M = ns.RegisterModule({
     id = "dungeons", category = "guide", default = true,
     name = "Quêtes de donjon",
-    desc = "Quand ton niveau colle à un donjon, le guide indique combien de ses quêtes tu peux prendre avant d'y aller, et un bouton t'amène au donneur le plus proche. /fp donjons pour la liste complète.",
+    desc = "Quand ton niveau colle à un donjon, le guide indique combien de ses quêtes tu peux prendre avant d'y aller, et un bouton t'amène au donneur le plus proche. /qw donjons pour la liste complète.",
     options = {
         { key = "section", label = "Rappel dans le guide", type = "check", default = true },
     },
@@ -85,7 +85,7 @@ function M:OnEnable() self:Update() end
 function M:OnDisable() self:Update() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cffcc66ffDonjon|r Les Mortemines (17-26)\n4 quête(s) à prendre avant")
 end

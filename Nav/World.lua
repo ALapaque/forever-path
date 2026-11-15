@@ -137,8 +137,8 @@ end
 
 -- Stockage partagé (compte) : chemins appris, vols connus, foyer
 ns.On("FP_INIT", function()
-    ForeverPathNavDB = ForeverPathNavDB or {}
-    local db = ForeverPathNavDB
+    QuestweaverNavDB = QuestweaverNavDB or {}
+    local db = QuestweaverNavDB
     db.version = db.version or 1
     db.paths = db.paths or {}       -- [continent] = { nodes = {...}, edges = {...} }
     db.flights = db.flights or {}   -- [faction] = { [nodeKey] = {...} }

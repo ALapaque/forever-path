@@ -104,7 +104,7 @@ function M.preview(p)
     for i, icon in ipairs({ "INV_Misc_Food_15", "INV_Drink_07", "INV_Ammo_Arrow_02" }) do
         local t = p:CreateTexture(nil, "ARTWORK"); t:SetSize(26, 26); t:SetPoint("CENTER", (i - 2) * 36, 6)
         t:SetTexture("Interface\\Icons\\" .. icon)
-        local n = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+        local n = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
         n:SetPoint("TOP", t, "BOTTOM", 0, -2); n:SetText(({ "20", "20", "1000" })[i])
     end
 end

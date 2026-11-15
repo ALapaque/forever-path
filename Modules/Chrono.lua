@@ -1,11 +1,11 @@
 local _, ns = ...
 
 -- Chrono et rapport de parcours : temps de jeu par niveau (records entre tes personnages) et
--- rapport anonyme à partager (/fp rapport) pour améliorer la route avec de vraies parties.
+-- rapport anonyme à partager (/qw rapport) pour améliorer la route avec de vraies parties.
 local M = ns.RegisterModule({
     id = "chrono", category = "community", default = true,
     name = ns.Tr("Chrono et rapport de parcours"),
-    desc = ns.Tr("Mesure ton temps de jeu par niveau et le compare à ton record (tous personnages). /fp chrono pour le tableau à partager, /fp rapport pour envoyer un rapport anonyme qui aide à améliorer la route."),
+    desc = ns.Tr("Mesure ton temps de jeu par niveau et le compare à ton record (tous personnages). /qw chrono pour le tableau à partager, /qw rapport pour envoyer un rapport anonyme qui aide à améliorer la route."),
     options = {
         { key = "show", label = ns.Tr("Afficher le chrono dans le guide"), type = "check", default = true },
     },
@@ -95,7 +95,7 @@ end
 -- Tableau des temps par tranche de 10 niveaux
 function M.Table()
     local s, rec = stats(), records()
-    local lines = { ("ForeverPath %s : %s %s, niveau %d, %s de jeu, %d mort(s)"):format(ns.VERSION or "",
+    local lines = { ("Questweaver %s : %s %s, niveau %d, %s de jeu, %d mort(s)"):format(ns.VERSION or "",
         UnitRace("player") or "", UnitClass("player") or "", ns.PlayerLevel(), M.Fmt(s.played), s.deaths), "" }
     lines[#lines + 1] = "Niveaux    Temps     Record"
     for a = 1, 51, 10 do
@@ -139,7 +139,7 @@ function M.Report()
     return table.concat(out, "\n")
 end
 
-ns.SlashExt.chrono = function() ns.ShowExport(M.Table(), ns.Tr("Chrono ForeverPath")) end
+ns.SlashExt.chrono = function() ns.ShowExport(M.Table(), ns.Tr("Chrono Questweaver")) end
 ns.SlashExt.rapport = function()
     ns.ShowExport(M.Report(), ns.Tr("Rapport de parcours (Ctrl+C puis colle-le sur GitHub ou Discord)"))
 end
@@ -150,7 +150,7 @@ function M:OnEnable() self:Update() end
 function M:OnDisable() self:Update() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText(ns.Tr("|cffd4af37Chrono|r 6h12 de jeu\nrecord du niv. 21 dans 14 min\n\n/fp rapport"))
 end

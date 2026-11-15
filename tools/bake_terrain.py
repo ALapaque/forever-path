@@ -1,4 +1,4 @@
-"""Cuisson du terrain ForeverPath : fichiers ADT bruts (export « Raw » de wow.export) -> zones praticables.
+"""Cuisson du terrain Questweaver : fichiers ADT bruts (export « Raw » de wow.export) -> zones praticables.
 
 Pour chaque tuile, on lit les morceaux de terrain (MCNK) : hauteurs (MCVT), trous, et l'eau (MH2O).
 On en déduit une grille de cases de 8,33 yards (4 x 4 par morceau, 64 x 64 par tuile) :
@@ -6,10 +6,10 @@ On en déduit une grille de cases de 8,33 yards (4 x 4 par morceau, 64 x 64 par 
     1 = sol praticable
     2 = eau (on nage : plus lent)
 La grille est compressée (RLE) et écrite dans un addon de données chargé à la demande :
-    ForeverPath_Terrain/Data_<continent>.lua
+    Questweaver_Terrain/Data_<continent>.lua
 
 Usage :
-    python3 tools/bake_terrain.py --out ForeverPath_Terrain --map Kalimdor=1 <dossier Kalimdor> --map Azeroth=0 <dossier Azeroth>
+    python3 tools/bake_terrain.py --out Questweaver_Terrain --map Kalimdor=1 <dossier Kalimdor> --map Azeroth=0 <dossier Azeroth>
     (option --preview : écrit aussi un PNG d'aperçu par continent)
 Les fichiers sont lus comme des données binaires ; rien n'est exécuté.
 """
@@ -217,8 +217,8 @@ def bake(maps, out_dir, preview=False):
         lines = [
             "-- GÉNÉRÉ par tools/bake_terrain.py — zones praticables (%s, continent %d)." % (name, cont),
             "-- Dérivé des fichiers de terrain du client WoW Forever. Ne pas modifier à la main.",
-            "local T = ForeverPathTerrainData or {}",
-            "ForeverPathTerrainData = T",
+            "local T = QuestweaverTerrainData or {}",
+            "QuestweaverTerrainData = T",
             "T[%d] = T[%d] or {}" % (cont, cont),
             "local d = T[%d]" % cont,
         ]
@@ -258,7 +258,7 @@ def write_preview(tiles, path, scale=4):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out", default="ForeverPath_Terrain")
+    ap.add_argument("--out", default="Questweaver_Terrain")
     ap.add_argument("--preview", action="store_true")
     ap.add_argument("items", nargs="*")
     ap.add_argument("--map", action="append", default=[], help="Nom=continent (suivi du dossier en argument)")

@@ -20,7 +20,7 @@ function M:OnDisable() ns.Engine.Refresh() end
 function M:OnOptionChanged() ns.Engine.Refresh() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cff999999Prendre : Les loups affamés (niv. 4)|r\n|cff3fbf3fsautée : trop basse|r")
 end

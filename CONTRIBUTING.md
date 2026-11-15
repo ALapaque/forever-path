@@ -1,17 +1,17 @@
-# Contribuer à ForeverPath
+# Contribuer à Questweaver
 
 Merci ! Le plus utile aujourd'hui : **signaler les bugs** et **enregistrer les routes des nouvelles zones de Forever**.
 
 ## Signaler un bug
 Ouvre un ticket « Bug » et joins :
 - l'erreur Lua complète (installe **BugSack** + **BugGrabber** pour la copier) ;
-- le résultat de `/fp where` ;
-- le segment de route et l'étape (`/fp guides`, ou le titre de la fenêtre du guide).
+- le résultat de `/qw where` ;
+- le segment de route et l'étape (`/qw guides`, ou le titre de la fenêtre du guide).
 
 ## Proposer ou corriger une route
-1. Active le module **Enregistreur de route** dans `/fp config` (ou `/fp rec on`).
-2. Joue la zone normalement. Ajoute des notes avec `/fp note Prends le bateau au quai`.
-3. `/fp export`, puis copie le texte (Ctrl+A, Ctrl+C).
+1. Active le module **Enregistreur de route** dans `/qw config` (ou `/qw rec on`).
+2. Joue la zone normalement. Ajoute des notes avec `/qw note Prends le bateau au quai`.
+3. `/qw export`, puis copie le texte (Ctrl+A, Ctrl+C).
 4. Ouvre un ticket « Route » et colle-le, ou fais une pull request avec un fichier dans `Guides/`, ajouté au `.toc`.
 
 Format complet des étapes : voir le README (section DSL) et l'en-tête de `Parser.lua`.
@@ -51,4 +51,4 @@ Tu peux aussi le lancer à la main : onglet **Actions** > **Version** > **Run wo
 
 Pousser un tag `vX.Y.Z` toi-même fonctionne toujours (workflow **Release**).
 
-CurseForge et Wago : ajoute les secrets `CF_API_KEY` / `WAGO_API_TOKEN` dans GitHub, et les lignes `## X-Curse-Project-ID` / `## X-Wago-ID` dans `ForeverPath.toc`. Sans eux, seule la release GitHub est publiée.
+CurseForge et Wago : ajoute les secrets `CF_API_KEY` / `WAGO_API_TOKEN` dans GitHub, et les lignes `## X-Curse-Project-ID` / `## X-Wago-ID` dans `Questweaver.toc`. Sans eux, seule la release GitHub est publiée.

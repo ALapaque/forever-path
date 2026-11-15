@@ -1,0 +1,12 @@
+## Interface: 16001
+## Title: |cffd4af37Questweaver|r - Terrain
+## Notes: Zones praticables pour les itinéraires de Questweaver (chargé à la demande)
+## Notes-frFR: Zones praticables pour les itinéraires de Questweaver (chargé à la demande)
+## Author: Arlioz
+## Version: @project-version@
+## LoadOnDemand: 1
+## Dependencies: Questweaver
+## X-License: GPL-3.0
+
+Data_0.lua
+Data_1.lua

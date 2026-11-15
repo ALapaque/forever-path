@@ -60,7 +60,7 @@ function R.Color(z, lvl)
 end
 
 -- Panneau
-local p = CreateFrame("Frame", "ForeverPathZonePanel", UIParent, "BackdropTemplate")
+local p = CreateFrame("Frame", "QuestweaverZonePanel", UIParent, "BackdropTemplate")
 p:SetSize(330, 10)
 p:Hide()
 ns.Skin(p, 0.92, 0.6)
@@ -77,11 +77,11 @@ function p:Refresh()
         n = n + 1
         local fs = self.lines[n]
         if not fs then
-            fs = self:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+            fs = self:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
             fs:SetJustifyH("LEFT"); fs:SetWordWrap(true); fs:SetWidth(310)
             self.lines[n] = fs
         end
-        fs:SetFontObject(header and "ForeverPathFontNormal" or "ForeverPathFontSmall")
+        fs:SetFontObject(header and "QuestweaverFontNormal" or "QuestweaverFontSmall")
         fs:ClearAllPoints()
         fs:SetPoint("TOPLEFT", 10, y)
         fs:SetText(text)
@@ -146,7 +146,7 @@ end)
 M:On("ZONE_CHANGED_NEW_AREA", function() if p:IsShown() then p:Refresh() end end)
 
 function M.preview(pp)
-    local fs = pp:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = pp:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("LEFT", 10, 0)
     fs:SetJustifyH("LEFT")
     fs:SetText(ns.Tr("|cffffd100Zones (niv. 38)|r\n|cffffff0036-44|r Rives Claires |cff66ccffNOUVEAU|r\n|cffffff0035-45|r Terres ingrates\n|cffcc66ff35-40|r La Cité engloutie"))

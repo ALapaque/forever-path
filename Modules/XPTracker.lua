@@ -49,7 +49,7 @@ end)
 M:On("FP_STEP_CHANGED", function() M:Update() end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText(ns.Tr("|cffcc66ffXP|r 18.4k/h\nniveau dans 23 min  •  61%"))
 end

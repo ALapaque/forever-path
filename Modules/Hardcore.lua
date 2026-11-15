@@ -39,7 +39,7 @@ function M:OnDisable() ns.Engine.Refresh() end
 function M:OnOptionChanged() ns.Engine.Refresh() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:14|t Route prudente\n|cff999999Quête dangereuse sautée|r")
 end

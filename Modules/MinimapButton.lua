@@ -5,7 +5,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "minimapbutton", category = "look", default = true,
     name = "Bouton de la minimap",
-    desc = "Un bouton ForeverPath autour de la minimap (glisse-le pour le placer) : clic gauche pour afficher le guide, clic droit pour les options. L'étape en cours s'affiche aussi dans les barres d'infos (Titan, ElvUI…) via LibDataBroker.",
+    desc = "Un bouton Questweaver autour de la minimap (glisse-le pour le placer) : clic gauche pour afficher le guide, clic droit pour les options. L'étape en cours s'affiche aussi dans les barres d'infos (Titan, ElvUI…) via LibDataBroker.",
     options = {},
 })
 
@@ -16,14 +16,14 @@ local function onClick(_, mouse)
     elseif ns.Guide.enabled then ns.Guide:Toggle() else ns.SetModuleEnabled("guide", true) end
 end
 local function tooltip(tt)
-    tt:AddLine("ForeverPath")
+    tt:AddLine("Questweaver")
     local _, st = ns.Engine.Current()
     if st and ns.Guide then tt:AddLine((ns.Guide.StepLabel(st)), 1, 1, 1, true) end
     tt:AddLine(ns.Tr("Clic gauche : guide  •  Clic droit : options"), 0.6, 0.6, 0.6)
 end
 
 -- bouton maison (pas besoin de bibliothèque)
-local b = CreateFrame("Button", "ForeverPathMinimapButton", Minimap)
+local b = CreateFrame("Button", "QuestweaverMinimapButton", Minimap)
 b:SetSize(31, 31)
 b:SetFrameStrata("MEDIUM")
 b:SetFrameLevel(8)
@@ -69,14 +69,14 @@ local ldb
 local function initLDB()
     local LDB = LibStub and LibStub("LibDataBroker-1.1", true)
     if not LDB or ldb then return end
-    ldb = LDB:NewDataObject("ForeverPath", { type = "launcher", icon = ICON, label = "ForeverPath", text = "ForeverPath",
+    ldb = LDB:NewDataObject("Questweaver", { type = "launcher", icon = ICON, label = "Questweaver", text = "Questweaver",
         OnClick = onClick, OnTooltipShow = tooltip })
 end
 
 function M:Update()
     if ldb then
         local g, _, i = ns.Engine.Current()
-        ldb.text = g and ("%d/%d"):format(i, #g.steps) or "ForeverPath"
+        ldb.text = g and ("%d/%d"):format(i, #g.steps) or "Questweaver"
     end
 end
 

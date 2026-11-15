@@ -9,14 +9,14 @@ local M = ns.RegisterModule({
     },
 })
 
-local f = CreateFrame("Frame", "ForeverPathModelFrame", UIParent)
+local f = CreateFrame("Frame", "QuestweaverModelFrame", UIParent)
 f:SetSize(120, 140)
 f:Hide()
 ns.Skin(f, 0.75, 0.5)
 f.model = CreateFrame("PlayerModel", nil, f)
 f.model:SetPoint("TOPLEFT", 3, -3)
 f.model:SetPoint("BOTTOMRIGHT", -3, 16)
-f.name = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+f.name = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
 f.name:SetPoint("BOTTOM", 0, 3)
 f.name:SetWidth(114)
 f.name:SetWordWrap(false)

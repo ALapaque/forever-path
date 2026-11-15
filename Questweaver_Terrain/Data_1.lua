@@ -1,7 +1,7 @@
 -- GÉNÉRÉ par tools/bake_terrain.py — zones praticables (Kalimdor, continent 1).
 -- Dérivé des fichiers de terrain du client WoW Forever. Ne pas modifier à la main.
-local T = ForeverPathTerrainData or {}
-ForeverPathTerrainData = T
+local T = QuestweaverTerrainData or {}
+QuestweaverTerrainData = T
 T[1] = T[1] or {}
 local d = T[1]
 d["0:0"]="czzc45"

@@ -2,7 +2,7 @@ local _, ns = ...
 local L = ns.L
 
 -- Enregistreur : joue normalement, l'addon note chaque quête prise / terminée / rendue
--- (avec position et npcID), puis /fp export génère une route au format DSL.
+-- (avec position et npcID), puis /qw export génère une route au format DSL.
 -- Indispensable pour les nouvelles zones de Forever, absentes des bases de données.
 local M = ns.RegisterModule({
     id = "recorder", category = "community", default = false,
@@ -60,7 +60,7 @@ function M.Note(text)
 end
 function M.Export()
     local header = {
-        ns.Tr("# Route enregistrée avec ForeverPath ") .. ns.VERSION,
+        ns.Tr("# Route enregistrée avec Questweaver ") .. ns.VERSION,
         ("# %s %s, faction %s"):format(ns.PlayerRace() or "?", ns.PlayerClass() or "?", ns.PlayerFaction() or "?"),
         "",
     }
@@ -102,7 +102,7 @@ function M:OnEnable()
         btn = ns.Guide:AddButton("rec", nil, 22, function() M.Set(not M.IsOn()); M:Paint() end, function(tt)
             tt:SetText(ns.Tr("Enregistreur de route"), 1, 1, 1)
             tt:AddLine(M.IsOn() and ns.Tr("|cffff4040Enregistrement en cours|r — clic pour arrêter") or ns.Tr("Clic pour enregistrer tes quêtes"), 0.8, 0.8, 0.8, true)
-            tt:AddLine(ns.Tr("/fp export pour copier la route"), 0.6, 0.6, 0.6)
+            tt:AddLine(ns.Tr("/qw export pour copier la route"), 0.6, 0.6, 0.6)
         end, ns.MEDIA .. "dot")
     end
     if btn then btn:Show(); ns.Guide:Layout(); self:Paint() end
@@ -114,7 +114,7 @@ function M:Paint()
 end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetJustifyH("LEFT")
     fs:SetText("|T" .. ns.MEDIA .. "dot:12:12:0:0:32:32:0:32:0:32:255:50:50|t REC\nA 9601 @42.1,55.3 id=...\nC 9601 @45.0,61.2")

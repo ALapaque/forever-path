@@ -6,7 +6,7 @@ local Nav = ns.Nav
 local M = ns.RegisterModule({
     id = "session", category = "comfort", default = true,
     name = ns.Tr("Session de jeu"),
-    desc = ns.Tr("Indique le temps dont tu disposes (bouton horloge ou /fp session 45) : ForeverPath estime jusqu'où tu iras, propose de t'arrêter juste après un rendu de quête, puis te guide vers l'auberge la plus proche."),
+    desc = ns.Tr("Indique le temps dont tu disposes (bouton horloge ou /qw session 45) : Questweaver estime jusqu'où tu iras, propose de t'arrêter juste après un rendu de quête, puis te guide vers l'auberge la plus proche."),
     options = {
         { key = "minutes", label = ns.Tr("Durée par défaut (minutes)"), type = "slider", min = 15, max = 240, step = 15, default = 60 },
         { key = "inn", label = ns.Tr("Guider vers l'auberge à la fin"), type = "check", default = true },
@@ -151,7 +151,7 @@ ns.SlashExt.session = function(arg)
 end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText(ns.Tr("|cff66ccffSession|r 42 min restantes\narrêt après l'étape 18\n\n|cff66ccffDétour :|r Auberge"))
 end

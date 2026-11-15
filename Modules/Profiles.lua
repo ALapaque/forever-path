@@ -5,7 +5,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "profiles", category = "look", default = true, locked = true,
     name = "Profils",
-    desc = "Quatre profils prêts à l'emploi (Découverte, Speedrun, Hardcore, Minimal) qui cochent les bons modules d'un coup, proposés au premier lancement. /fp profil <nom>, /fp profil export pour partager tes réglages, /fp profil import pour les reprendre.",
+    desc = "Quatre profils prêts à l'emploi (Découverte, Speedrun, Hardcore, Minimal) qui cochent les bons modules d'un coup, proposés au premier lancement. /qw profil <nom>, /qw profil export pour partager tes réglages, /qw profil import pour les reprendre.",
     options = {},
 })
 
@@ -92,18 +92,18 @@ end
 local wiz
 function M.ShowWizard()
     if not wiz then
-        wiz = CreateFrame("Frame", "ForeverPathWizard", UIParent, "BackdropTemplate")
+        wiz = CreateFrame("Frame", "QuestweaverWizard", UIParent, "BackdropTemplate")
         wiz:SetSize(560, 330)
         wiz:SetPoint("CENTER", 0, 60)
         wiz:SetFrameStrata("DIALOG")
         ns.Skin(wiz, 0.96)
-        tinsert(UISpecialFrames, "ForeverPathWizard")
-        local t = wiz:CreateFontString(nil, "OVERLAY", "ForeverPathFontHuge")
+        tinsert(UISpecialFrames, "QuestweaverWizard")
+        local t = wiz:CreateFontString(nil, "OVERLAY", "QuestweaverFontHuge")
         t:SetPoint("TOP", 0, -18)
-        t:SetText(ns.Tr("Bienvenue dans ForeverPath"))
-        local s = wiz:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+        t:SetText(ns.Tr("Bienvenue dans Questweaver"))
+        local s = wiz:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
         s:SetPoint("TOP", t, "BOTTOM", 0, -6)
-        s:SetText(ns.Tr("Choisis un profil pour commencer : tout reste modifiable ensuite (/fp config)."))
+        s:SetText(ns.Tr("Choisis un profil pour commencer : tout reste modifiable ensuite (/qw config)."))
         for i, p in ipairs(M.PRESETS) do
             local b = CreateFrame("Button", nil, wiz, "BackdropTemplate")
             b:SetSize(250, 100)
@@ -111,9 +111,9 @@ function M.ShowWizard()
             ns.Skin(b, 0.6)
             local ic = b:CreateTexture(nil, "ARTWORK")
             ic:SetSize(34, 34); ic:SetPoint("TOPLEFT", 10, -10); ic:SetTexture(p.icon)
-            local n = b:CreateFontString(nil, "OVERLAY", "ForeverPathFontLarge")
+            local n = b:CreateFontString(nil, "OVERLAY", "QuestweaverFontLarge")
             n:SetPoint("LEFT", ic, "RIGHT", 10, 0); n:SetText(p.name)
-            local d = b:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+            local d = b:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
             d:SetPoint("TOPLEFT", 10, -50); d:SetPoint("RIGHT", -10, 0); d:SetJustifyH("LEFT"); d:SetText(p.desc)
             b:SetScript("OnEnter", function(self) self:SetBackdropBorderColor(0.83, 0.69, 0.22, 1) end)
             b:SetScript("OnLeave", function(self) ns.ReSkin(self) end)
@@ -129,10 +129,10 @@ end
 
 ns.SlashExt.profil = function(arg)
     local cmd = (arg or ""):match("^(%S*)")
-    if cmd == "export" then ns.ShowExport(M.Export(), ns.Tr("Profil ForeverPath (Ctrl+A, Ctrl+C)"))
+    if cmd == "export" then ns.ShowExport(M.Export(), ns.Tr("Profil Questweaver (Ctrl+A, Ctrl+C)"))
     elseif cmd == "import" then ns.ShowImport(ns.Tr("Colle le profil puis Importer"), M.Import)
     elseif cmd == "" then M.ShowWizard()
-    elseif not M.Apply(cmd) then ns.Print("/fp profil decouverte | speedrun | hardcore | minimal | export | import") end
+    elseif not M.Apply(cmd) then ns.Print("/qw profil decouverte | speedrun | hardcore | minimal | export | import") end
 end
 ns.SlashExt.profile = ns.SlashExt.profil
 
@@ -141,6 +141,6 @@ function M.preview(p)
         local ic = p:CreateTexture(nil, "ARTWORK")
         ic:SetSize(26, 26); ic:SetPoint("CENTER", (i - 2.5) * 34, 6); ic:SetTexture(pr.icon)
     end
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
-    fs:SetPoint("BOTTOM", 0, 8); fs:SetText("/fp profil")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
+    fs:SetPoint("BOTTOM", 0, 8); fs:SetText("/qw profil")
 end

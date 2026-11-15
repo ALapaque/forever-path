@@ -1,11 +1,11 @@
 # Empaquetage par BigWigsMods/packager (CurseForge, Wago, GitHub Releases)
-package-as: ForeverPath
+package-as: Questweaver
 
 enable-nolib-creation: no
 
 # deuxième addon livré dans le même zip : les données de terrain (chargées à la demande)
 move-folders:
-  ForeverPath/ForeverPath_Terrain: ForeverPath_Terrain
+  Questweaver/Questweaver_Terrain: Questweaver_Terrain
 
 ignore:
   - tests

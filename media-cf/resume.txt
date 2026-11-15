@@ -2,7 +2,7 @@ Résumé (champ "Summary", ~1 ligne, en anglais) :
 Free, modular 1-60 leveling guide for WoW Forever: optimized routes, arrow, 3D guidance, journeys and 45 pick-and-choose modules.
 
 Nom du projet :
-ForeverPath - Leveling Guide 1-60
+Questweaver - Leveling Guide 1-60
 
 Catégories :
 Quests & Leveling (principale), Map & Minimap
@@ -11,6 +11,6 @@ Licence :
 GNU General Public License version 3 (GPLv3)
 
 Liens :
-Source : https://github.com/ALapaque/forever-path
-Issues : https://github.com/ALapaque/forever-path/issues
-Wiki / documentation : https://alapaque.github.io/forever-path/
+Source : https://github.com/ALapaque/quest-weaver
+Issues : https://github.com/ALapaque/quest-weaver/issues
+Wiki / documentation : https://alapaque.github.io/quest-weaver/

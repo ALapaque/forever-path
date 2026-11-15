@@ -45,11 +45,11 @@ local callbacks = { DestinationChanged = {}, JourneyChanged = {} }
 local function fire(event, ...)
     for _, fn in ipairs(callbacks[event]) do pcall(fn, ...) end
     if EventRegistry and EventRegistry.TriggerEvent then
-        pcall(EventRegistry.TriggerEvent, EventRegistry, "ForeverPath." .. event, ...)
+        pcall(EventRegistry.TriggerEvent, EventRegistry, "Questweaver." .. event, ...)
     end
 end
 
-ForeverPathAPI = {
+QuestweaverAPI = {
     version = 1,
     -- Destination de l'étape en cours : { mapID, x, y (0..1), title, questID, type }
     GetDestination = function()
@@ -67,7 +67,7 @@ ForeverPathAPI = {
         for _, l in ipairs(journey.legs) do legs[#legs + 1] = { mode = l.mode, time = l.time, toName = l.toName } end
         return { total = journey.total, legs = legs }
     end,
-    -- Événements : "DestinationChanged", "JourneyChanged". Aussi via EventRegistry ("ForeverPath.<event>").
+    -- Événements : "DestinationChanged", "JourneyChanged". Aussi via EventRegistry ("Questweaver.<event>").
     RegisterCallback = function(event, fn)
         if callbacks[event] and type(fn) == "function" then table.insert(callbacks[event], fn) return true end
     end,
@@ -147,7 +147,7 @@ local function refine(j)
                             drive()
                         end
                         M:Render()
-                        fire("JourneyChanged", ForeverPathAPI.GetJourney())
+                        fire("JourneyChanged", QuestweaverAPI.GetJourney())
                     end)
                 end
             end
@@ -183,7 +183,7 @@ function M:Replan(reason)
         ns.Waypoint:Place(false)     -- pas d'itinéraire : point directement sur l'étape
     end
     self:Render()
-    fire("JourneyChanged", ForeverPathAPI.GetJourney())
+    fire("JourneyChanged", QuestweaverAPI.GetJourney())
 end
 
 ---------------------------------------------------------------------------
@@ -398,7 +398,7 @@ M:On("FP_STEP_CHANGED", function()
         lastTargetKey = key
         external = false
         M:Replan(ns.Tr("étape"))
-        fire("DestinationChanged", ForeverPathAPI.GetDestination())
+        fire("DestinationChanged", QuestweaverAPI.GetDestination())
     end
 end)
 M:On("FP_TICK", function() M:Tick() end)
@@ -430,7 +430,7 @@ function M.preview(p)
             d:SetVertexColor(c[1], c[2], c[3])
         end
     end
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("BOTTOMRIGHT", -4, 4)
     fs:SetJustifyH("RIGHT")
     fs:SetText("|cff4de65aconnu|r  |cffff8c26inconnu|r  |cff59b3ffvol|r")

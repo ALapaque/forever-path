@@ -1,4 +1,4 @@
-"""Génère les textures TGA de ForeverPath (flèche, halo). Usage : python3 make_media.py <dossier Media>"""
+"""Génère les textures TGA de Questweaver (flèche, halo). Usage : python3 make_media.py <dossier Media>"""
 import math, struct, sys
 
 def write_tga(path, w, h, pixel):

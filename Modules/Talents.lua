@@ -42,7 +42,7 @@ function M:OnEnable() self:Update() end
 function M:OnDisable() self:Update() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|TInterface\\Icons\\Ability_Marksmanship:16|t |cff66ccffTalents|r\n2 point(s) à dépenser")
 end

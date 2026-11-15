@@ -50,7 +50,7 @@ function M.StepLabel(step)
 end
 
 ---------------------------------------------------------------------------
-local f = CreateFrame("Frame", "ForeverPathFrame", UIParent, "BackdropTemplate")
+local f = CreateFrame("Frame", "QuestweaverFrame", UIParent, "BackdropTemplate")
 M.frame = f
 f:SetSize(330, 120)
 f:Hide()
@@ -89,13 +89,13 @@ f:SetScript("OnSizeChanged", function(self, w)
     if w ~= lastW then lastW = w; if M.enabled then M:Layout() end end
 end)
 
-f.title = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
+f.title = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallGold")
 f.title:SetPoint("TOPLEFT", 8, -6)
 f.title:SetPoint("TOPRIGHT", -84, -6)
 f.title:SetJustifyH("LEFT")
 f.title:SetWordWrap(false)
 
-f.progress = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+f.progress = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
 f.progress:SetPoint("TOPRIGHT", -26, -6)
 
 f.cfg = CreateFrame("Button", nil, f)
@@ -105,7 +105,7 @@ f.cfg:SetNormalTexture("Interface\\Buttons\\UI-OptionsButton")
 f.cfg:SetScript("OnClick", function() ns.Options:Open() end)
 f.cfg:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(ns.Tr("Options de ForeverPath"), 1, 1, 1)
+    GameTooltip:SetText(ns.Tr("Options de Questweaver"), 1, 1, 1)
     GameTooltip:AddLine("Modules, apparence, route", 0.7, 0.7, 0.7)
     GameTooltip:Show()
 end)
@@ -125,13 +125,13 @@ f.icon = f:CreateTexture(nil, "ARTWORK")
 f.icon:SetSize(28, 28)
 f.icon:SetPoint("TOPLEFT", 8, -30)
 
-f.text = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontHighlight")
+f.text = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontHighlight")
 f.text:SetPoint("TOPLEFT", f.icon, "TOPRIGHT", 8, 0)
 f.text:SetPoint("RIGHT", f, "RIGHT", -8, 0)
 f.text:SetJustifyH("LEFT")
 f.text:SetWordWrap(true)
 
-f.sub = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+f.sub = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
 f.sub:SetPoint("TOPLEFT", f.text, "BOTTOMLEFT", 0, -3)
 f.sub:SetPoint("RIGHT", f, "RIGHT", -8, 0)
 f.sub:SetJustifyH("LEFT")
@@ -146,7 +146,7 @@ function M:SetSection(id, order, text)
     M:Layout()
 end
 
-f.upcoming = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+f.upcoming = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
 f.upcoming:SetJustifyH("LEFT")
 f.upcoming:SetWordWrap(true)
 
@@ -155,7 +155,7 @@ f.prev:SetPoint("BOTTOMLEFT", 6, 6)
 f.next = ns.Button(f, ">", 26, 20, function() ns.Engine.Next() end,
     ns.Tr("Étape suivante\n|cffaaaaaaPasse cette étape (elle reste passée après un /reload)|r"))
 f.next:SetPoint("LEFT", f.prev, "RIGHT", 3, 0)
-f.dist = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
+f.dist = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallGold")
 f.dist:SetPoint("LEFT", f.next, "RIGHT", 8, 0)
 
 -- boutons optionnels (les modules les montrent/cachent)
@@ -178,7 +178,7 @@ function M:Layout()
     for i, d in ipairs(list) do
         local fs = f.sections[i]
         if not fs then
-            fs = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+            fs = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
             fs:SetJustifyH("LEFT")
             fs:SetWordWrap(true)
             f.sections[i] = fs
@@ -219,7 +219,7 @@ function M:Update()
     if not self.enabled then return end
     local g, step, i = ns.Engine.Current()
     if not g then
-        f.title:SetText("ForeverPath")
+        f.title:SetText("Questweaver")
         f.progress:SetText("")
         f.text:SetText(L.NO_GUIDE)
         f.sub:SetText("")

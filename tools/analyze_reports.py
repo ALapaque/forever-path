@@ -1,4 +1,4 @@
-"""Analyse les rapports de parcours (/fp rapport) envoyés par les joueurs.
+"""Analyse les rapports de parcours (/qw rapport) envoyés par les joueurs.
 
 Chaque fichier peut contenir un ou plusieurs rapports (blocs qui commencent par « FPR1; »).
 Sortie : segments les plus lents, les plus mortels, étapes les plus souvent passées, temps par niveau.

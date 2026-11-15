@@ -1,12 +1,12 @@
-# ForeverPath — guide de leveling 1-60 gratuit et modulaire pour WoW Forever
+# Questweaver — guide de leveling 1-60 gratuit et modulaire pour WoW Forever
 
-**Site et documentation des modules (FR/EN) : https://alapaque.github.io/forever-path/**
+**Site et documentation des modules (FR/EN) : https://alapaque.github.io/quest-weaver/**
 
-ForeverPath te donne un chemin rapide et simple de 1 à 60, Horde et Alliance : quelle quête prendre, où aller, quoi tuer, où rendre. Chaque fonction est un module que tu actives ou non depuis un panneau d'options avec aperçu.
+Questweaver te donne un chemin rapide et simple de 1 à 60, Horde et Alliance : quelle quête prendre, où aller, quoi tuer, où rendre. Chaque fonction est un module que tu actives ou non depuis un panneau d'options avec aperçu.
 
 ## Installation
-1. Copie le dossier `ForeverPath` dans le dossier `Interface/AddOns` de ton installation **Forever**.
-2. Lance le jeu : le panneau d'options s'ouvre la première fois. Ensuite : `/fp config`.
+1. Copie le dossier `Questweaver` dans le dossier `Interface/AddOns` de ton installation **Forever**.
+2. Lance le jeu : le panneau d'options s'ouvre la première fois. Ensuite : `/qw config`.
 
 ## Routes
 | Parcours | Départ | Quêtes |
@@ -23,7 +23,7 @@ Les nouvelles zones de Forever font partie des parcours : Shen'dralas (40-45), R
 
 Les routes sont générées à partir de **QuestieDB (données Forever, nouveau contenu compris : base générée, corrections et traces QuestieTrace)** par `tools/gen_routes.py`. Le script simule un personnage (niveau, XP, journal de 20 quêtes, prérequis) et enchaîne à chaque fois l'action la plus proche : prendre, faire, rendre. Il écarte les quêtes élites, de classe, de métier et de réputation, ainsi que les objets de quête. La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées, et le bon segment se charge tout seul si tu montes plus vite. Les paliers « Monte au niveau X » se valident d'eux-mêmes si tu as déjà le niveau.
 
-Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/fp collecte`, dossier `Collected/`).
+Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/qw collecte`, dossier `Collected/`).
 
 ## Apparence
 Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin officiel : couleurs et police de Daylight UI en direct, si installé), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
@@ -58,11 +58,11 @@ Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin offici
 | Enregistreur de route | — |
 
 ## Commandes
-`/fp` afficher/masquer · `/fp config` options · `/fp next` / `/fp prev` · `/fp zones` · `/fp guides` · `/fp load <id>` · `/fp auto` (route automatique) · `/fp session [minutes|stop]` · `/fp chrono` · `/fp rapport` · `/fp rec on|off|clear` · `/fp note <texte>` · `/fp export` · `/fp lock` · `/fp reset` · `/fp paths …` · `/fp where` (debug : carte, coordonnées, npcID de la cible).
+`/qw` afficher/masquer · `/qw config` options · `/qw next` / `/qw prev` · `/qw zones` · `/qw guides` · `/qw load <id>` · `/qw auto` (route automatique) · `/qw session [minutes|stop]` · `/qw chrono` · `/qw rapport` · `/qw rec on|off|clear` · `/qw note <texte>` · `/qw export` · `/qw lock` · `/qw reset` · `/qw paths …` · `/qw where` (debug : carte, coordonnées, npcID de la cible).
 
 L'interface est en français, et en anglais sur tous les autres clients (`Locale_enUS.lua`, vérifié en CI par `tools/check_locale.py`).
 
-Raccourcis clavier : Options > Raccourcis > ForeverPath (étape suivante/précédente, Cibler, Objet de quête).
+Raccourcis clavier : Options > Raccourcis > Questweaver (étape suivante/précédente, Cibler, Objet de quête).
 
 ## Format des routes (DSL)
 ```
@@ -86,11 +86,11 @@ python3 -I gen_world.py ../Data/World.lua                        # maîtres, aub
 ```
 Chaque génération affiche ses mesures (temps estimé jusqu'au 60, XP/h, distance, farm) et l'écart avec `tools/route_metrics.json`. Des réglages peuvent être testés sans rien écrire : `gen_routes.py … --dry GREY=9 HUB=100`.
 
-Les rapports des joueurs (`/fp rapport`) s'analysent avec `python3 -I tools/analyze_reports.py rapports/*.txt`.
+Les rapports des joueurs (`/qw rapport`) s'analysent avec `python3 -I tools/analyze_reports.py rapports/*.txt`.
 Les données sont lues comme de simples données : aucun code Lua téléchargé n'est exécuté.
 
 ## Intégrations
-API publique `ForeverPathAPI`, Naowh Forever, Daylight UI, TomTom : voir [INTEGRATIONS.md](INTEGRATIONS.md).
+API publique `QuestweaverAPI`, Naowh Forever, Daylight UI, TomTom : voir [INTEGRATIONS.md](INTEGRATIONS.md).
 
 ## Contribuer
 Bugs, routes des nouvelles zones, nouveaux modules : voir [CONTRIBUTING.md](CONTRIBUTING.md). Chaque push lance luacheck et les tests. Une nouvelle section `## vX.Y.Z` en tête du `CHANGELOG.md` publie automatiquement la version.

@@ -56,7 +56,7 @@ M:On("GOSSIP_SHOW", function()
 end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|TInterface\\Icons\\Ability_Mount_Wyvern_01:16|t Vol vers\nLa Croisée")
 end

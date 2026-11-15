@@ -17,7 +17,7 @@ end
 print("étapes totales", nsteps, "sans carte", bad)
 check(bad == 0, "toutes les étapes ont une carte connue")
 
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 check(ns.cdb.guideId == "alliance-human-01-elwynn", "humain niveau 1 -> Elwynn ("..tostring(ns.cdb.guideId)..")")
 local g, step = ns.Engine.Current()
@@ -105,7 +105,7 @@ C_TooltipInfo = { GetUnit = function() return { lines = { { type = 8, leftText =
 check(NP.QuestState("nameplate1") == "todo", "objectif en cours détecté")
 
 -- slash
-SlashCmdList.FOREVERPATH("where"); SlashCmdList.FOREVERPATH("config"); SlashCmdList.FOREVERPATH("zones")
+SlashCmdList.QUESTWEAVER("where"); SlashCmdList.QUESTWEAVER("config"); SlashCmdList.QUESTWEAVER("zones")
 TICK()
 local miss = {} for k in pairs(MISSING) do miss[#miss+1]=k end table.sort(miss)
 print("GLOBALS STUBBÉS:", table.concat(miss, " "))

@@ -35,7 +35,7 @@ function M:OnEnable() self:Update() end
 function M:OnDisable() self:Update() end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText(ns.Tr("|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:12|t |cffff7f3fQuête de groupe|r\n3 joueurs conseillés"))
 end

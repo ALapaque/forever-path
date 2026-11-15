@@ -1,4 +1,4 @@
-"""Banc de test ForeverPath : charge l'addon (ordre du .toc) dans Lua 5.1 avec une API WoW simulée,
+"""Banc de test Questweaver : charge l'addon (ordre du .toc) dans Lua 5.1 avec une API WoW simulée,
 puis exécute un script de test Lua.
 
 Usage : python3 tests/harness.py [dossier_addon] [script_test.lua]
@@ -29,7 +29,7 @@ function CreateFrame(kind, name)
   rawset(f,"RegisterEvent", function(self,e) EVENTS[e]=true end)
   rawset(f,"SetScript", function(self,k,fn) scripts[k]=fn end)
   rawset(f,"_scripts", scripts)
-  if name=="ForeverPathCore" then core=f end
+  if name=="QuestweaverCore" then core=f end
   if name then _G[name]=f end
   return f
 end
@@ -37,7 +37,7 @@ function FireEvent(e, ...) core._scripts.OnEvent(core, e, ...) end
 function GetLocale() return "frFR" end
 MISSING = {}
 setmetatable(_G, {__index=function(t,k)
-  if type(k)=="string" and (k:match("^ForeverPath") or k=="DaylightUI") then return nil end
+  if type(k)=="string" and (k:match("^Questweaver") or k=="DaylightUI") then return nil end
   if type(k)=="string" and k:match("^[A-Z]") or (type(k)=="string" and k:match("^C_")) then
     MISSING[k]=true
     local stub = mockobj()
@@ -131,14 +131,14 @@ SlashCmdList={}
 '''
 mocks = mocks.replace('return "frFR"', 'return "%s"' % (__import__("os").environ.get("FP_LOCALE") or "frFR"))
 lua.execute(mocks)
-toc = open(f"{ROOT}/ForeverPath.toc", encoding="utf-8").read().splitlines()
+toc = open(f"{ROOT}/Questweaver.toc", encoding="utf-8").read().splitlines()
 lua.execute("C_GossipInfo={} SlashCmdList={}")
 files = [l.strip().replace("\\","/") for l in toc if l.strip() and not l.startswith("#")]
 lua.execute("NS = {}")
 for fn in files:
     src = open(f"{ROOT}/{fn}", encoding="utf-8").read()
     chunk = lua.eval("function(src,name) local f,err=loadstring(src,'@'..name) if not f then error(err) end return f end")(src, fn)
-    lua.eval("function(f) f('ForeverPath', NS) end")(chunk)
+    lua.eval("function(f) f('Questweaver', NS) end")(chunk)
 print("Loaded", len(files), "files OK")
 lua.execute(open(TEST, encoding="utf-8").read())
 n_err = lua.eval("(function() return table.getn(LUA_ERRORS) - (tonumber(EXPECTED_ERRORS) or 0) end)")()

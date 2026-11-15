@@ -1,7 +1,7 @@
 -- GÉNÉRÉ par tools/bake_terrain.py — zones praticables (Azeroth, continent 0).
 -- Dérivé des fichiers de terrain du client WoW Forever. Ne pas modifier à la main.
-local T = ForeverPathTerrainData or {}
-ForeverPathTerrainData = T
+local T = QuestweaverTerrainData or {}
+QuestweaverTerrainData = T
 T[0] = T[0] or {}
 local d = T[0]
 d["20:35"]="czzc45"

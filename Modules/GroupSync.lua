@@ -1,13 +1,13 @@
 local _, ns = ...
 
--- Duo / groupe : chaque membre avec ForeverPath partage son étape et ses quêtes de la route.
+-- Duo / groupe : chaque membre avec Questweaver partage son étape et ses quêtes de la route.
 -- On voit qui est en avance ou en retard, et qui n'a pas la quête de l'étape (bouton Partager).
-local PREFIX = "FPATH1"
+local PREFIX = "QWVR1"
 
 local M = ns.RegisterModule({
     id = "groupsync", category = "comfort", default = true,
     name = ns.Tr("Progression du groupe"),
-    desc = ns.Tr("En groupe, affiche l'étape de chaque membre qui utilise ForeverPath (en avance, en retard), signale qui n'a pas la quête de l'étape et propose de la partager."),
+    desc = ns.Tr("En groupe, affiche l'étape de chaque membre qui utilise Questweaver (en avance, en retard), signale qui n'a pas la quête de l'étape et propose de la partager."),
     options = {
         { key = "share", label = ns.Tr("Proposer de partager les quêtes"), type = "check", default = true },
     },
@@ -147,7 +147,7 @@ M:On("QUEST_ACCEPTED", queueSend)
 M:On("QUEST_REMOVED", queueSend)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText(ns.Tr("|cff66ccffThrall|r (14) : même étape\n|cff66ccffJaina|r (13) : |cffff7f3fen retard de 3|r\n|cffffd100Sans la quête :|r Jaina"))
 end

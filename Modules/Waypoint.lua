@@ -36,7 +36,7 @@ function M:PlaceAt(map, x, y)
     if not self.enabled then return end
     setPoint(map, x, y)
     if M:Opt("tomtom") and TomTom and TomTom.AddWaypoint then
-        tomtomUid = TomTom:AddWaypoint(map, x, y, { title = "ForeverPath", persistent = false, minimap = true, world = true })
+        tomtomUid = TomTom:AddWaypoint(map, x, y, { title = "Questweaver", persistent = false, minimap = true, world = true })
     end
 end
 
@@ -46,7 +46,7 @@ local function set(step)
     local x, y = step.x / 100, step.y / 100
     setPoint(map, x, y)
     if M:Opt("tomtom") and TomTom and TomTom.AddWaypoint then
-        tomtomUid = TomTom:AddWaypoint(map, x, y, { title = "ForeverPath", persistent = false, minimap = true, world = true })
+        tomtomUid = TomTom:AddWaypoint(map, x, y, { title = "Questweaver", persistent = false, minimap = true, world = true })
     end
     return ours or tomtomUid ~= nil
 end
@@ -114,7 +114,7 @@ function M.preview(p)
     pin:SetPoint("CENTER", 24, 8)
     pin:SetTexture(ns.MEDIA .. "pin")
     pin:SetVertexColor(1, 0.85, 0.3)
-    local d = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallGold")
+    local d = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallGold")
     d:SetPoint("TOP", pin, "BOTTOM", 0, -2)
     d:SetText("124 m")
 end

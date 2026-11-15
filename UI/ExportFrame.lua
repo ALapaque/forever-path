@@ -2,7 +2,7 @@ local _, ns = ...
 local L = ns.L
 
 -- Fenêtre de copie / collage (export d'une route, import de chemins partagés)
-local f = CreateFrame("Frame", "ForeverPathExport", UIParent, "BackdropTemplate")
+local f = CreateFrame("Frame", "QuestweaverExport", UIParent, "BackdropTemplate")
 f:SetSize(520, 380)
 f:SetPoint("CENTER")
 f:SetFrameStrata("DIALOG")
@@ -13,9 +13,9 @@ f:RegisterForDrag("LeftButton")
 f:SetScript("OnDragStart", f.StartMoving)
 f:SetScript("OnDragStop", f.StopMovingOrSizing)
 f:Hide()
-tinsert(UISpecialFrames, "ForeverPathExport") -- fermeture avec Échap
+tinsert(UISpecialFrames, "QuestweaverExport") -- fermeture avec Échap
 
-f.title = f:CreateFontString(nil, "OVERLAY", "ForeverPathFontNormal")
+f.title = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontNormal")
 f.title:SetPoint("TOPLEFT", 10, -8)
 f.title:SetText(L.EXPORT_TITLE)
 

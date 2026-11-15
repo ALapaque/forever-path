@@ -1,7 +1,7 @@
 -- Scénario : client allemand (FP_LOCALE=deDE) : textes courts en allemand, le reste en anglais
 local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 check(ns.L.ACCEPT == "Annehmen", "verbes en allemand")

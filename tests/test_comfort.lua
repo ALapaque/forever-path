@@ -4,7 +4,7 @@ local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m
 NOW = 100000
 time = function() return NOW end
 
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local E, Places = ns.Engine, ns.Nav.Places
@@ -69,8 +69,8 @@ NOW = NOW + 7 * 60
 S:Update()
 check(ns.cdb.session.finished and E.Detour() and E.Detour().kind == "inn", "fin de session : détour vers l'auberge")
 E.SetDetour(nil)
-SlashCmdList.FOREVERPATH("session stop")
-check(ns.cdb.session == nil, "/fp session stop")
+SlashCmdList.QUESTWEAVER("session stop")
+check(ns.cdb.session == nil, "/qw session stop")
 
 -- marchand : camelote
 BAGS = { [0] = { { quality = 0, itemID = 1, stackCount = 3 }, { quality = 2, itemID = 2 }, { quality = 0, itemID = 3, hasNoValue = true } } }

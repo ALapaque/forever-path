@@ -1,7 +1,7 @@
 -- Scénario : pierre de foyer (lier / utiliser), vols automatiques, dialogues, achats, journal plein
 local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local E = ns.Engine

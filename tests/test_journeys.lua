@@ -3,7 +3,7 @@ local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
 local Nav = ns.Nav
 
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 check(Nav.db and Nav.char, "base de navigation initialisée")
@@ -106,10 +106,10 @@ check(ok and added == beforeExport, "import : "..tostring(added).." points resta
 check(Nav.Net.Forget(0, 31, -200, 30) > 0, "oubli des liaisons autour d'un point")
 
 -- 9) API publique
-local dest = ForeverPathAPI.GetDestination()
+local dest = QuestweaverAPI.GetDestination()
 check(dest and dest.mapID == 1429, "API : destination")
 local got
-ForeverPathAPI.RegisterCallback("JourneyChanged", function(j) got = j end)
+QuestweaverAPI.RegisterCallback("JourneyChanged", function(j) got = j end)
 ns.Journeys:Replan("api")
 check(got and got.total and got.legs, "API : événement JourneyChanged")
 
@@ -118,5 +118,5 @@ FireEvent("USER_WAYPOINT_UPDATED")
 check(not ns.Journeys:Driving(), "cohabitation : un autre addon guide le point")
 
 -- slash
-SlashCmdList.FOREVERPATH("paths")
+SlashCmdList.QUESTWEAVER("paths")
 print("ALL TESTS PASSED")

@@ -1,4 +1,4 @@
-/* ForeverPath — site : langue, rendu des modules (data.json, généré depuis l'addon), animations */
+/* Questweaver — site : langue, rendu des modules (data.json, généré depuis l'addon), animations */
 (() => {
   "use strict";
 
@@ -7,15 +7,15 @@
       "nav.features": "Fonctions", "nav.install": "Installer", "nav.modules": "Modules", "nav.commands": "Commandes", "nav.releases": "Nouveautés",
       "hero.eyebrow": "Gratuit · Open source · Horde & Alliance",
       "hero.title1": "Le chemin le plus court", "hero.title2": "de 1 à 60.",
-      "hero.lead": "ForeverPath te dit quelle quête prendre, où aller, quoi tuer et où rendre, dans WoW Forever. Flèche, guidage 3D, itinéraires optimisés et plus de 40 modules à cocher selon tes envies.",
+      "hero.lead": "Questweaver te dit quelle quête prendre, où aller, quoi tuer et où rendre, dans WoW Forever. Flèche, guidage 3D, itinéraires optimisés et plus de 40 modules à cocher selon tes envies.",
       "hero.download": "Télécharger", "hero.docs": "Voir les modules",
       "mock.turnin": "Rendre", "mock.quest": "La menace kobold", "mock.sub": "Garde-maréchal Dughan · Comté-de-l'Or", "mock.journey": "Itinéraire ~2 min",
       "stats.modules": "modules à la carte", "stats.routes": "routes complètes 1-60", "stats.quests": "quêtes par route", "stats.lang": "interface traduite", "stats.price": "pour toujours",
-      "features.kicker": "Pourquoi ForeverPath", "features.title": "Tout ce qu'un guide payant fait. En mieux, et gratuit.",
+      "features.kicker": "Pourquoi Questweaver", "features.title": "Tout ce qu'un guide payant fait. En mieux, et gratuit.",
       "install.kicker": "Installation", "install.title": "Trois étapes, deux minutes.",
       "install.s1t": "Télécharge", "install.s1": "Récupère le zip de la dernière version sur GitHub (bientôt aussi sur CurseForge et Wago).",
-      "install.s2t": "Copie", "install.s2": "Place les dossiers ForeverPath et ForeverPath_Terrain dans <code>_forever_/Interface/AddOns</code>.",
-      "install.s3t": "Joue", "install.s3": "Le panneau d'options s'ouvre à la première connexion : coche ce que tu veux. Ensuite, <code>/fp config</code>.",
+      "install.s2t": "Copie", "install.s2": "Place les dossiers Questweaver et Questweaver_Terrain dans <code>_forever_/Interface/AddOns</code>.",
+      "install.s3t": "Joue", "install.s3": "Le panneau d'options s'ouvre à la première connexion : coche ce que tu veux. Ensuite, <code>/qw config</code>.",
       "modules.kicker": "Documentation", "modules.title": "Chaque module, en détail.",
       "modules.sub": "Tout se coche ou se décoche dans le panneau d'options, avec un aperçu. Cette documentation est générée à partir du code de l'addon : elle est toujours à jour.",
       "modules.search": "Chercher un module…", "modules.empty": "Aucun module ne correspond.",
@@ -31,15 +31,15 @@
       "nav.features": "Features", "nav.install": "Install", "nav.modules": "Modules", "nav.commands": "Commands", "nav.releases": "What's new",
       "hero.eyebrow": "Free · Open source · Horde & Alliance",
       "hero.title1": "The shortest path", "hero.title2": "from 1 to 60.",
-      "hero.lead": "ForeverPath tells you which quest to take, where to go, what to kill and where to turn in, in WoW Forever. Arrow, 3D guidance, optimized journeys and 40+ modules you pick yourself.",
+      "hero.lead": "Questweaver tells you which quest to take, where to go, what to kill and where to turn in, in WoW Forever. Arrow, 3D guidance, optimized journeys and 40+ modules you pick yourself.",
       "hero.download": "Download", "hero.docs": "Browse modules",
       "mock.turnin": "Turn in", "mock.quest": "The Kobold Menace", "mock.sub": "Marshal Dughan · Goldshire", "mock.journey": "Journey ~2 min",
       "stats.modules": "pick-and-choose modules", "stats.routes": "complete 1-60 routes", "stats.quests": "quests per route", "stats.lang": "translated interface", "stats.price": "forever",
-      "features.kicker": "Why ForeverPath", "features.title": "Everything a paid guide does. Better, and free.",
+      "features.kicker": "Why Questweaver", "features.title": "Everything a paid guide does. Better, and free.",
       "install.kicker": "Install", "install.title": "Three steps, two minutes.",
       "install.s1t": "Download", "install.s1": "Grab the latest release zip on GitHub (CurseForge and Wago coming soon).",
-      "install.s2t": "Copy", "install.s2": "Put the ForeverPath and ForeverPath_Terrain folders in <code>_forever_/Interface/AddOns</code>.",
-      "install.s3t": "Play", "install.s3": "The options panel opens on first login: tick what you want. Later, <code>/fp config</code>.",
+      "install.s2t": "Copy", "install.s2": "Put the Questweaver and Questweaver_Terrain folders in <code>_forever_/Interface/AddOns</code>.",
+      "install.s3t": "Play", "install.s3": "The options panel opens on first login: tick what you want. Later, <code>/qw config</code>.",
       "modules.kicker": "Documentation", "modules.title": "Every module, in detail.",
       "modules.sub": "Everything can be switched on or off in the options panel, with a live preview. This documentation is generated from the addon's code: it's always up to date.",
       "modules.search": "Search a module…", "modules.empty": "No module matches.",
@@ -98,12 +98,12 @@
       en: ["Is it really free?", "Yes, forever, and the code is open (GPL-3.0). No subscription, no locked features."] },
     { fr: ["D'où viennent les quêtes ?", "De QuestieDB (données WoW Forever). Les routes sont générées par un simulateur qui mesure l'XP par heure. Les nouvelles zones de Forever s'ajoutent grâce à l'enregistreur et à la bibliothèque de routes."],
       en: ["Where do the quests come from?", "From QuestieDB (WoW Forever data). Routes are generated by a simulator that measures XP per hour. Forever's new zones are added through the recorder and the route library."] },
-    { fr: ["Ça marche avec Daylight UI, Naowh, TomTom ?", "Oui : thème Daylight UI officiel, ForeverPath laisse la main à Naowh s'il pose son point, TomTom et Pawn sont utilisés s'ils sont installés."],
-      en: ["Does it work with Daylight UI, Naowh, TomTom?", "Yes: official Daylight UI theme, ForeverPath steps aside if Naowh sets its own waypoint, TomTom and Pawn are used when installed."] },
+    { fr: ["Ça marche avec Daylight UI, Naowh, TomTom ?", "Oui : thème Daylight UI officiel, Questweaver laisse la main à Naowh s'il pose son point, TomTom et Pawn sont utilisés s'ils sont installés."],
+      en: ["Does it work with Daylight UI, Naowh, TomTom?", "Yes: official Daylight UI theme, Questweaver steps aside if Naowh sets its own waypoint, TomTom and Pawn are used when installed."] },
     { fr: ["Et en Hardcore ?", "Active le mode Hardcore : les quêtes dont les monstres sont trop hauts sont sautées, les zones dangereuses signalées, et les rares affichés sur la carte."],
       en: ["What about Hardcore?", "Turn on Hardcore mode: quests with monsters too high are skipped, dangerous zones flagged, and rares shown on the map."] },
-    { fr: ["Une étape est fausse, je fais quoi ?", "Corrige-la en jeu avec /fp edit pos (ou suppr, note), puis /fp edit export et propose-la sur GitHub. Tout le monde en profite."],
-      en: ["A step is wrong, what do I do?", "Fix it in game with /fp edit pos (or suppr, note), then /fp edit export and share it on GitHub. Everyone benefits."] },
+    { fr: ["Une étape est fausse, je fais quoi ?", "Corrige-la en jeu avec /qw edit pos (ou suppr, note), puis /qw edit export et propose-la sur GitHub. Tout le monde en profite."],
+      en: ["A step is wrong, what do I do?", "Fix it in game with /qw edit pos (or suppr, note), then /qw edit export and share it on GitHub. Everyone benefits."] },
     { fr: ["Mon client est en anglais ?", "L'interface est en français pour les clients frFR et en anglais pour toutes les autres langues."],
       en: ["My client is in English?", "The interface is in French on frFR clients and in English for every other language."] },
   ];
@@ -123,7 +123,7 @@
     document.querySelectorAll("[data-i18n]").forEach((el) => { el.innerHTML = t(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-ph]").forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
     document.querySelectorAll(".lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-    document.title = lang === "fr" ? "ForeverPath — guide de leveling 1-60 gratuit pour WoW Forever" : "ForeverPath — free 1-60 leveling guide for WoW Forever";
+    document.title = lang === "fr" ? "Questweaver — guide de leveling 1-60 gratuit pour WoW Forever" : "Questweaver — free 1-60 leveling guide for WoW Forever";
   }
 
   function renderFeatures() {

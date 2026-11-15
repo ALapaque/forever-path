@@ -4,7 +4,7 @@ local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
 dofile("/tmp/fp_terrain/Data_1.lua")
 
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local Nav, T = ns.Nav, ns.Nav.Terrain

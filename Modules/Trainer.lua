@@ -74,7 +74,7 @@ function M.preview(p)
     ns.Skin(box, 0.9)
     local i = box:CreateTexture(nil, "ARTWORK"); i:SetSize(22, 22); i:SetPoint("LEFT", 6, 0)
     i:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
-    local t = box:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local t = box:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     t:SetPoint("LEFT", i, "RIGHT", 6, 0); t:SetPoint("RIGHT", -4, 0); t:SetJustifyH("LEFT")
     t:SetText(ns.Tr("|cff66ccffDétour :|r Maître de classe\nKhelden Bremen"))
 end

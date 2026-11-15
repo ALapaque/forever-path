@@ -2,7 +2,7 @@
 local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
 time = function() return 300000 end
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local C = ns.Modules.collector

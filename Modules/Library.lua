@@ -5,7 +5,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "library", category = "community", default = true,
     name = "Bibliothèque de routes",
-    desc = "Importe une route partagée (/fp importer, puis colle le texte) : routes des nouvelles zones de Forever enregistrées par d'autres joueurs, routes corrigées… Elle est gardée pour tous tes personnages. /fp routes pour la liste.",
+    desc = "Importe une route partagée (/qw importer, puis colle le texte) : routes des nouvelles zones de Forever enregistrées par d'autres joueurs, routes corrigées… Elle est gardée pour tous tes personnages. /qw routes pour la liste.",
     options = {},
 })
 
@@ -41,7 +41,7 @@ function M.Import(text)
     ns.db.library[id] = r
     register(id, r)
     if ns.ApplyEdits then ns.ApplyEdits(ns.Guides[id]) end
-    ns.Print(ns.Tr("Route importée : %s (%d étapes). /fp load %s pour la suivre."):format(r.name, r.n, id))
+    ns.Print(ns.Tr("Route importée : %s (%d étapes). /qw load %s pour la suivre."):format(r.name, r.n, id))
     return id
 end
 
@@ -70,11 +70,11 @@ ns.SlashExt.routes = function(arg)
         n = n + 1
         ns.Print(("%s — %s (%d-%d, %d)"):format(gid, r.name, r.minLevel or 1, r.maxLevel or 60, r.n or 0))
     end
-    if n == 0 then ns.Print(ns.Tr("Aucune route importée. /fp importer pour en ajouter une.")) end
+    if n == 0 then ns.Print(ns.Tr("Aucune route importée. /qw importer pour en ajouter une.")) end
 end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("# nom: Rives Claires 36-40\nM 2210\nA 90012 @41.2,55.0 id=..\n|cff3fbf3fRoute importée|r")
 end

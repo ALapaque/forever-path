@@ -2,7 +2,7 @@
 local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
 date = function() return "23:00:00" end
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local P = ns.Modules.profiles
@@ -27,13 +27,13 @@ check(P.Import(code), "import")
 check(ns.Modules.splits.enabled and ns.Modules.session:Opt("minutes") == 45, "réglages restaurés")
 check(not P.Import("n'importe quoi"), "profil invalide refusé")
 P.ShowWizard()
-check(_G.ForeverPathWizard ~= nil, "assistant créé")
+check(_G.QuestweaverWizard ~= nil, "assistant créé")
 
 -- rapport de bug
 EXPECTED_ERRORS = 1
 ns.ReportError("boom de test")
 local txt = ns.BugReport.Text()
-check(txt:find("ForeverPath ") and txt:find("Modules actifs") and txt:find("boom de test"), "rapport de bug complet")
+check(txt:find("Questweaver ") and txt:find("Modules actifs") and txt:find("boom de test"), "rapport de bug complet")
 
 -- versions
 local V = ns.Modules.version
@@ -44,7 +44,7 @@ ns.VERSION = "v0.2.0-beta13"
 local toasted
 local oldToast = ns.Toast
 ns.Toast = function(m) toasted = m end
-FireEvent("CHAT_MSG_ADDON", "FPATHV", "v0.2.0-beta20", "GUILD", "Hazghard")
+FireEvent("CHAT_MSG_ADDON", "QWVRV", "v0.2.0-beta20", "GUILD", "Hazghard")
 ns.Toast = oldToast
 check(toasted and toasted:find("beta20"), "averti d'une version plus récente")
 
@@ -70,8 +70,8 @@ Ambiguate = function(n) return n end
 UnitInParty = function() return true end
 IsInGroup = function() return true end
 IsInRaid = function() return false end
-FireEvent("CHAT_MSG_ADDON", "FPATH1", "2:lead-seg:1:1:20:", "PARTY", "Jaina")
+FireEvent("CHAT_MSG_ADDON", "QWVR1", "2:lead-seg:1:1:20:", "PARTY", "Jaina")
 check(ns.cdb.guideId ~= "lead-seg", "un membre qui n'est pas chef : on ne suit pas")
-FireEvent("CHAT_MSG_ADDON", "FPATH1", "2:lead-seg:1:1:20:", "PARTY", "Thrall")
+FireEvent("CHAT_MSG_ADDON", "QWVR1", "2:lead-seg:1:1:20:", "PARTY", "Thrall")
 check(ns.cdb.guideId == "lead-seg", "route du chef chargée")
 print("ALL TESTS PASSED")

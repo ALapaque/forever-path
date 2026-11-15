@@ -63,7 +63,7 @@ M:On("MERCHANT_SHOW", function()
 end)
 
 function M.preview(p)
-    local t = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local t = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     t:SetPoint("CENTER")
     t:SetText(ns.Tr("|cff9d9d9dCamelote vendue : 7 objet(s)|r\n|cffffd100+ 1 po 23 pa|r\n\nÉquipement réparé"))
 end

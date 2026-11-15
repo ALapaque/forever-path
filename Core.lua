@@ -3,9 +3,9 @@ local ADDON, ns = ...
 local meta = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)
 ns.VERSION = meta and meta(ADDON, "Version") or "dev"
 if not ns.VERSION or ns.VERSION:find("@") then ns.VERSION = "dev" end
-ns.MEDIA = "Interface\\AddOns\\ForeverPath\\Media\\"
+ns.MEDIA = "Interface\\AddOns\\Questweaver\\Media\\"
 
-local FP = CreateFrame("Frame", "ForeverPathCore")
+local FP = CreateFrame("Frame", "QuestweaverCore")
 ns.FP = FP
 
 ---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ function ns.GossipOption(kind, opts)
     end
 end
 
--- Erreurs : gardées (les 15 dernières) pour /fp bug, puis transmises au gestionnaire du jeu
+-- Erreurs : gardées (les 15 dernières) pour /qw bug, puis transmises au gestionnaire du jeu
 ns.errors = {}
 function ns.ReportError(err)
     table.insert(ns.errors, 1, { time = date and date("%H:%M:%S") or "", msg = tostring(err),
@@ -63,12 +63,12 @@ function ns.ReportError(err)
     geterrorhandler()(err)
 end
 
--- Sous-commandes /fp ajoutées par les modules : ns.SlashExt.nom = function(arg) ... end
+-- Sous-commandes /qw ajoutées par les modules : ns.SlashExt.nom = function(arg) ... end
 ns.SlashExt = {}
 
 function ns.Print(fmt, ...)
     local msg = select("#", ...) > 0 and ns.Tr(fmt):format(...) or ns.Tr(fmt)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffd4af37ForeverPath|r " .. msg)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffd4af37Questweaver|r " .. msg)
 end
 
 ---------------------------------------------------------------------------
@@ -183,12 +183,12 @@ end
 FP:RegisterEvent("ADDON_LOADED")
 ns.On("ADDON_LOADED", function(name)
     if name ~= ADDON then return end
-    ForeverPathDB = ForeverPathDB or {}
-    ForeverPathCharDB = ForeverPathCharDB or {}
-    applyDefaults(ForeverPathDB, defaults.global)
-    applyDefaults(ForeverPathCharDB, defaults.char)
-    ns.db = ForeverPathDB
-    ns.cdb = ForeverPathCharDB
+    QuestweaverDB = QuestweaverDB or {}
+    QuestweaverCharDB = QuestweaverCharDB or {}
+    applyDefaults(QuestweaverDB, defaults.global)
+    applyDefaults(QuestweaverCharDB, defaults.char)
+    ns.db = QuestweaverDB
+    ns.cdb = QuestweaverCharDB
     ns.Fire("FP_INIT")
 end)
 

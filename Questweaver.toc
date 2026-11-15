@@ -1,16 +1,16 @@
 ## Interface: 16001
-## Title: |cffd4af37ForeverPath|r
+## Title: |cffd4af37Questweaver|r
 ## Notes: Guide de leveling 1-60 gratuit et modulaire pour WoW Forever
 ## Notes-frFR: Guide de leveling 1-60 gratuit et modulaire pour WoW Forever
 ## Author: Arlioz
 ## Version: @project-version@
-## OptionalDeps: TomTom, LibSharedMedia-3.0, DaylightUI, ForeverPath_Terrain
+## OptionalDeps: TomTom, LibSharedMedia-3.0, DaylightUI, Questweaver_Terrain
 ## X-License: GPL-3.0
-## X-Website: https://github.com/ALapaque/forever-path
+## X-Website: https://github.com/ALapaque/quest-weaver
 ## Category: Quests
 ## Category-frFR: Quêtes
-## SavedVariables: ForeverPathDB, ForeverPathNavDB
-## SavedVariablesPerCharacter: ForeverPathCharDB
+## SavedVariables: QuestweaverDB, QuestweaverNavDB
+## SavedVariablesPerCharacter: QuestweaverCharDB
 ## IconTexture: Interface\Icons\INV_Misc_Map_01
 
 # Si l'addon apparaît « périmé », vérifie le numéro avec  /dump (select(4, GetBuildInfo()))

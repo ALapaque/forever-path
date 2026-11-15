@@ -1,16 +1,16 @@
 # Fiche CurseForge / Wago
 
-**Nom :** ForeverPath — Leveling Guide 1-60
+**Nom :** Questweaver — Leveling Guide 1-60
 **Résumé (FR) :** Guide de leveling 1-60 gratuit et modulaire pour WoW Forever, Horde et Alliance.
 **Summary (EN):** Free, modular 1-60 leveling guide for WoW Forever, Horde and Alliance.
 **Catégories :** Quests & Leveling, Map & Minimap
-**Licence :** GPL-3.0 · **Code :** https://github.com/ALapaque/forever-path
+**Licence :** GPL-3.0 · **Code :** https://github.com/ALapaque/quest-weaver
 
 ---
 
 ## Description (FR)
 
-ForeverPath te donne un chemin rapide et simple de 1 à 60 : quelle quête prendre, où aller, quoi tuer, où rendre. **Gratuit, sans abonnement.**
+Questweaver te donne un chemin rapide et simple de 1 à 60 : quelle quête prendre, où aller, quoi tuer, où rendre. **Gratuit, sans abonnement.**
 
 - **8 routes complètes** (Humain, Nain/Gnome, Elfe de la nuit, Orc/Troll, Tauren, Mort-vivant, Éolides Alliance et Horde), de 450 à 600 quêtes chacune, nouveau contenu de Forever compris, optimisées pour l'XP/h.
 - **Guidage** : flèche, point sur la carte et la minimap, faisceau 3D dans le monde, tracé de la route sur la carte.
@@ -22,11 +22,11 @@ ForeverPath te donne un chemin rapide et simple de 1 à 60 : quelle quête prend
 - **Tout est modulaire** : un panneau d'options avec aperçu, tu coches ce que tu veux.
 - Compatible **Daylight UI** (plugin officiel), Naowh Forever, TomTom, Pawn.
 
-`/fp` pour afficher le guide, `/fp config` pour les options.
+`/qw` pour afficher le guide, `/qw config` pour les options.
 
 ## Description (EN)
 
-ForeverPath gives you a fast, simple path from 1 to 60: which quest to take, where to go, what to kill, where to turn in. **Free, no subscription.**
+Questweaver gives you a fast, simple path from 1 to 60: which quest to take, where to go, what to kill, where to turn in. **Free, no subscription.**
 
 - **8 complete routes** (Human, Dwarf/Gnome, Night Elf, Orc/Troll, Tauren, Undead, Skyborne Alliance and Horde), 450 to 600 quests each, including Forever's new content, tuned for XP/hour.
 - **Guidance**: arrow, map and minimap waypoint, in-world 3D beam, route drawn on the map.
@@ -38,4 +38,4 @@ ForeverPath gives you a fast, simple path from 1 to 60: which quest to take, whe
 - **Fully modular**: an options panel with previews, tick what you want.
 - Works with **Daylight UI** (official plugin), Naowh Forever, TomTom, Pawn.
 
-`/fp` to show the guide, `/fp config` for options.
+`/qw` to show the guide, `/qw config` for options.

@@ -2,12 +2,12 @@ local _, ns = ...
 
 -- Collecteur : note automatiquement, pendant que tu joues, les quêtes que QuestieDB ne connaît pas
 -- encore (nouveau contenu de Forever) : donneur, rendu, objectifs, niveau, XP, monstres, et les
--- quêtes disponibles affichées par le jeu sur la carte. Rien n'est envoyé : /fp collecte export
+-- quêtes disponibles affichées par le jeu sur la carte. Rien n'est envoyé : /qw collecte export
 -- produit un texte à partager, que tools/merge_collected.py fusionne pour le générateur de routes.
 local M = ns.RegisterModule({
     id = "collector", category = "community", default = true,
     name = "Collecteur de quêtes",
-    desc = "Note tout seul les quêtes de Forever absentes des données publiques (donneur, rendu, objectifs, niveau, XP, monstres) pour améliorer les routes. Rien n'est envoyé : /fp collecte export pour partager ce que tu as collecté.",
+    desc = "Note tout seul les quêtes de Forever absentes des données publiques (donneur, rendu, objectifs, niveau, XP, monstres) pour améliorer les routes. Rien n'est envoyé : /qw collecte export pour partager ce que tu as collecté.",
     options = {
         { key = "all", label = "Collecter aussi les quêtes déjà connues", type = "check", default = false },
         { key = "chat", label = "Message à chaque nouvelle quête notée", type = "check", default = false },
@@ -227,7 +227,7 @@ ns.SlashExt.collecte = function(arg)
         ns.Print(ns.Tr("Collecte effacée."))
     else
         local n, done = M.Count()
-        ns.Print(ns.Tr("Collecte : %d quête(s) notée(s), dont %d rendue(s). /fp collecte export pour partager."):format(n, done))
+        ns.Print(ns.Tr("Collecte : %d quête(s) notée(s), dont %d rendue(s). /qw collecte export pour partager."):format(n, done))
     end
 end
 ns.SlashExt.collect = ns.SlashExt.collecte
@@ -241,7 +241,7 @@ M:On("FP_INIT", function()
 end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cff66ccffCollecte|r : 37 quêtes notées\ndont 22 rendues\n/fp collecte export")
 end

@@ -87,9 +87,9 @@ for f in sorted(glob.glob(os.path.join(ROOT, "Modules", "*.lua"))):
         "name": both(field(head, "name") or mid), "desc": both(field(head, "desc") or ""), "options": opts,
     })
 
-# --- commandes (aide /fp, fr et en)
+# --- commandes (aide /qw, fr et en)
 loc = open(os.path.join(ROOT, "Locale.lua"), encoding="utf-8").read()
-helps = [re.findall(r'"(/fp[^"]*)"', h) for h in re.findall(r"HELP = \{(.*?)\n    \}", loc, re.S)]
+helps = [re.findall(r'"(/qw[^"]*)"', h) for h in re.findall(r"HELP = \{(.*?)\n    \}", loc, re.S)]
 commands = []
 for k, fr in enumerate(helps[0] if helps else []):
     en = helps[1][k] if len(helps) > 1 and k < len(helps[1]) else fr
@@ -107,7 +107,7 @@ for m in re.finditer(r"^## (v[\w.\-]+)\n(.*?)(?=^## |\Z)", changelog, re.S | re.
         break
 
 data = {"version": releases[0]["version"] if releases else "dev", "modules": modules, "commands": commands,
-        "releases": releases, "repo": "https://github.com/ALapaque/forever-path"}
+        "releases": releases, "repo": "https://github.com/ALapaque/quest-weaver"}
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 json.dump(data, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("site : %d modules, %d commandes, version %s" % (len(modules), len(commands), data["version"]))

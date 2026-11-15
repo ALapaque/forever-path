@@ -1,7 +1,7 @@
 local _, ns = ...
 
--- /fp bug : rapport prêt à coller (GitHub, Discord) avec la version, le client, le personnage,
--- l'étape, les modules et les dernières erreurs (ForeverPath et BugSack s'il est installé).
+-- /qw bug : rapport prêt à coller (GitHub, Discord) avec la version, le client, le personnage,
+-- l'étape, les modules et les dernières erreurs (Questweaver et BugSack s'il est installé).
 local M = {}
 ns.BugReport = M
 
@@ -11,7 +11,7 @@ function M.Text()
     local ver, build, _, iface = GetBuildInfo()
     local _, race = UnitRace("player")
     local _, class = UnitClass("player")
-    add("ForeverPath " .. tostring(ns.VERSION))
+    add("Questweaver " .. tostring(ns.VERSION))
     add(("Client %s (%s), interface %s, %s"):format(tostring(ver), tostring(build), tostring(iface), GetLocale and GetLocale() or "?"))
     add(("Perso : %s %s %s, niveau %d"):format(ns.PlayerFaction() or "?", race or "?", class or "?", ns.PlayerLevel()))
     local g, st, i = ns.Engine.Current()
@@ -46,7 +46,7 @@ function M.Text()
     for k = #(db or {}), 1, -1 do
         local e = db[k]
         if n >= 8 then break end
-        if e and type(e.message) == "string" and (e.message:find("ForeverPath") or (e.stack or ""):find("ForeverPath")) then
+        if e and type(e.message) == "string" and (e.message:find("Questweaver") or (e.stack or ""):find("Questweaver")) then
             n = n + 1
             add(("[BugSack x%d] %s"):format(e.counter or 1, e.message))
             if e.stack and e.stack ~= "" then add(e.stack) end

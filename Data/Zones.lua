@@ -2,7 +2,7 @@ local _, ns = ...
 
 -- Zones de leveling WoW Forever.
 -- faction : "Alliance" | "Horde" | "Contested"
--- mapID   : uiMapID Classic, à vérifier en jeu avec /fp where (remplacer si différent).
+-- mapID   : uiMapID Classic, à vérifier en jeu avec /qw where (remplacer si différent).
 -- start   : races (raceFile) dont c'est la zone de départ.
 -- unconfirmed : niveaux non annoncés officiellement par Blizzard.
 ns.Zones = {

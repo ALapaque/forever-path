@@ -4,7 +4,7 @@ local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m
 NOW = 200000
 time = function() return NOW end
 date = function() return "14/11 22:00" end
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local E = ns.Engine

@@ -67,6 +67,6 @@ function M.preview(p)
     i2:SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
     local a = p:CreateTexture(nil, "ARTWORK")
     a:SetSize(14, 14); a:SetPoint("CENTER", 0, 8); a:SetTexture(ns.MEDIA .. "chevron")
-    local t = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+    local t = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
     t:SetPoint("TOP", 0, -50); t:SetText("Maj = manuel")
 end

@@ -1,11 +1,11 @@
 local _, ns = ...
 
 -- Pont Daylight UI (https://daylightui.com/plugins/guide) :
---  - ForeverPath s'enregistre comme plugin (DaylightUI:RegisterPlugin) ;
+--  - Questweaver s'enregistre comme plugin (DaylightUI:RegisterPlugin) ;
 --  - un thème « Daylight UI » reprend en direct sa couleur d'accent (API.Accent),
 --    ses couleurs de texte (API.Colors) et sa police (API.FontFile("general")) ;
 --  - il suit les changements de style de DUI (StyleChanged / SettingChanged) ;
---  - /dui path ouvre les options de ForeverPath.
+--  - /dui path ouvre les options de Questweaver.
 -- Seule DaylightUI.API est promise stable par DUI : tout appel est protégé.
 local B = {}
 ns.Daylight = B
@@ -90,12 +90,12 @@ function B.Register()
     B.registered = true
     B.BuildTheme()
     if DaylightUI.RegisterPlugin then
-        local ok, err = pcall(DaylightUI.RegisterPlugin, DaylightUI, "ForeverPath", {
+        local ok, err = pcall(DaylightUI.RegisterPlugin, DaylightUI, "Questweaver", {
             needs = NEEDS, icon = "Interface\\Icons\\INV_Misc_Map_01", color = "d4af37", short = "Path",
         })
         if not ok then B.lastError = err end
     end
-    local my = a.For and select(2, pcall(a.For, "ForeverPath"))
+    local my = a.For and select(2, pcall(a.For, "Questweaver"))
     if type(my) == "table" then
         B.handle = my
         if my.On then
@@ -104,7 +104,7 @@ function B.Register()
             end
         end
         if my.RegisterCommand then
-            pcall(my.RegisterCommand, "path", function() ns.Options:Open() end, ns.Tr("Ouvrir les options de ForeverPath"))
+            pcall(my.RegisterCommand, "path", function() ns.Options:Open() end, ns.Tr("Ouvrir les options de Questweaver"))
         end
     end
 end

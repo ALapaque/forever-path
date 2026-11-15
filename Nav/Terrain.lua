@@ -2,7 +2,7 @@ local _, ns = ...
 local Nav = ns.Nav
 
 -- Terrain : zones praticables précalculées (tools/bake_terrain.py) dans l'addon de données
--- ForeverPath_Terrain, chargé à la demande. Recherche de chemin A* sur une grille de 8,33 yards
+-- Questweaver_Terrain, chargé à la demande. Recherche de chemin A* sur une grille de 8,33 yards
 -- (falaises, trous et lave infranchissables, eau plus lente), étalée sur plusieurs images.
 local T = {}
 Nav.Terrain = T
@@ -25,20 +25,20 @@ T.MAX_EXPAND = 150000
 ---------------------------------------------------------------------------
 local loaded, tried = false, false
 function T.Load()
-    if loaded or ForeverPathTerrainData then loaded = true return true end
+    if loaded or QuestweaverTerrainData then loaded = true return true end
     if tried or InCombatLockdown() then return false end
     tried = true
     local load = C_AddOns and C_AddOns.LoadAddOn or LoadAddOn
     if load then
-        local ok = pcall(load, "ForeverPath_Terrain")
-        loaded = ok and ForeverPathTerrainData ~= nil
+        local ok = pcall(load, "Questweaver_Terrain")
+        loaded = ok and QuestweaverTerrainData ~= nil
     end
     return loaded
 end
 
 function T.Has(cont)
     T.Load()
-    return ForeverPathTerrainData and ForeverPathTerrainData[cont] ~= nil
+    return QuestweaverTerrainData and QuestweaverTerrainData[cont] ~= nil
 end
 
 local cache, cacheOrder = {}, {}
@@ -57,7 +57,7 @@ local function tile(cont, tr, tc)
     local key = cont .. ":" .. tr .. ":" .. tc
     local t = cache[key]
     if t ~= nil then return t end
-    local data = ForeverPathTerrainData and ForeverPathTerrainData[cont]
+    local data = QuestweaverTerrainData and QuestweaverTerrainData[cont]
     local enc = data and data[tr .. ":" .. tc]
     t = enc and decode(enc) or false
     cache[key] = t

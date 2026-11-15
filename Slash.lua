@@ -1,18 +1,18 @@
 local _, ns = ...
 local L = ns.L
 
-SLASH_FOREVERPATH1 = "/fp"
-SLASH_FOREVERPATH2 = "/foreverpath"
+SLASH_QUESTWEAVER1 = "/qw"
+SLASH_QUESTWEAVER2 = "/questweaver"
 
 -- Raccourcis clavier (Bindings.xml)
-BINDING_HEADER_FOREVERPATH = "ForeverPath"
-BINDING_NAME_FOREVERPATH_NEXT = ns.Tr("Étape suivante")
-BINDING_NAME_FOREVERPATH_PREV = ns.Tr("Étape précédente")
-BINDING_NAME_FOREVERPATH_TOGGLE = ns.Tr("Afficher / masquer le guide")
-BINDING_NAME_CLICK_ForeverPathTargetButton_LeftButton = ns.Tr("Cibler le PNJ / monstre de l'étape")
-BINDING_NAME_CLICK_ForeverPathQuestItemButton_LeftButton = ns.Tr("Utiliser l'objet de quête")
+BINDING_HEADER_QUESTWEAVER = "Questweaver"
+BINDING_NAME_QUESTWEAVER_NEXT = ns.Tr("Étape suivante")
+BINDING_NAME_QUESTWEAVER_PREV = ns.Tr("Étape précédente")
+BINDING_NAME_QUESTWEAVER_TOGGLE = ns.Tr("Afficher / masquer le guide")
+BINDING_NAME_CLICK_QuestweaverTargetButton_LeftButton = ns.Tr("Cibler le PNJ / monstre de l'étape")
+BINDING_NAME_CLICK_QuestweaverQuestItemButton_LeftButton = ns.Tr("Utiliser l'objet de quête")
 
-SlashCmdList.FOREVERPATH = function(msg)
+SlashCmdList.QUESTWEAVER = function(msg)
     local cmd, arg = (msg or ""):match("^%s*(%S*)%s*(.-)%s*$")
     cmd = cmd:lower()
     local ext = ns.SlashExt and ns.SlashExt[cmd]
@@ -82,7 +82,7 @@ SlashCmdList.FOREVERPATH = function(msg)
             local flights = #ns.Nav.Transport.Flights()
             ns.Print(ns.Tr("Chemins appris : %d points, %d liaisons, %d continent(s). Vols connus : %d. Foyer : %s."),
                 nodes, edges, conts, flights, ns.Nav.char and ns.Nav.char.hearth and "connu" or ns.Tr("à apprendre"))
-            ns.Print(ns.Tr("/fp paths export | import | here (oublier autour de moi) | reset"))
+            ns.Print(ns.Tr("/qw paths export | import | here (oublier autour de moi) | reset"))
         end
     elseif cmd == "where" then
         local mapID, x, y = ns.PlayerMapPos()
@@ -104,6 +104,6 @@ SlashCmdList.FOREVERPATH = function(msg)
     end
 end
 
-function ForeverPath_Next() ns.Engine.Next() end
-function ForeverPath_Prev() ns.Engine.Prev() end
-function ForeverPath_Toggle() SlashCmdList.FOREVERPATH("") end
+function Questweaver_Next() ns.Engine.Next() end
+function Questweaver_Prev() ns.Engine.Prev() end
+function Questweaver_Toggle() SlashCmdList.QUESTWEAVER("") end

@@ -41,6 +41,6 @@ function M.preview(p)
     ns.Skin(box, 0.9)
     local i = box:CreateTexture(nil, "ARTWORK"); i:SetSize(20, 20); i:SetPoint("LEFT", 5, 0)
     i:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
-    local t = box:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local t = box:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     t:SetPoint("LEFT", i, "RIGHT", 5, 0); t:SetText(ns.Tr("Nouveaux sorts !"))
 end

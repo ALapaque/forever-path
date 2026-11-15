@@ -1,7 +1,7 @@
 -- Scénario : mode Hardcore, rattrapage, quêtes de donjon, écran de splits
 local ns = NS
 local function check(c, m) if not c then error("FAIL: "..m) end print("ok - "..m) end
-FireEvent("ADDON_LOADED", "ForeverPath")
+FireEvent("ADDON_LOADED", "Questweaver")
 FireEvent("PLAYER_LOGIN")
 RunTimers()
 local E = ns.Engine
@@ -52,7 +52,7 @@ for _, d in ipairs(ns.Modules.dungeons.ForLevel(20)) do
 end
 check(not hasDM, "quêtes de faction filtrées")
 PLAYER.faction = "Alliance"
-check(ns.Modules.dungeons.List():find("Mortemines"), "/fp donjons")
+check(ns.Modules.dungeons.List():find("Mortemines"), "/qw donjons")
 
 -- splits
 local S = ns.Modules.splits

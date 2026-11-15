@@ -1,4 +1,4 @@
-"""Génère les routes de leveling ForeverPath à partir de QuestieDB (Forever).
+"""Génère les routes de leveling Questweaver à partir de QuestieDB (Forever).
 
 Simulation d'un personnage : niveau/XP, journal de 20 quêtes, prérequis, et choix glouton
 de l'action la plus proche (prendre / faire / rendre) pour minimiser les trajets.

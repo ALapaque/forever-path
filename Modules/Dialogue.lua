@@ -40,7 +40,7 @@ M:On("CONFIRM_BINDER", function()
 end)
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|TInterface\\GossipFrame\\BinderGossipIcon:16|t Faites de cette auberge\nvotre foyer  |cff3fbf3f(auto)|r")
 end

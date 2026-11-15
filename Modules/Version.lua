@@ -1,8 +1,8 @@
 local _, ns = ...
 
--- Nouvelle version : les joueurs de ton groupe ou de ta guilde qui ont ForeverPath s'échangent leur
+-- Nouvelle version : les joueurs de ton groupe ou de ta guilde qui ont Questweaver s'échangent leur
 -- version ; si l'un d'eux en a une plus récente, tu es prévenu (une fois par session).
-local PREFIX = "FPATHV"
+local PREFIX = "QWVRV"
 local M = ns.RegisterModule({
     id = "version", category = "community", default = true,
     name = "Avertissement de nouvelle version",
@@ -41,7 +41,7 @@ M:On("CHAT_MSG_ADDON", function(prefix, msg)
         newest = msg
         if not warned then
             warned = true
-            ns.Toast(ns.Tr("Nouvelle version de ForeverPath disponible : %s"):format(msg), "Interface\\Icons\\INV_Misc_Map_01", 0.4, 0.8, 1, 8)
+            ns.Toast(ns.Tr("Nouvelle version de Questweaver disponible : %s"):format(msg), "Interface\\Icons\\INV_Misc_Map_01", 0.4, 0.8, 1, 8)
             ns.Print(ns.Tr("Nouvelle version disponible : %s (tu as %s). Télécharge-la sur GitHub ou CurseForge."):format(msg, tostring(ns.VERSION)))
         end
     end
@@ -52,7 +52,7 @@ M:On("FP_READY", function() C_Timer.After(15, broadcast) end)
 function M:OnEnable() C_ChatInfo.RegisterAddonMessagePrefix(PREFIX) end
 
 function M.preview(p)
-    local fs = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmall")
+    local fs = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
     fs:SetPoint("CENTER")
     fs:SetText("|cff66ccffNouvelle version|r\nv0.3.0 disponible")
 end

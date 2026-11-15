@@ -9,7 +9,7 @@ local M = ns.RegisterModule({
     options = {},
 })
 
-local b = CreateFrame("Button", "ForeverPathQuestItemButton", UIParent, "SecureActionButtonTemplate")
+local b = CreateFrame("Button", "QuestweaverQuestItemButton", UIParent, "SecureActionButtonTemplate")
 b:SetSize(36, 36)
 b:RegisterForClicks("AnyUp", "AnyDown")
 b:SetAttribute("type", "item")
@@ -77,7 +77,7 @@ function M.preview(p)
     t:SetSize(36, 36)
     t:SetPoint("CENTER", 0, 6)
     t:SetTexture("Interface\\Icons\\INV_Potion_51")
-    local k = p:CreateFontString(nil, "OVERLAY", "ForeverPathFontSmallDim")
+    local k = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
     k:SetPoint("TOP", t, "BOTTOM", 0, -3)
     k:SetText(ns.Tr("Raccourci : à définir"))
 end

@@ -21,6 +21,17 @@ ns.Themes = {
       bg = { 0, 0, 0, 0.85 }, border = { 0.9, 0.9, 0.9, 1 },
       accent = { 1, 0.82, 0 }, text = { 1, 1, 1 },
       button = { bg = { 0.35, 0.05, 0.05, 1 }, border = { 1, 0.82, 0, 0.8 }, hover = { 0.55, 0.1, 0.1, 1 } } },
+    -- Néon : contraste fort, textes en majuscules avec contour, lignes surlignées pour prendre,
+    -- faire et rendre, mots-clés en couleur, barre de progression en dégradé.
+    { key = "neon", name = "Néon (contraste)",
+      bgFile = FLAT, edgeFile = FLAT, edgeSize = 2, inset = 0,
+      bg = { 0.11, 0.11, 0.12, 0.94 }, border = { 0, 0, 0, 0.95 },
+      accent = { 0.25, 0.95, 0.6 }, text = { 1, 1, 1 },
+      button = { bg = { 1, 1, 1, 0.06 }, border = { 0, 0, 0, 0.9 }, hover = { 0.42, 0.22, 0.72, 0.9 } },
+      caps = true, outline = true, keywords = true, barBottom = true,
+      gradient = { { 1, 0.45, 0.1 }, { 0.25, 0.45, 1 } },
+      rows = { accept = { 0.40, 0.20, 0.68, 0.85 }, turnin = { 0.40, 0.20, 0.68, 0.85 },
+               complete = { 0.40, 0.20, 0.68, 0.55 } } },
     { key = "minimal", name = "Minimal",
       bgFile = FLAT, edgeFile = FLAT, edgeSize = 1, inset = 0,
       bg = { 0, 0, 0, 0.35 }, border = { 0, 0, 0, 0 },
@@ -57,6 +68,12 @@ local FONT_OBJECTS = {
     { "QuestweaverFontSmallGold",  "GameFontNormalSmall",      "accent", 10 },
     { "QuestweaverFontLarge",      "GameFontNormalLarge",      "accent", 16 },
     { "QuestweaverFontHuge",       "GameFontNormalHuge",       "accent", 20 },
+    -- textes sous la flèche « pointe » : contour épais, lisibles sur n'importe quel décor
+    { "QuestweaverFontArrow",      "GameFontNormalLarge",      "white",  14, "THICKOUTLINE" },
+    { "QuestweaverFontArrowGold",  "GameFontNormalLarge",      "gold",   14, "THICKOUTLINE" },
+    -- textes du guide quand le thème demande un contour (thème Néon)
+    { "QuestweaverFontOutline",    "GameFontHighlight",        "text",   12, "OUTLINE" },
+    { "QuestweaverFontOutlineSmall", "GameFontHighlightSmall", "text",   10, "OUTLINE" },
 }
 local baseSize = {}
 for _, def in ipairs(FONT_OBJECTS) do
@@ -69,6 +86,7 @@ for _, def in ipairs(FONT_OBJECTS) do
     end
     -- certaines interfaces (ou un modèle pas encore chargé) renvoient 0 : on garde une taille sûre
     if type(size) ~= "number" or size < 6 then size = def[4] end
+    if def[5] then size, flags = math.max(size, def[4]), def[5] end
     baseSize[def[1]] = { size = size, flags = flags or "" }
     fo:SetFont(ns.FONTS[1].path, size, flags or "")
 end
@@ -122,6 +140,36 @@ function ns.FormatDistance(yards)
     return ("%d m"):format(n)
 end
 
+-- Majuscules en UTF-8 (accents français, allemands, espagnols compris), sans toucher aux codes
+-- de l'interface (|cffxxxxxx, |r, |T...|t, |A...|a) ni aux liens.
+local UPPER = { ["à"]="À", ["â"]="Â", ["ä"]="Ä", ["á"]="Á", ["ç"]="Ç", ["é"]="É", ["è"]="È", ["ê"]="Ê",
+    ["ë"]="Ë", ["í"]="Í", ["î"]="Î", ["ï"]="Ï", ["ñ"]="Ñ", ["ó"]="Ó", ["ô"]="Ô", ["ö"]="Ö", ["ú"]="Ú",
+    ["ù"]="Ù", ["û"]="Û", ["ü"]="Ü", ["œ"]="Œ", ["æ"]="Æ" }
+local function upperPlain(s)
+    s = s:gsub("[\195\197][\128-\191]", function(ch) return UPPER[ch] or ch end)
+    return (s:upper())
+end
+function ns.Upper(s)
+    if type(s) ~= "string" or s == "" then return s end
+    local out, i, n = {}, 1, #s
+    while i <= n do
+        local j = s:find("|", i, true)
+        if not j then out[#out + 1] = upperPlain(s:sub(i)); break end
+        out[#out + 1] = upperPlain(s:sub(i, j - 1))
+        local c = s:sub(j + 1, j + 1)
+        local e
+        if c == "c" then e = j + 9
+        elseif c == "r" or c == "n" or c == "|" then e = j + 1
+        elseif c == "T" then e = (s:find("|t", j + 2, true) or n) + 1
+        elseif c == "A" then e = (s:find("|a", j + 2, true) or n) + 1
+        elseif c == "H" then e = (s:find("|h", j + 2, true) or n) + 1
+        else e = j end
+        out[#out + 1] = s:sub(j, e)
+        i = e + 1
+    end
+    return table.concat(out)
+end
+
 -- SetFont ne renvoie rien sur certains clients (et true / false sur d'autres) : on ne se fie pas à
 -- son retour. On vérifie avec GetFont que le fichier demandé est bien celui en place.
 local function baseName(p)
@@ -144,7 +192,8 @@ function ns.ApplyFonts()
         local b = baseSize[def[1]]
         local size = math.max(6, math.floor(b.size * scale + 0.5))
         if not setFont(fo, path, size, b.flags) then fo:SetFont(ns.FONTS[1].path, size, b.flags) end
-        local c = def[3] == "accent" and t.accent or def[3] == "text" and t.text or { 0.55, 0.55, 0.58 }
+        local c = def[3] == "accent" and t.accent or def[3] == "text" and t.text
+            or def[3] == "white" and { 1, 1, 1 } or def[3] == "gold" and { 1, 0.82, 0.1 } or { 0.55, 0.55, 0.58 }
         fo:SetTextColor(c[1], c[2], c[3])
     end
 end

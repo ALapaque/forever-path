@@ -369,4 +369,9 @@ ns.DE = {
     ["Police choisie : %s"] = "Gewählte Schrift: %s",
     ["Fichier attendu : %s"] = "Erwartete Datei: %s",
     ["Fichier affiché : %s"] = "Angezeigte Datei: %s",
+    ["Une flèche qui pointe vers l'étape : pointe à deux facettes avec l'étape, la distance et le temps restant, flèche 3D posée au sol ou flèche plate. Elle change de couleur selon que tu vas dans la bonne direction."] = "Ein Pfeil zum Schritt: Pfeilspitze mit zwei Facetten samt Schritt, Entfernung und Restzeit, 3D-Pfeil auf dem Boden oder flacher Pfeil. Die Farbe zeigt, ob du in die richtige Richtung läufst.",
+    ["Pointe (étapes dessous)"] = "Pfeilspitze (Schritte darunter)",
+    ["Texte en majuscules (style Pointe)"] = "Text in Großbuchstaben (Stil Pfeilspitze)",
+    ["Étape suivante sous la flèche (style Pointe)"] = "Nächster Schritt unter dem Pfeil (Stil Pfeilspitze)",
+    ["Rendre : La menace kobold"] = "Abgeben: Die Koboldplage",
 }

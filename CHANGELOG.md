@@ -1,8 +1,15 @@
 # Questweaver
 
-## v1.3.3
+## v1.4.0
 
-- **Flèche 3D redessinée** : sa forme était tordue (le jeu coupe une texture déformée en deux triangles). Elle est maintenant tournée puis aplatie au sol par ses coordonnées de texture, une transformation exacte : la flèche garde sa forme sous tous les angles. Épaisseur plus fine, ombre plus discrète, distance placée sous la flèche sans la chevaucher.
+- **Nouvelle flèche « Pointe »** (style par défaut) : une pointe de flèche à deux facettes, une éclairée et une dans l'ombre, légèrement inclinée vers le sol. Dessous, en majuscules avec un contour épais : l'étape en cours, l'étape suivante, puis la distance et le **temps de trajet estimé** (selon que tu cours ou que tu es sur ta monture). Vert d'eau dans la bonne direction, ambre de côté, rouge à l'opposé. Options : majuscules, étape suivante affichée ou non.
+- **Nouveau thème « Néon (contraste) »** (Apparence > Thème) :
+  - fond anthracite, bordure noire épaisse ;
+  - textes en majuscules avec contour ;
+  - verbe en blanc et objet en couleur : quête en vert entre apostrophes, objectif en orange ;
+  - lignes « prendre », « faire » et « rendre » surlignées en violet, une par étape suivante ;
+  - barre de progression en bas, en dégradé orange vers bleu.
+- **Flèche 3D redessinée** : sa forme était tordue (le jeu coupe une texture déformée en deux triangles). Elle est maintenant tournée puis aplatie au sol par ses coordonnées de texture : elle garde sa forme sous tous les angles.
 
 ## v1.3.2
 

@@ -369,4 +369,9 @@ ns.ES = {
     ["Police choisie : %s"] = "Fuente elegida: %s",
     ["Fichier attendu : %s"] = "Archivo esperado: %s",
     ["Fichier affiché : %s"] = "Archivo mostrado: %s",
+    ["Une flèche qui pointe vers l'étape : pointe à deux facettes avec l'étape, la distance et le temps restant, flèche 3D posée au sol ou flèche plate. Elle change de couleur selon que tu vas dans la bonne direction."] = "Una flecha que apunta al paso: punta de dos caras con el paso, la distancia y el tiempo restante, flecha 3D sobre el suelo o flecha plana. Su color indica si vas en la buena dirección.",
+    ["Pointe (étapes dessous)"] = "Punta (pasos debajo)",
+    ["Texte en majuscules (style Pointe)"] = "Texto en mayúsculas (estilo Punta)",
+    ["Étape suivante sous la flèche (style Pointe)"] = "Paso siguiente bajo la flecha (estilo Punta)",
+    ["Rendre : La menace kobold"] = "Entregar: La amenaza kóbold",
 }

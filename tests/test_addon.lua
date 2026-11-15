@@ -56,9 +56,9 @@ do
   local up = QuestweaverArrow._scripts.OnUpdate
   ns.Modules.arrow:SetOpt("style", 1); up(QuestweaverArrow, 0.05); up(QuestweaverArrow, 0.05)
   ns.Modules.arrow:SetOpt("style", 2); up(QuestweaverArrow, 0.05)
-  ns.Modules.arrow:SetOpt("style", 1)
+  ns.Modules.arrow:SetOpt("style", 3); up(QuestweaverArrow, 0.05); up(QuestweaverArrow, 0.05)
   ns.Engine.NavStep, ns.Geo.Vector, ns.Geo.RelativeAngle = E, G, RA
-  check(true, "flèche 3D et flèche plate dessinées")
+  check(true, "flèches pointe, 3D et plate dessinées")
 end
 
 -- options : construction des cartes + aperçus
@@ -190,5 +190,20 @@ do
   J.Polylines, ns.Nav.ToMap, J.enabled = oldPoly, oldToMap, oldEn
   C_Map.GetPlayerMapPosition = oldPos
   WorldMapFrame = nil
+end
+
+-- thème Néon : majuscules, mots-clés colorés, lignes surlignées, barre en bas
+do
+  ns.Modules.guide:SetOpt("upcoming", 3)
+  ns.Modules.appearance:SetOpt("theme", "Néon (contraste)")
+  check(ns.db.theme == "neon", "thème Néon choisi")
+  ns.Guide:Update()
+  local _, step = ns.Engine.Current()
+  local label = ns.Guide.StepLabel(step)
+  check(not label:find("|cff3dff9a") or label:find("'"), "mots-clés en couleur : "..label)
+  check(#ns.Guide.upData >= 1, "lignes suivantes séparées : "..#ns.Guide.upData)
+  ns.Modules.appearance:SetOpt("theme", "Sombre doré")
+  ns.Guide:Update()
+  check(ns.db.theme == "dark", "retour au thème doré")
 end
 print("ALL TESTS PASSED")

@@ -43,8 +43,20 @@ function M.StepLabel(step)
             body = "#" .. step.quest
         end
     end
-    local s = ("|c%s%s|r"):format(st.color, verb)
-    if body then s = s .. " : " .. body end
+    local s
+    local t = ns.Theme()
+    if t.keywords then
+        -- verbe en blanc, objet de la quête en couleur (vert pour une quête, orange pour un objectif)
+        local kc = step.type == "complete" and "ffff8a3d" or "ff3dff9a"
+        s = verb
+        if body then
+            local quoted = (step.type == "accept" or step.type == "turnin") and ("'" .. body .. "'") or body
+            s = ("%s |c%s%s|r"):format(verb, kc, quoted)
+        end
+    else
+        s = ("|c%s%s|r"):format(st.color, verb)
+        if body then s = s .. " : " .. body end
+    end
     if step.danger then s = "|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:14|t " .. s end
     return s, st
 end
@@ -149,6 +161,21 @@ end
 f.upcoming = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
 f.upcoming:SetJustifyH("LEFT")
 f.upcoming:SetWordWrap(true)
+f.upLines = {}       -- une ligne par étape suivante (fond coloré possible selon le thème)
+M.upData = {}
+
+-- barre colorée derrière une ligne (thème Néon)
+local function rowBar()
+    local b = f:CreateTexture(nil, "BORDER")
+    b:SetTexture("Interface\\Buttons\\WHITE8x8")
+    b:Hide()
+    return b
+end
+f.mainBar = rowBar()
+
+local function caps(s)
+    return ns.Theme().caps and ns.Upper(s) or s
+end
 
 f.prev = ns.Button(f, "<", 26, 20, function() ns.Engine.Prev() end, ns.Tr("Étape précédente"))
 f.prev:SetPoint("BOTTOMLEFT", 6, 6)
@@ -192,15 +219,38 @@ function M:Layout()
     end
     for i = #list + 1, #f.sections do f.sections[i]:Hide() end
 
-    if f.upcoming:GetText() and f.upcoming:GetText() ~= "" then
-        f.upcoming:ClearAllPoints()
-        f.upcoming:SetPoint("TOPLEFT", 10, y)
-        f.upcoming:SetPoint("RIGHT", f, "RIGHT", -8, 0)
-        f.upcoming:Show()
-        y = y - f.upcoming:GetStringHeight() - 4
-    else
-        f.upcoming:Hide()
+    f.upcoming:Hide()
+    local theme = ns.Theme()
+    local font = theme.outline and "QuestweaverFontOutlineSmall" or "QuestweaverFontSmallDim"
+    for k, d in ipairs(M.upData) do
+        local line = f.upLines[k]
+        if not line then
+            line = { fs = f:CreateFontString(nil, "OVERLAY", font), bar = rowBar() }
+            line.fs:SetJustifyH("LEFT")
+            line.fs:SetWordWrap(true)
+            f.upLines[k] = line
+        end
+        line.fs:SetFontObject(font)
+        line.fs:ClearAllPoints()
+        line.fs:SetPoint("TOPLEFT", 12, y - 2)
+        line.fs:SetPoint("RIGHT", f, "RIGHT", -10, 0)
+        line.fs:SetText(d.text)
+        line.fs:Show()
+        local h = line.fs:GetStringHeight() + 4
+        local rc = theme.rows and d.step and theme.rows[d.step.type]
+        if rc then
+            line.bar:ClearAllPoints()
+            line.bar:SetPoint("TOPLEFT", f, "TOPLEFT", 6, y)
+            line.bar:SetPoint("RIGHT", f, "RIGHT", -6, 0)
+            line.bar:SetHeight(h)
+            line.bar:SetVertexColor(rc[1], rc[2], rc[3], rc[4])
+            line.bar:Show()
+        else
+            line.bar:Hide()
+        end
+        y = y - h - 2
     end
+    for k = #M.upData + 1, #f.upLines do f.upLines[k].fs:Hide(); f.upLines[k].bar:Hide() end
 
     -- boutons visibles alignés à droite
     local anchor
@@ -213,6 +263,20 @@ function M:Layout()
         end
     end
     f:SetHeight(-y + 32)
+
+    -- fond coloré derrière l'étape en cours (thème Néon)
+    local step = ns.Engine.Current and select(2, ns.Engine.Current())
+    local rc = theme.rows and step and theme.rows[step.type]
+    if rc then
+        f.mainBar:ClearAllPoints()
+        f.mainBar:SetPoint("TOPLEFT", f.icon, "TOPLEFT", -2, 2)
+        f.mainBar:SetPoint("RIGHT", f, "RIGHT", -6, 0)
+        f.mainBar:SetHeight(math.max(28, textH) + 4)
+        f.mainBar:SetVertexColor(rc[1], rc[2], rc[3], rc[4])
+        f.mainBar:Show()
+    else
+        f.mainBar:Hide()
+    end
 end
 
 function M:Update()
@@ -226,10 +290,11 @@ function M:Update()
         f.icon:SetTexture("Interface\\Icons\\INV_Misc_Map_01")
         f.bar:SetMinMaxValues(0, 1); f.bar:SetValue(0)
         f.upcoming:SetText("")
+        wipe(M.upData)
         self:Layout()
         return
     end
-    f.title:SetText(g.name)
+    f.title:SetText(caps(g.name))
     f.progress:SetText(("%d/%d"):format(math.min(i, #g.steps), #g.steps))
     f.bar:SetMinMaxValues(0, #g.steps)
     f.bar:SetValue(i - 1)
@@ -239,13 +304,14 @@ function M:Update()
         f.icon:SetTexture("Interface\\Icons\\Achievement_Quests_Completed_01")
         f.sub:SetText("")
         f.upcoming:SetText("")
+        wipe(M.upData)
         self:Layout()
         return
     end
 
     local label, st = M.StepLabel(step)
     f.icon:SetTexture(st.icon)
-    f.text:SetText(label)
+    f.text:SetText(caps(label))
     local sub = {}
     local z = ns.ZoneByKey[step.map or ""] or ns.ZoneByMap[step.map or 0]
     if z then sub[#sub + 1] = ns.ZoneName(z) end
@@ -260,11 +326,16 @@ function M:Update()
         if #names > 0 then sub[#sub + 1] = table.concat(names, ", ") end
     end
     if step.x then sub[#sub + 1] = ("%.1f, %.1f"):format(step.x, step.y) end
-    f.sub:SetText(table.concat(sub, "  •  "))
+    f.sub:SetText(caps(table.concat(sub, "  •  ")))
 
     local n = self:Opt("upcoming") or 1
     local lines = {}
-    for _, s in ipairs(ns.Engine.Upcoming(n)) do lines[#lines + 1] = M.CHEVRON .. (M.StepLabel(s)) end
+    wipe(M.upData)
+    for _, s in ipairs(ns.Engine.Upcoming(n)) do
+        local text = M.CHEVRON .. caps((M.StepLabel(s)))
+        lines[#lines + 1] = text
+        M.upData[#M.upData + 1] = { text = text, step = s }
+    end
     f.upcoming:SetText(table.concat(lines, "\n"))
     self:UpdateDistance()
     self:Layout()
@@ -281,9 +352,29 @@ function M:ApplyLook()
     f:SetWidth(ns.db.guideWidth or 330)
     f.fpAlpha = self:Opt("alpha")
     ns.ReSkin(f)
-    f.bar:SetStatusBarColor(unpack(ns.Theme().accent))
+    local t = ns.Theme()
+    f.bar:SetStatusBarColor(unpack(t.accent))
+    -- barre de progression : en haut, ou en bas en dégradé (thème Néon)
+    f.bar:ClearAllPoints()
+    if t.barBottom then
+        f.bar:SetPoint("BOTTOMLEFT", 8, 4)
+        f.bar:SetPoint("BOTTOMRIGHT", -8, 4)
+        f.bar:SetHeight(4)
+    else
+        f.bar:SetPoint("TOPLEFT", 8, -20)
+        f.bar:SetPoint("TOPRIGHT", -8, -20)
+        f.bar:SetHeight(3)
+    end
+    local tex = f.bar:GetStatusBarTexture()
+    if tex and tex.SetGradient and CreateColor then
+        local a, b = t.gradient and t.gradient[1] or t.accent, t.gradient and t.gradient[2] or t.accent
+        pcall(tex.SetGradient, tex, "HORIZONTAL", CreateColor(a[1], a[2], a[3], 1), CreateColor(b[1], b[2], b[3], 1))
+    end
+    -- textes avec contour
+    f.text:SetFontObject(t.outline and "QuestweaverFontOutline" or "QuestweaverFontHighlight")
+    f.sub:SetFontObject(t.outline and "QuestweaverFontOutlineSmall" or "QuestweaverFontSmallDim")
 end
-ns.On("FP_THEME_CHANGED", function() M:ApplyLook() end)
+ns.On("FP_THEME_CHANGED", function() M:ApplyLook(); if M.enabled then M:Update() end end)
 
 function M:OnEnable() self:ApplyLook(); f:Show(); self:Update() end
 function M:OnDisable() f:Hide() end

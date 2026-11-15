@@ -151,4 +151,44 @@ assert(L({ 8, 2, 3, 4 }) == "2-4,8", "regroupement trié : "..L({ 8, 2, 3, 4 }))
 assert(L({ 1, 2 }) == "1,2", "deux étapes consécutives")
 assert(L({ 1, 3, 5 }) == "1+", "trop de morceaux : "..L({ 1, 3, 5 }))
 print("ok - étiquettes des pastilles regroupées")
+
+-- tracé sur la carte : le corps n'est calculé qu'une fois tant que rien ne change
+do
+  local child = mockobj()
+  rawset(child, "GetWidth", function() return 1000 end)
+  rawset(child, "GetHeight", function() return 700 end)
+  rawset(child, "GetFrameLevel", function() return 1 end)
+  local scale = 1
+  WorldMapFrame = { IsShown = function() return true end, GetMapID = function() return 1429 end,
+    GetCanvasScale = function() return scale end, ScrollContainer = { Child = child } }
+  local px = 0.40
+  local oldPos = C_Map.GetPlayerMapPosition
+  C_Map.GetPlayerMapPosition = function() return { GetXY = function() return px, 0.5 end } end
+  local J = ns.Journeys
+  local oldPoly, oldToMap, oldEn = J.Polylines, ns.Nav.ToMap, J.enabled
+  local segs = { { pts = { { c = 0, x = 0, y = 0 }, { c = 0, x = 1, y = 0 } }, head = true, color = { 1, 1, 1 } } }
+  for k = 1, 300 do
+    segs[#segs + 1] = { pts = { { c = 0, x = k, y = 0 }, { c = 0, x = k + 1, y = 0 } }, color = { 1, 1, 1 } }
+  end
+  J.Polylines = function() return segs end
+  J.enabled, J.version = true, 1
+  local calls = 0
+  ns.Nav.ToMap = function(c, x, y) calls = calls + 1; return 1429, 0.1 + x / 400, 0.3 end
+  local M = ns.Modules.maproute
+  M.builds = 0
+  M:Draw(true)
+  local first = calls
+  for _ = 1, 10 do M:Draw() end
+  check(M.builds == 1 and calls - first <= 10, ("tracé calculé une seule fois (%d conversions puis %d)"):format(first, calls - first))
+  check(#M.cache.body <= 460, "nombre de points borné : "..#M.cache.body)
+  scale = 2; M:Draw()
+  check(M.builds == 1, "zoom : simple redimensionnement")
+  px = 0.45; M:Draw()
+  check(M.builds == 1, "le joueur bouge : seule la tête est redessinée")
+  J.version = 2; M:Draw()
+  check(M.builds == 2, "trajet modifié : tracé recalculé")
+  J.Polylines, ns.Nav.ToMap, J.enabled = oldPoly, oldToMap, oldEn
+  C_Map.GetPlayerMapPosition = oldPos
+  WorldMapFrame = nil
+end
 print("ALL TESTS PASSED")

@@ -1,5 +1,14 @@
 # Questweaver
 
+## v1.3.1
+
+- **Tracé de la route sur la carte : fini les ralentissements sur les longs trajets.** Le tracé entier était recalculé 5 fois par seconde tant que la carte était ouverte (conversion de chaque point de l'itinéraire, jusqu'à 600 points repositionnés). Maintenant :
+  - le tracé n'est calculé qu'une fois, puis seulement quand l'itinéraire, l'étape ou la carte affichée changent ;
+  - un zoom ne fait que redimensionner les points ;
+  - quand tu avances, seul le bout entre ton personnage et le prochain point est redessiné ;
+  - les très longs trajets sont dessinés avec des points plus espacés (450 au maximum).
+- **Minimap** : le tracé de l'itinéraire ne parcourt plus que la portion visible autour de toi, au lieu de tout le trajet 10 fois par seconde.
+
 ## v1.3.0
 
 - **Police enfin appliquée.** Le jeu ne renvoie rien quand on change la police d'un texte, et Questweaver prenait ce silence pour un échec : il revenait à Friz Quadrata à chaque fois, quelle que soit la police choisie. Il vérifie maintenant la police réellement en place. Nouvelle commande `/qw police` pour voir la police choisie, le fichier attendu et celui affiché.

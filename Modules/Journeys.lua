@@ -240,6 +240,8 @@ local function dot(c)
 end
 
 function M:Render()
+    -- version du trajet : la carte ne recalcule son tracé que quand elle change
+    self.version = (self.version or 0) + 1
     ns.Fire("FP_JOURNEY_CHANGED")
     if not ns.Guide then return end
     if not (self.enabled and self:Opt("card") and journey) then
@@ -281,7 +283,7 @@ function M:Polylines()
             for j = startIdx, #l.pts do
                 local q = l.pts[j]
                 if prev then
-                    out[#out + 1] = { pts = { prev, q },
+                    out[#out + 1] = { pts = { prev, q }, head = prev == p or nil,
                         color = q.risky and M.COLORS.risky or q.terrain and M.COLORS.terrain or M.COLORS.known }
                 end
                 prev = q
@@ -340,13 +342,22 @@ function M:DrawMinimap()
     local facing = rotate and GetPlayerFacing and GetPlayerFacing() or nil
     if facing and ns.IsSecret(facing) then return end
     local n = 0
+    -- rayon visible de la minimap (en yards) : les tronçons plus loin sont ignorés d'emblée
+    local yards = (indoor and MINIMAP_YARDS.indoor or MINIMAP_YARDS.outdoor)[zoom] or 466
+    local reach = yards / 2 + 20
     for _, seg in ipairs(self:Polylines()) do
         local a, b = seg.pts[1], seg.pts[2]
-        if a.c == player.c and b.c == player.c then
+        if a.c == player.c and b.c == player.c and Nav.SegDist(player, a, b) <= reach then
             local len = Nav.Dist(a, b)
-            local steps = math.max(1, math.floor(len / 14))
+            -- seulement la portion du tronçon proche du joueur
+            local t0, t1 = 0, 1
+            if len > reach * 2 then
+                local proj = ((player.x - a.x) * (b.x - a.x) + (player.y - a.y) * (b.y - a.y)) / (len * len)
+                t0, t1 = math.max(0, proj - reach / len), math.min(1, proj + reach / len)
+            end
+            local steps = math.max(1, math.floor(len * (t1 - t0) / 14))
             for k = 0, steps do
-                local t = k / steps
+                local t = t0 + (t1 - t0) * k / steps
                 local q = { x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t }
                 local ox, oy = M.MinimapOffset(q, player, zoom, indoor, rotate, facing, radius)
                 if ox * ox + oy * oy < (radius - 4) ^ 2 then

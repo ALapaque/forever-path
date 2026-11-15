@@ -62,113 +62,203 @@ local function pin(i)
     return p
 end
 
-local function dot(i)
-    local d = dots[i]
+-- Deux réserves de points : le corps du tracé (calculé une fois par trajet / étape / carte) et
+-- la « tête » (du joueur au prochain point), la seule partie qui bouge quand on avance.
+local headDots = {}
+local function texture(pool, i)
+    local d = pool[i]
     if not d then
         d = overlay:CreateTexture(nil, "OVERLAY")
         d:SetTexture(ns.MEDIA .. "dot")
-        dots[i] = d
+        pool[i] = d
     end
     return d
 end
 
-function M:Draw()
+local MAX_DOTS = 450        -- au-delà, on espace les points plutôt que d'en ajouter
+
+-- Pose des points tous les `gap` pixels le long d'une polyligne (en pixels du canevas),
+-- en reportant le reste d'un segment au suivant : espacement régulier, pas de doublons aux coins.
+local function along(out, poly, gap, color, alpha, sizePx, skipFirst)
+    local nextAt = skipFirst and gap or 0       -- distance, dans le segment, du prochain point
+    for k = 2, #poly do
+        local ax, ay, bx, by = poly[k - 1][1], poly[k - 1][2], poly[k][1], poly[k][2]
+        local len = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
+        local t = nextAt
+        while t <= len do
+            local f = len > 0 and t / len or 0
+            out[#out + 1] = { ax + (bx - ax) * f, ay + (by - ay) * f, color, alpha, sizePx }
+            t = t + gap
+        end
+        nextAt = t - len
+    end
+end
+
+local function polyLength(poly)
+    local L = 0
+    for k = 2, #poly do L = L + math.sqrt((poly[k][1] - poly[k - 1][1]) ^ 2 + (poly[k][2] - poly[k - 1][2]) ^ 2) end
+    return L
+end
+
+local cache = { key = nil, scale = nil, body = {}, pts = {}, nBody = 0, head = nil, headKey = nil }
+M.cache = cache
+
+local function hideAll()
     for _, p in ipairs(pins) do p:Hide() end
     for _, d in ipairs(dots) do d:Hide() end
-    if not (self.enabled and WorldMapFrame and WorldMapFrame:IsShown()) then return end
-    if not ensureOverlay() then return end
-    local mapID = WorldMapFrame:GetMapID()
-    local W, H = overlay:GetWidth(), overlay:GetHeight()
-    if not (W and W > 0) then return end
-    local scale = (WorldMapFrame.GetCanvasScale and WorldMapFrame:GetCanvasScale()) or 1
-    local size = 20 / scale
+    for _, d in ipairs(headDots) do d:Hide() end
+    cache.key, cache.scale, cache.headKey = nil, nil, nil
+end
 
-    -- itinéraire calculé (module Itinéraires) : tracé coloré jusqu'à l'étape en cours
-    local nd = 0
-    local gap = 9 / scale
+-- Clé de ce qui change le corps du tracé : carte affichée, trajet, étape, réglages
+local function bodyKey(mapID, W)
+    local g, _, i = ns.Engine.Current()
+    local jv = ns.Journeys and ns.Journeys.enabled and ns.Journeys.version or 0
+    return table.concat({ mapID or 0, math.floor(W or 0), jv, g and g.id or "-", i or 0,
+        M:Opt("count") or 6, M:Opt("fromPlayer") and 1 or 0 }, ":")
+end
+
+-- Calcule (une fois) le corps du tracé : itinéraire puis étapes suivantes, en pixels du canevas
+local function buildBody(mapID, W, H, scale)
+    local body, pts = {}, {}
+    cache.headTarget, cache.headColor = nil, nil
+    local polys = {}
+    -- itinéraire calculé (module Itinéraires)
     local journeyLines = ns.Journeys and ns.Journeys:Polylines() or {}
+    cache.hasJourney = #journeyLines > 0
+    local run, runColor
+    local function flush()
+        if run and #run > 1 then polys[#polys + 1] = { pts = run, color = runColor, alpha = 1, size = 6 } end
+        run, runColor = nil, nil
+    end
     for _, seg in ipairs(journeyLines) do
         local a, b = seg.pts[1], seg.pts[2]
-        local _, ax, ay = ns.Nav.ToMap(a.c, a.x, a.y, mapID)
-        local _, bx, by = ns.Nav.ToMap(b.c, b.x, b.y, mapID)
-        if ax and bx and math.max(ax, bx) > -0.05 and math.min(ax, bx) < 1.05
-            and math.max(ay, by) > -0.05 and math.min(ay, by) < 1.05 then
-            local x1, y1, x2, y2 = ax * W, ay * H, bx * W, by * H
-            local len = math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
-            local steps = math.max(1, math.floor(len / gap))
-            for t = 0, steps do
-                nd = nd + 1
-                if nd > 600 then break end
-                local d = dot(nd)
-                local f = t / steps
-                d:SetSize(6 / scale, 6 / scale)
-                d:ClearAllPoints()
-                d:SetPoint("CENTER", overlay, "TOPLEFT", x1 + (x2 - x1) * f, -(y1 + (y2 - y1) * f))
-                d:SetVertexColor(seg.color[1], seg.color[2], seg.color[3], 1)
-                d:Show()
+        if seg.head then
+            -- tête : redessinée à part, à chaque déplacement du joueur
+            local _, bx, by = ns.Nav.ToMap(b.c, b.x, b.y, mapID)
+            if bx then cache.headTarget, cache.headColor = { map = mapID, mx = bx, my = by }, seg.color end
+        else
+            local _, ax, ay = ns.Nav.ToMap(a.c, a.x, a.y, mapID)
+            local _, bx, by = ns.Nav.ToMap(b.c, b.x, b.y, mapID)
+            if ax and bx and math.max(ax, bx) > -0.05 and math.min(ax, bx) < 1.05
+                and math.max(ay, by) > -0.05 and math.min(ay, by) < 1.05 then
+                if run and runColor == seg.color and run[#run][1] == ax * W and run[#run][2] == ay * H then
+                    run[#run + 1] = { bx * W, by * H }
+                else
+                    flush()
+                    run, runColor = { { ax * W, ay * H }, { bx * W, by * H } }, seg.color
+                end
+            else
+                flush()
             end
         end
     end
+    flush()
 
-    -- points à relier : position du joueur (si sur cette carte) puis étapes suivantes
-    -- (avec un itinéraire, le premier tronçon est déjà tracé ci-dessus)
-    local pts = {}
-    if self:Opt("fromPlayer") and #journeyLines == 0 then
-        local pos = C_Map.GetPlayerMapPosition(mapID, "player")
-        if pos then
-            local px, py = pos:GetXY()
-            if px and px > 0 then pts[#pts + 1] = { x = px, y = py } end
-        end
-    end
+    -- étapes suivantes sur la carte affichée
     local g, _, i = ns.Engine.Current()
-    if not g then return end
-    local n, max = 0, self:Opt("count") or 6
-    for j = i, #g.steps do
-        local s = g.steps[j]
-        if s.x and ns.Engine.Applies(s) and (j == i or not ns.Engine.IsDone(s, j)) then
-            if ns.Geo.StepMap(s) ~= mapID then break end   -- on ne trace que la carte affichée
-            n = n + 1
-            pts[#pts + 1] = { x = s.x / 100, y = s.y / 100, step = s, n = n }
-            if n >= max then break end
+    if g then
+        local n, max = 0, M:Opt("count") or 6
+        for j = i, #g.steps do
+            local st = g.steps[j]
+            if st.x and ns.Engine.Applies(st) and (j == i or not ns.Engine.IsDone(st, j)) then
+                if ns.Geo.StepMap(st) ~= mapID then break end   -- on ne trace que la carte affichée
+                n = n + 1
+                pts[#pts + 1] = { x = st.x / 100, y = st.y / 100, step = st, n = n }
+                if n >= max then break end
+            end
         end
     end
-
-    -- pointillés entre les étapes suivantes
     for k = 2, #pts do
         local a, b = pts[k - 1], pts[k]
-        local ax, ay, bx, by = a.x * W, a.y * H, b.x * W, b.y * H
-        local len = math.sqrt((bx - ax) ^ 2 + (by - ay) ^ 2)
-        local steps = math.floor(len / gap)
-        for t = 1, steps - 1 do
-            nd = nd + 1
-            if nd > 400 then break end
-            local d = dot(nd)
-            local f = t / steps
-            d:SetSize(5 / scale, 5 / scale)
-            d:ClearAllPoints()
-            d:SetPoint("CENTER", overlay, "TOPLEFT", ax + (bx - ax) * f, -(ay + (by - ay) * f))
-            local c = COLORS[b.step and b.step.type] or COLORS.default
-            d:SetVertexColor(c[1], c[2], c[3], k == 2 and 1 or 0.75)
-            d:Show()
-        end
+        polys[#polys + 1] = { pts = { { a.x * W, a.y * H }, { b.x * W, b.y * H } },
+            color = COLORS[b.step.type] or COLORS.default, alpha = 0.75, size = 5, skipFirst = true }
+    end
+    if #pts > 0 and not cache.hasJourney and M:Opt("fromPlayer") then
+        cache.headTarget = { map = mapID, mx = pts[1].x, my = pts[1].y }
+        cache.headColor = COLORS[pts[1].step.type] or COLORS.default
     end
 
+    -- espacement : 9 px à l'écran, élargi si le tracé est très long (trajets lointains)
+    local total = 0
+    for _, pl in ipairs(polys) do total = total + polyLength(pl.pts) end
+    local gap = math.max(9 / scale, total / MAX_DOTS)
+    for _, pl in ipairs(polys) do along(body, pl.pts, gap, pl.color, pl.alpha, pl.size, pl.skipFirst) end
+    cache.body, cache.pts, cache.gap = body, pts, gap
+end
+
+local function paintBody(scale)
+    local body = cache.body
+    for k, e in ipairs(body) do
+        local d = texture(dots, k)
+        d:SetSize(e[5] / scale, e[5] / scale)
+        d:ClearAllPoints()
+        d:SetPoint("CENTER", overlay, "TOPLEFT", e[1], -e[2])
+        d:SetVertexColor(e[3][1], e[3][2], e[3][3], e[4])
+        d:Show()
+    end
+    for k = #body + 1, #dots do dots[k]:Hide() end
+end
+
+local function resizeBody(scale)
+    for k, e in ipairs(cache.body) do dots[k]:SetSize(e[5] / scale, e[5] / scale) end
+end
+
+-- Tête : du joueur au prochain point. Recalculée seulement si le joueur a bougé.
+local function drawHead(mapID, W, H, scale)
+    local tgt = cache.headTarget
+    local n = 0
+    if tgt then
+        local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+        local px, py
+        if pos then px, py = pos:GetXY() end
+        if px and not ns.IsSecret(px) and px > 0 then
+            local tx, ty = tgt.mx, tgt.my
+            if tgt.c and (tgt.map ~= mapID or not tx) then
+                local _, x, y = ns.Nav.ToMap(tgt.c, tgt.x, tgt.y, mapID)
+                tx, ty = x, y
+            end
+            if tx then
+                local hk = ("%d:%d:%d:%.3f"):format(math.floor(px * W / 2), math.floor(py * H / 2), mapID, scale)
+                if hk == cache.headKey then return end
+                cache.headKey = hk
+                local out = {}
+                along(out, { { px * W, py * H }, { tx * W, ty * H } }, cache.gap or 9 / scale,
+                    cache.headColor or COLORS.default, 1, cache.hasJourney and 6 or 5, true)
+                for k, e in ipairs(out) do
+                    if k > 120 then break end
+                    n = k
+                    local d = texture(headDots, k)
+                    d:SetSize(e[5] / scale, e[5] / scale)
+                    d:ClearAllPoints()
+                    d:SetPoint("CENTER", overlay, "TOPLEFT", e[1], -e[2])
+                    d:SetVertexColor(e[3][1], e[3][2], e[3][3], e[4])
+                    d:Show()
+                end
+            end
+        end
+    end
+    if n == 0 then cache.headKey = nil end
+    for k = n + 1, #headDots do headDots[k]:Hide() end
+end
+
+local function drawPins(W, H, scale)
+    for _, p in ipairs(pins) do p:Hide() end
+    local size = 20 / scale
     -- étapes numérotées : les étapes au même endroit (ou qui se chevauchent à ce zoom) sont
     -- regroupées en une seule pastille « 2-4 » ; la liste complète est dans l'infobulle.
     local groups = {}
     local near = size * 0.9
-    for _, p in ipairs(pts) do
-        if p.step then
-            local sx, sy = p.x * W, p.y * H
-            local into
-            for _, gr in ipairs(groups) do
-                if math.abs(gr.x - sx) < near and math.abs(gr.y - sy) < near then into = gr break end
-            end
-            if into then
-                into.items[#into.items + 1] = p
-            else
-                groups[#groups + 1] = { x = sx, y = sy, items = { p } }
-            end
+    for _, p in ipairs(cache.pts) do
+        local sx, sy = p.x * W, p.y * H
+        local into
+        for _, gr in ipairs(groups) do
+            if math.abs(gr.x - sx) < near and math.abs(gr.y - sy) < near then into = gr break end
+        end
+        if into then
+            into.items[#into.items + 1] = p
+        else
+            groups[#groups + 1] = { x = sx, y = sy, items = { p } }
         end
     end
     for gi, gr in ipairs(groups) do
@@ -199,6 +289,33 @@ function M:Draw()
     end
 end
 
+-- Dessin : le corps n'est recalculé que si la carte, le trajet ou l'étape changent ; un zoom
+-- ne fait que redimensionner les points ; seule la tête suit le joueur.
+function M:Draw(force)
+    if not (self.enabled and WorldMapFrame and WorldMapFrame:IsShown()) then hideAll() return end
+    if not ensureOverlay() then return end
+    local mapID = WorldMapFrame:GetMapID()
+    local W, H = overlay:GetWidth(), overlay:GetHeight()
+    if not (W and W > 0) then return end
+    local scale = (WorldMapFrame.GetCanvasScale and WorldMapFrame:GetCanvasScale()) or 1
+    local key = bodyKey(mapID, W)
+    local rebuilt = false
+    if force or key ~= cache.key then
+        cache.key, cache.scale, cache.headKey = key, nil, nil
+        buildBody(mapID, W, H, scale)
+        paintBody(scale)
+        rebuilt = true
+        M.builds = (M.builds or 0) + 1
+    end
+    if rebuilt or not cache.scale or math.abs(scale - cache.scale) / cache.scale > 0.04 then
+        if not rebuilt then resizeBody(scale) end
+        cache.scale = scale
+        cache.headKey = nil
+        drawPins(W, H, scale)
+    end
+    drawHead(mapID, W, H, scale)
+end
+
 -- { 2, 3, 4, 8 } -> "2-4, 8" (au-delà de deux morceaux : "2-4+")
 function M.Label(nums)
     table.sort(nums)
@@ -216,7 +333,8 @@ function M.Label(nums)
     return table.concat(parts, ",")
 end
 
--- La carte zoome / change : on redessine régulièrement tant qu'elle est ouverte (léger : < 20 éléments + pointillés)
+-- Tant que la carte est ouverte : vérification légère toutes les 0,2 s (le corps n'est refait
+-- que si quelque chose a changé ; sinon seuls le zoom et la tête sont suivis).
 local ticker = CreateFrame("Frame")
 local acc = 0
 ticker:SetScript("OnUpdate", function(_, dt)
@@ -226,10 +344,10 @@ ticker:SetScript("OnUpdate", function(_, dt)
     if M.enabled and WorldMapFrame and WorldMapFrame:IsShown() then M:Draw() end
 end)
 
-function M:OnEnable() self:Draw() end
+function M:OnEnable() self:Draw(true) end
 function M:OnDisable() self:Draw() end
-function M:OnOptionChanged() self:Draw() end
-M:On("FP_STEP_CHANGED", function() M:Draw() end)
+function M:OnOptionChanged() self:Draw(true) end
+M:On("FP_STEP_CHANGED", function() M:Draw(true) end)
 
 function M.preview(p)
     local bg = p:CreateTexture(nil, "BACKGROUND")

@@ -86,6 +86,21 @@ local function draw3d(rel, r, g, b, dt)
     end
 end
 
+f.dist = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontNormal")
+f.dist:SetPoint("TOP", f.tex, "BOTTOM", 0, -2)
+f.label = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
+f.label:SetPoint("TOP", f.dist, "BOTTOM", 0, -1)
+f.label:SetWidth(160)
+f.label:SetWordWrap(false)
+
+local function color(rel)
+    -- 0 = droit devant ; vert -> jaune -> rouge selon l'écart
+    local off = rel > math.pi and (2 * math.pi - rel) or rel
+    local t = off / math.pi
+    if t < 0.5 then return t * 2, 1, 0.2 end
+    return 1, 1 - (t - 0.5) * 2, 0.2
+end
+
 local function use3d() return supports3d and (M:Opt("style") or 1) == 1 end
 
 local acc = 0

@@ -106,5 +106,18 @@ do
   check(all:find("Butin possible") and all:find("Bottes de test") and all:find("propre à ce rare"), "infobulle du rare : " .. all)
   check(pending > 0 and #requested == pending and all:find("Chargement"), "objets pas en cache demandés au jeu")
   check(#R.Loot(999999) == 0, "rare sans butin connu : rien")
+
+  -- fenêtre de butin : chaque objet se survole pour l'infobulle complète du jeu
+  local shownItem
+  GameTooltip.SetOwner = function() end
+  GameTooltip.Show = function() end
+  GameTooltip.Hide = function() end
+  GameTooltip.SetItemByID = function(_, id) shownItem = id end
+  R.OpenLoot({ npc = 5822, name = "Gangretisseur Scornn", min = 11, max = 11, rank = 4 }, nil)
+  check(QuestweaverRareLoot ~= nil, "fenêtre de butin ouverte au clic")
+  local row = R.lootButtons[1]
+  check(row ~= nil and row.itemID == 284287, "première ligne : l'objet propre au rare")
+  row._scripts.OnEnter(row)
+  check(shownItem == 284287, "survol d'un objet : infobulle complète du jeu")
 end
 print("ALL TESTS PASSED")

@@ -61,11 +61,11 @@ local function qualityHex(q)
 end
 
 local hovered
-function M.AddLootLines(tt, npc)
-    local loot = M.Loot(npc)
-    if #loot == 0 then return 0 end
+
+-- butin trié : objets propres au rare d'abord, puis par qualité ; pending = objets pas encore en cache
+function M.LootRows(npc)
     local rows, pending = {}, 0
-    for _, it in ipairs(loot) do
+    for _, it in ipairs(M.Loot(npc)) do
         local name, quality, icon = itemInfo(it.id)
         if not name then pending = pending + 1 end
         rows[#rows + 1] = { id = it.id, unique = it.unique, name = name, quality = quality or 1, icon = icon }
@@ -75,6 +75,12 @@ function M.AddLootLines(tt, npc)
         if a.quality ~= b.quality then return a.quality > b.quality end
         return (a.name or "") < (b.name or "")
     end)
+    return rows, pending
+end
+
+function M.AddLootLines(tt, npc)
+    local rows, pending = M.LootRows(npc)
+    if #rows == 0 then return 0 end
     tt:AddLine(" ")
     tt:AddLine(ns.Tr("Butin possible"), 1, 0.82, 0.1)
     for k, r in ipairs(rows) do
@@ -87,7 +93,104 @@ function M.AddLootLines(tt, npc)
         tt:AddLine(ic .. qualityHex(r.quality) .. (r.name or ("#" .. r.id)) .. "|r" .. tag)
     end
     if pending > 0 then tt:AddLine(ns.Tr("Chargement des objets…"), 0.6, 0.6, 0.6) end
+    tt:AddLine(ns.Tr("Clic : butin en détail (survole un objet pour ses caractéristiques)"), 0.5, 0.8, 1, true)
     return pending
+end
+
+---------------------------------------------------------------------------
+-- Fenêtre de butin : ouverte d'un clic sur l'étoile. Chaque objet se survole pour l'infobulle
+-- complète du jeu (caractéristiques, niveau, ensemble…). Maj-clic : lien dans la discussion,
+-- Ctrl-clic : cabine d'essayage.
+---------------------------------------------------------------------------
+local lootFrame, lootRows = nil, {}
+M.lootButtons = lootRows
+local ROW_H = 22
+
+local function lootRow(i)
+    local r = lootRows[i]
+    if r then return r end
+    r = CreateFrame("Button", nil, lootFrame)
+    r:SetHeight(ROW_H)
+    r:SetPoint("TOPLEFT", 8, -34 - (i - 1) * ROW_H)
+    r:SetPoint("RIGHT", lootFrame, "RIGHT", -8, 0)
+    r:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    r.icon = r:CreateTexture(nil, "ARTWORK")
+    r.icon:SetSize(18, 18)
+    r.icon:SetPoint("LEFT", 2, 0)
+    r.name = r:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
+    r.name:SetPoint("LEFT", r.icon, "RIGHT", 6, 0)
+    r.name:SetPoint("RIGHT", -4, 0)
+    r.name:SetJustifyH("LEFT")
+    r.name:SetWordWrap(false)
+    r:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetItemByID(self.itemID)
+        GameTooltip:Show()
+    end)
+    r:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    r:SetScript("OnClick", function(self)
+        local link = select(2, (C_Item and C_Item.GetItemInfo or GetItemInfo)(self.itemID))
+        if not link then return end
+        if IsModifiedClick and IsModifiedClick("CHATLINK") and ChatEdit_InsertLink then ChatEdit_InsertLink(link)
+        elseif IsModifiedClick and IsModifiedClick("DRESSUP") and DressUpItemLink then DressUpItemLink(link) end
+    end)
+    lootRows[i] = r
+    return r
+end
+
+local function fillLoot()
+    if not (lootFrame and lootFrame.rare) then return end
+    local r = lootFrame.rare
+    lootFrame.title:SetText(r.name)
+    lootFrame.sub:SetText(("%s %d%s  •  %s"):format(ns.Tr("Niveau"), r.min, r.max > r.min and ("-" .. r.max) or "",
+        r.rank == 2 and ns.Tr("Rare élite") or ns.Tr("Rare")))
+    local rows, pending = M.LootRows(r.npc)
+    for i, it in ipairs(rows) do
+        local row = lootRow(i)
+        row.itemID = it.id
+        row.icon:SetTexture(it.icon or 134400)
+        row.name:SetText(qualityHex(it.quality) .. (it.name or ("#" .. it.id)) .. "|r"
+            .. (it.unique and ns.Tr(" |cffffd100(propre à ce rare)|r") or ""))
+        row:Show()
+    end
+    for i = #rows + 1, #lootRows do lootRows[i]:Hide() end
+    lootFrame.empty:SetShown(#rows == 0)
+    lootFrame.hint:SetText(pending > 0 and ns.Tr("Chargement des objets…")
+        or ns.Tr("Maj-clic : lien  •  Ctrl-clic : essayer"))
+    lootFrame:SetHeight(34 + math.max(1, #rows) * ROW_H + 26)
+end
+M.FillLoot = fillLoot
+
+function M.OpenLoot(rare, anchor)
+    if not lootFrame then
+        lootFrame = CreateFrame("Frame", "QuestweaverRareLoot", WorldMapFrame or UIParent, "BackdropTemplate")
+        lootFrame:SetWidth(280)
+        lootFrame:SetFrameStrata("TOOLTIP")
+        lootFrame:EnableMouse(true)
+        lootFrame:SetClampedToScreen(true)
+        ns.Skin(lootFrame, 0.96)
+        lootFrame.title = lootFrame:CreateFontString(nil, "OVERLAY", "QuestweaverFontNormal")
+        lootFrame.title:SetPoint("TOPLEFT", 10, -8)
+        lootFrame.title:SetPoint("RIGHT", -28, 0)
+        lootFrame.title:SetJustifyH("LEFT")
+        lootFrame.sub = lootFrame:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
+        lootFrame.sub:SetPoint("TOPLEFT", lootFrame.title, "BOTTOMLEFT", 0, -2)
+        lootFrame.empty = lootFrame:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
+        lootFrame.empty:SetPoint("TOPLEFT", 12, -38)
+        lootFrame.empty:SetText(ns.Tr("Aucun butin connu pour ce rare."))
+        lootFrame.hint = lootFrame:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallDim")
+        lootFrame.hint:SetPoint("BOTTOMLEFT", 10, 8)
+        local close = CreateFrame("Button", nil, lootFrame, "UIPanelCloseButton")
+        close:SetPoint("TOPRIGHT", 2, 2)
+        close:SetScale(0.8)
+        if WorldMapFrame then WorldMapFrame:HookScript("OnHide", function() lootFrame:Hide() end) end
+    end
+    if lootFrame:IsShown() and lootFrame.rare == rare then lootFrame:Hide() return end
+    lootFrame.rare = rare
+    lootFrame:ClearAllPoints()
+    lootFrame:SetPoint("TOPLEFT", anchor or UIParent, "TOPRIGHT", 8, 0)
+    fillLoot()
+    lootFrame:Show()
 end
 
 local function showTooltip(self)
@@ -105,6 +208,7 @@ local refresh = CreateFrame("Frame")
 refresh:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 refresh:SetScript("OnEvent", function()
     if hovered and hovered:IsVisible() and GameTooltip:IsOwned(hovered) then showTooltip(hovered) end
+    if lootFrame and lootFrame:IsShown() then fillLoot() end
 end)
 local function pin(i)
     local p = pins[i]
@@ -116,6 +220,12 @@ local function pin(i)
         p:EnableMouse(true)
         p:SetScript("OnEnter", function(self) hovered = self; showTooltip(self) end)
         p:SetScript("OnLeave", function() hovered = nil; GameTooltip:Hide() end)
+        p:SetScript("OnMouseUp", function(self, button)
+            if button == "LeftButton" and M:Opt("loot") ~= false then
+                GameTooltip:Hide()
+                M.OpenLoot(self.rare, self)
+            end
+        end)
         pins[i] = p
     end
     return p

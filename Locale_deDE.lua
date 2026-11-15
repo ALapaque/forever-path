@@ -405,4 +405,7 @@ ns.DE = {
     ["Chargement des objets…"] = "Gegenstände werden geladen…",
     ["ta cible"] = "dein Ziel",
     ["Avec Daylight UI : reprendre son point pour qu'il suive notre itinéraire"] = "Mit Daylight UI: seinen Wegpunkt übernehmen, damit er unserer Route folgt",
+    ["Clic : butin en détail (survole un objet pour ses caractéristiques)"] = "Klick: Beute im Detail (Gegenstand überfahren für Werte)",
+    ["Aucun butin connu pour ce rare."] = "Keine bekannte Beute für diesen Seltenen.",
+    ["Maj-clic : lien  •  Ctrl-clic : essayer"] = "Umschalt-Klick: Link  •  Strg-Klick: anprobieren",
 }

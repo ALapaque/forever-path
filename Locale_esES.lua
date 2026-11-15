@@ -405,4 +405,7 @@ ns.ES = {
     ["Chargement des objets…"] = "Cargando objetos…",
     ["ta cible"] = "tu objetivo",
     ["Avec Daylight UI : reprendre son point pour qu'il suive notre itinéraire"] = "Con Daylight UI: retomar su punto para que siga nuestra ruta",
+    ["Clic : butin en détail (survole un objet pour ses caractéristiques)"] = "Clic: botín en detalle (pasa sobre un objeto para ver sus estadísticas)",
+    ["Aucun butin connu pour ce rare."] = "No se conoce botín para este raro.",
+    ["Maj-clic : lien  •  Ctrl-clic : essayer"] = "Mayús-clic: enlace  •  Ctrl-clic: probar",
 }

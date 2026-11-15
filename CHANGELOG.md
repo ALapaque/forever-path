@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.6.3
+
+- **Butin des rares en détail** : un clic sur l'étoile d'un rare ouvre une petite fenêtre avec son butin. Survole un objet pour l'infobulle complète du jeu (caractéristiques, niveau requis, emplacement, ensemble…). Maj-clic pour mettre le lien dans la discussion, Ctrl-clic pour l'essayer en cabine. Un second clic sur l'étoile ou la fermeture de la carte la referme.
+
 ## v1.6.2
 
 - **Avec Daylight UI, ses points bleus suivent notre itinéraire.** Le module Quêtes de Daylight UI épingle le point de la quête suivie et trace ses points bleus vers lui en ligne droite ; Questweaver lui laissait la main. Maintenant Questweaver reprend ce point et le pose virage par virage le long de son itinéraire : les points bleus et le marqueur de Daylight UI suivent le même chemin que le tracé vert de la minimap. Si Daylight UI reprend le point plus de 3 fois en 30 secondes, Questweaver le lui laisse pour ne pas se le disputer. Option « Avec Daylight UI : reprendre son point… » dans le module Itinéraires.

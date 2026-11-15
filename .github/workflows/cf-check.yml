@@ -1,4 +1,5 @@
 name: Tester CurseForge
+# (relancé le 15/11 après mise à jour du jeton)
 
 # Lancement à la main (Actions → Tester CurseForge → Run workflow) : vérifie que le jeton
 # CURSE_FORGE_API_KEY est accepté et que la version de jeu de WoW Forever existe sur CurseForge.

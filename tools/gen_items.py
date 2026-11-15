@@ -2,7 +2,9 @@
 quête, les quêtes qui le demandent (objectif), qu'il lance, ou qui le fournissent ; et pour ces
 quêtes : niveau, niveau requis, XP de base, faction et nom (anglais et français).
 
-Usage : FP_DB=<db_full.pkl> python3 -I tools/gen_items.py <sortie Data/QuestItems.lua>
+Usage : FP_DB=<db_full.pkl> python3 -I tools/gen_items.py <sortie Data/QuestItems.lua> [Data/World.lua Data/RareLoot.lua]
+Avec les deux derniers arguments : génère aussi la table de butin des monstres rares listés dans
+Data/World.lua (équipement, sacs et recettes ; « * » = objet que seuls 1 ou 2 monstres lâchent).
 Lit la base comme de simples données (aucun code exécuté).
 """
 import os, pickle, sys
@@ -78,3 +80,35 @@ for qid in quests:
 out.append("}")
 open(sys.argv[1], "w", encoding="utf-8").write("\n".join(out) + "\n")
 print("objets : %d, quêtes : %d" % (len(items), len(quests)))
+
+if len(sys.argv) >= 4:
+    import re
+    I = db["Item"]
+    drops = defaultdict(list)
+    for iid, it in I.items():
+        for n in vals(g(it, 2, {})):
+            if isinstance(n, int):
+                drops[n].append(iid)
+    count = defaultdict(int)
+    for n, lst in drops.items():
+        for i in lst:
+            count[i] += 1
+    world = open(sys.argv[2], encoding="utf-8").read()
+    block = world[world.find("ns.World.rares"):]
+    rares = [int(m) for m in re.findall(r"\{ (\d+), \d+,", block)]
+    KEEP = {1, 2, 4, 9}            # sacs, armes, armures, recettes
+    lines = ["local _, ns = ...", "",
+             "-- Généré par tools/gen_items.py depuis QuestieDB (GPLv3). Ne pas modifier à la main.",
+             "-- ns.RareLoot[monstre rare] = \"objet,objet*,...\" (* : objet que seuls 1 ou 2 monstres lâchent)",
+             "ns.RareLoot = {"]
+    n_items = 0
+    for npc in rares:
+        items = [i for i in drops.get(npc, []) if g(I[i], 12) in KEEP]
+        if not items:
+            continue
+        items.sort(key=lambda i: (count[i] > 2, i))
+        n_items += len(items)
+        lines.append("[%d]=\"%s\"," % (npc, ",".join(str(i) + ("*" if count[i] <= 2 else "") for i in items)))
+    lines.append("}")
+    open(sys.argv[3], "w", encoding="utf-8").write("\n".join(lines) + "\n")
+    print("butin des rares : %d monstres, %d objets" % (len(lines) - 5, n_items))

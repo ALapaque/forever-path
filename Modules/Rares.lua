@@ -1,13 +1,14 @@
 local _, ns = ...
 
 -- Rares sur la carte du monde : les monstres rares de la zone (données QuestieDB) avec leur niveau,
--- pour les chasser ou les éviter (Hardcore).
+-- pour les chasser ou les éviter, avec leur butin possible.
 local M = ns.RegisterModule({
     id = "rares", category = "safety", default = true,
     name = "Rares sur la carte",
-    desc = "Affiche sur la carte du monde les monstres rares de la zone et leur niveau (étoile argentée : rare, dorée : rare élite). Survole pour le nom. Pour les chasser… ou les éviter.",
+    desc = "Affiche sur la carte du monde les monstres rares de la zone et leur niveau (étoile argentée : rare, dorée : rare élite). Survole une étoile pour le nom et le butin possible (équipement, sacs, recettes ; ceux propres à ce rare en premier). Pour les chasser… ou les éviter.",
     options = {
         { key = "range", label = "Seulement autour de mon niveau (± niveaux)", type = "slider", min = 3, max = 60, step = 1, default = 10 },
+        { key = "loot", label = ns.Tr("Butin dans l'infobulle"), type = "check", default = true },
     },
 })
 
@@ -30,6 +31,81 @@ function M.ForMap(mapID)
 end
 
 local overlay, pins = nil, {}
+
+---------------------------------------------------------------------------
+-- Butin du rare (Data/RareLoot.lua, tiré de QuestieDB) : équipement, sacs et recettes, triés par
+-- qualité, ceux propres à ce rare en premier. Les objets pas encore en cache sont demandés au
+-- jeu et l'infobulle se met à jour dès qu'ils arrivent.
+---------------------------------------------------------------------------
+local LOOT_MAX = 10
+function M.Loot(npc)
+    local raw = ns.RareLoot and ns.RareLoot[npc]
+    if not raw then return {} end
+    local out = {}
+    for id, star in raw:gmatch("(%d+)(%*?)") do out[#out + 1] = { id = tonumber(id), unique = star == "*" } end
+    return out
+end
+
+local function itemInfo(id)
+    local get = C_Item and C_Item.GetItemInfo or GetItemInfo
+    if not get then return end
+    local name, _, quality, _, _, _, _, _, _, icon = get(id)
+    if not name and C_Item and C_Item.RequestLoadItemDataByID then C_Item.RequestLoadItemDataByID(id) end
+    return name, quality, icon
+end
+
+local function qualityHex(q)
+    local c = ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[q or 1]
+    if c and c.hex then return c.hex end
+    return ({ [0] = "|cff9d9d9d", "|cffffffff", "|cff1eff00", "|cff0070dd", "|cffa335ee", "|cffff8000" })[q or 1] or "|cffffffff"
+end
+
+local hovered
+function M.AddLootLines(tt, npc)
+    local loot = M.Loot(npc)
+    if #loot == 0 then return 0 end
+    local rows, pending = {}, 0
+    for _, it in ipairs(loot) do
+        local name, quality, icon = itemInfo(it.id)
+        if not name then pending = pending + 1 end
+        rows[#rows + 1] = { id = it.id, unique = it.unique, name = name, quality = quality or 1, icon = icon }
+    end
+    table.sort(rows, function(a, b)
+        if a.unique ~= b.unique then return a.unique end
+        if a.quality ~= b.quality then return a.quality > b.quality end
+        return (a.name or "") < (b.name or "")
+    end)
+    tt:AddLine(" ")
+    tt:AddLine(ns.Tr("Butin possible"), 1, 0.82, 0.1)
+    for k, r in ipairs(rows) do
+        if k > LOOT_MAX then
+            tt:AddLine((ns.Tr("… et %d autre(s) objet(s)")):format(#rows - LOOT_MAX), 0.6, 0.6, 0.6)
+            break
+        end
+        local ic = r.icon and ("|T" .. r.icon .. ":14:14:0:0|t ") or ""
+        local tag = r.unique and ns.Tr(" |cffffd100(propre à ce rare)|r") or ""
+        tt:AddLine(ic .. qualityHex(r.quality) .. (r.name or ("#" .. r.id)) .. "|r" .. tag)
+    end
+    if pending > 0 then tt:AddLine(ns.Tr("Chargement des objets…"), 0.6, 0.6, 0.6) end
+    return pending
+end
+
+local function showTooltip(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    local r = self.rare
+    GameTooltip:SetText(r.name, 1, 0.82, 0.1)
+    GameTooltip:AddLine(("%s %d%s"):format(ns.Tr("Niveau"), r.min, r.max > r.min and ("-" .. r.max) or ""), 1, 1, 1)
+    GameTooltip:AddLine(r.rank == 2 and ns.Tr("Rare élite") or ns.Tr("Rare"), 0.7, 0.7, 0.7)
+    if M:Opt("loot") ~= false then M.AddLootLines(GameTooltip, r.npc) end
+    GameTooltip:Show()
+end
+
+-- un objet du butin vient d'arriver dans le cache : on redessine l'infobulle survolée
+local refresh = CreateFrame("Frame")
+refresh:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+refresh:SetScript("OnEvent", function()
+    if hovered and hovered:IsVisible() and GameTooltip:IsOwned(hovered) then showTooltip(hovered) end
+end)
 local function pin(i)
     local p = pins[i]
     if not p then
@@ -38,15 +114,8 @@ local function pin(i)
         p.t:SetAllPoints()
         p.t:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_1")
         p:EnableMouse(true)
-        p:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            local r = self.rare
-            GameTooltip:SetText(r.name, 1, 0.82, 0.1)
-            GameTooltip:AddLine(("%s %d%s"):format(ns.Tr("Niveau"), r.min, r.max > r.min and ("-" .. r.max) or ""), 1, 1, 1)
-            GameTooltip:AddLine(r.rank == 2 and ns.Tr("Rare élite") or ns.Tr("Rare"), 0.7, 0.7, 0.7)
-            GameTooltip:Show()
-        end)
-        p:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        p:SetScript("OnEnter", function(self) hovered = self; showTooltip(self) end)
+        p:SetScript("OnLeave", function() hovered = nil; GameTooltip:Hide() end)
         pins[i] = p
     end
     return p

@@ -1,5 +1,10 @@
 # Questweaver
 
+## v1.6.0
+
+- **Rares sur la carte : butin dans l'infobulle.** En survolant l'étoile d'un rare, tu vois son butin possible : équipement, sacs et recettes, avec icône et couleur de qualité. Les objets propres à ce rare (que seuls un ou deux monstres lâchent) passent en premier, marqués « propre à ce rare », puis le reste par qualité. Les objets pas encore connus du jeu sont chargés et l'infobulle se met à jour toute seule. Option « Butin dans l'infobulle » dans le module.
+- Données : 1 011 objets pour 290 rares, tirés de QuestieDB (y compris les nouveaux rares de Forever).
+
 ## v1.5.1
 
 - **Bonnes icônes de quête** sur le marqueur 3D et dans la fenêtre du guide : le « ! » jaune du jeu pour prendre une quête, le « ? » jaune pour la rendre (gris tant qu'elle n'est pas terminée), comme au-dessus des PNJ. Les anciens fichiers d'icônes ne correspondaient plus à ce client et affichaient un « ! » même pour rendre.

@@ -397,4 +397,10 @@ ns.ES = {
     ["Aucun objet de quête dans tes sacs."] = "No hay objetos de misión en tus bolsas.",
     ["Viande de loup coriace"] = "Carne de lobo dura",
     ["Sert à [2] Les loups derrière la frontière : déjà faite"] = "Para [2] Lobos al otro lado de la frontera: ya hecha",
+    ["Affiche sur la carte du monde les monstres rares de la zone et leur niveau (étoile argentée : rare, dorée : rare élite). Survole une étoile pour le nom et le butin possible (équipement, sacs, recettes ; ceux propres à ce rare en premier). Pour les chasser… ou les éviter."] = "Muestra en el mapa del mundo los monstruos raros de la zona y su nivel (estrella plateada: raro, dorada: raro élite). Pasa sobre una estrella para ver el nombre y el botín posible (equipo, bolsas, recetas; los propios de este raro primero). Para cazarlos… o evitarlos.",
+    ["Butin dans l'infobulle"] = "Botín en la descripción",
+    ["Butin possible"] = "Botín posible",
+    ["… et %d autre(s) objet(s)"] = "… y %d objeto(s) más",
+    [" |cffffd100(propre à ce rare)|r"] = " |cffffd100(solo este raro)|r",
+    ["Chargement des objets…"] = "Cargando objetos…",
 }

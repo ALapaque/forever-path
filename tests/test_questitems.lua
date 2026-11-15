@@ -88,4 +88,23 @@ tipCallback(GameTooltip, { id = 2589 })
 local tl = table.concat(lines, " / ")
 check(not tl:find("débarrasser") and not tl:find("Inutile"), "tissu : jamais « inutile » : " .. tl)
 check(not tl:find("Quest1644"), "quête de paladin cachée pour un guerrier")
+
+-- butin des rares dans l'infobulle de la carte
+do
+  local R = ns.Modules.rares
+  ITEM_QUALITY_COLORS = { [1] = { hex = "|cffffffff" }, [2] = { hex = "|cff1eff00" }, [3] = { hex = "|cff0070dd" } }
+  local loot = R.Loot(5822)
+  check(#loot >= 2 and loot[1].unique, "butin du rare 5822 : objet propre en premier")
+  local cache = { [3290] = { "Bottes de test", 2, 132539 } }
+  C_Item.GetItemInfo = function(id) local c = cache[id]; if c then return c[1], nil, c[2], nil, nil, nil, nil, nil, nil, c[3] end end
+  local requested = {}
+  C_Item.RequestLoadItemDataByID = function(id) requested[#requested + 1] = id end
+  local tl = {}
+  local tip = { AddLine = function(_, t) tl[#tl + 1] = t end }
+  local pending = R.AddLootLines(tip, 5822)
+  local all = table.concat(tl, " / ")
+  check(all:find("Butin possible") and all:find("Bottes de test") and all:find("propre à ce rare"), "infobulle du rare : " .. all)
+  check(pending > 0 and #requested == pending and all:find("Chargement"), "objets pas en cache demandés au jeu")
+  check(#R.Loot(999999) == 0, "rare sans butin connu : rien")
+end
 print("ALL TESTS PASSED")

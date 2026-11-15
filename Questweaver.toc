@@ -26,6 +26,7 @@ UI\DaylightUI.lua
 Data\Zones.lua
 Data\World.lua
 Data\QuestItems.lua
+Data\RareLoot.lua
 Parser.lua
 Geo.lua
 Engine.lua

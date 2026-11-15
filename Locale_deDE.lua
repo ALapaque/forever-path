@@ -397,4 +397,10 @@ ns.DE = {
     ["Aucun objet de quête dans tes sacs."] = "Keine Questgegenstände in deinen Taschen.",
     ["Viande de loup coriace"] = "Zähes Wolfsfleisch",
     ["Sert à [2] Les loups derrière la frontière : déjà faite"] = "Für [2] Wölfe jenseits der Grenze: schon erledigt",
+    ["Affiche sur la carte du monde les monstres rares de la zone et leur niveau (étoile argentée : rare, dorée : rare élite). Survole une étoile pour le nom et le butin possible (équipement, sacs, recettes ; ceux propres à ce rare en premier). Pour les chasser… ou les éviter."] = "Zeigt seltene Monster der Zone mit Stufe auf der Weltkarte (silberner Stern: selten, goldener: seltene Elite). Fahre über einen Stern für Namen und mögliche Beute (Ausrüstung, Taschen, Rezepte; die nur dieser seltene Gegner fallen lässt zuerst). Zum Jagen… oder Meiden.",
+    ["Butin dans l'infobulle"] = "Beute im Tooltip",
+    ["Butin possible"] = "Mögliche Beute",
+    ["… et %d autre(s) objet(s)"] = "… und %d weitere Gegenstände",
+    [" |cffffd100(propre à ce rare)|r"] = " |cffffd100(nur dieser Seltene)|r",
+    ["Chargement des objets…"] = "Gegenstände werden geladen…",
 }

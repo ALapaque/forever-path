@@ -404,4 +404,5 @@ ns.DE = {
     [" |cffffd100(propre à ce rare)|r"] = " |cffffd100(nur dieser Seltene)|r",
     ["Chargement des objets…"] = "Gegenstände werden geladen…",
     ["ta cible"] = "dein Ziel",
+    ["Avec Daylight UI : reprendre son point pour qu'il suive notre itinéraire"] = "Mit Daylight UI: seinen Wegpunkt übernehmen, damit er unserer Route folgt",
 }

@@ -404,4 +404,5 @@ ns.ES = {
     [" |cffffd100(propre à ce rare)|r"] = " |cffffd100(solo este raro)|r",
     ["Chargement des objets…"] = "Cargando objetos…",
     ["ta cible"] = "tu objetivo",
+    ["Avec Daylight UI : reprendre son point pour qu'il suive notre itinéraire"] = "Con Daylight UI: retomar su punto para que siga nuestra ruta",
 }

@@ -18,6 +18,7 @@ local M = ns.RegisterModule({
         { key = "card", label = ns.Tr("Détail du trajet dans le guide"), type = "check", default = true },
         { key = "minimap", label = ns.Tr("Tracé sur la minimap"), type = "check", default = true },
         { key = "yield", label = ns.Tr("Laisser un autre addon guider s'il pose son point (Naowh...)"), type = "check", default = true },
+        { key = "overDaylight", label = ns.Tr("Avec Daylight UI : reprendre son point pour qu'il suive notre itinéraire"), type = "check", default = true },
     },
 })
 ns.Journeys = M
@@ -418,10 +419,41 @@ M:On("PLAYER_REGEN_ENABLED", function() if GetTime() - lastPlan > 3 then M:Repla
 M:On("PLAYER_CONTROL_GAINED", function() Nav.Net.Break(); C_Timer.After(1, function() M:Replan("atterrissage") end) end)
 M:On("PLAYER_DEAD", function() Nav.Net.Break() end)
 M:On("FP_NAV_CHANGED", function() if GetTime() - lastPlan > 2 then M:Replan(ns.Tr("nouveau transport")) end end)
+-- Daylight UI (module Quêtes, « Route ») épingle le point de la quête suivie et dessine ses
+-- points bleus vers lui, en ligne droite. On reprend le point pour le poser virage par virage :
+-- ses points bleus suivent alors notre itinéraire. Daylight UI laisse ensuite le point tranquille
+-- (il ne touche pas aux points posés par d'autres). Garde-fou : si le point nous est repris plus
+-- de 3 fois en 30 s, on laisse faire pour ne pas se le disputer.
+local function daylightPins()
+    if not M:Opt("overDaylight") then return false end
+    local loaded = C_AddOns and C_AddOns.IsAddOnLoaded
+    if not (loaded and loaded("DaylightUI_Quests")) then return false end
+    -- avec un autre guide installé, on ne sait pas qui a posé le point : on garde la règle normale
+    for _, other in ipairs({ "NaowhForever_Utilities", "Zygor Guides Viewer" }) do
+        if loaded(other) then return false end
+    end
+    return true
+end
+local retakes = {}
+local function mayRetake()
+    local now = GetTime()
+    while retakes[1] and now - retakes[1] > 30 do table.remove(retakes, 1) end
+    if #retakes >= 3 then return false end
+    retakes[#retakes + 1] = now
+    return true
+end
+M.daylightRetakes = retakes
+
 M:On("USER_WAYPOINT_UPDATED", function()
     if ns.Waypoint and ns.Waypoint.placing then return end
+    if not C_Map.HasUserWaypoint() then return end
+    if journey and M:Opt("corners") and daylightPins() and mayRetake() then
+        -- on remet notre virage au prochain affichage (pas dans l'événement lui-même)
+        C_Timer.After(0.2, function() external = false; drive(); M:Render() end)
+        return
+    end
     -- un autre addon a posé son propre point (ex. Naowh Journeys)
-    if C_Map.HasUserWaypoint() then external = true; M:Render() end
+    external = true; M:Render()
 end)
 
 function M.preview(p)

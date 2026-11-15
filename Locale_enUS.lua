@@ -58,6 +58,7 @@ ns.EN = {
     ["Aucune étape en cours."] = "No current step.",
     ["Automatique (race et niveau)"] = "Automatic (race and level)",
     ["Aux niveaux où de nouveaux sorts arrivent, indique le maître de ta classe le plus proche. Un clic pour y aller : la flèche et l'itinéraire font le détour, puis reprennent le guide."] = "At levels with new spells, shows your nearest class trainer. One click to go: the arrow and journey take the detour, then resume the guide.",
+    ["Avec Daylight UI : reprendre son point pour qu'il suive notre itinéraire"] = "With Daylight UI: take its waypoint back so it follows our route",
     ["Avec le PNJ de l'étape : choisit tout seul l'option de dialogue quand il n'y en a qu'une, et l'option « auberge » pour lier ta pierre de foyer. Maintiens Maj pour lire tranquillement."] = "With the step's NPC: picks the dialogue option by itself when there is only one, and the « inn » option to set your hearthstone. Hold Shift to read at your own pace.",
     ["Avertissement de nouvelle version"] = "New version notice",
     ["Baie-du-Butin"] = "Booty Bay",

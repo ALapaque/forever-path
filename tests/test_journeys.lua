@@ -117,6 +117,31 @@ check(got and got.total and got.legs, "API : événement JourneyChanged")
 FireEvent("USER_WAYPOINT_UPDATED")
 check(not ns.Journeys:Driving(), "cohabitation : un autre addon guide le point")
 
+-- 11) Daylight UI épingle la quête : on reprend le point pour qu'il suive notre itinéraire
+C_AddOns = C_AddOns or {}
+local oldLoaded = C_AddOns.IsAddOnLoaded
+C_AddOns.IsAddOnLoaded = function(n) return n == "DaylightUI_Quests" end
+local oldHas = C_Map.HasUserWaypoint
+C_Map.HasUserWaypoint = function() return true end
+ns.Journeys:Replan("test")
+for k in pairs(placed) do placed[k] = nil end
+FireEvent("USER_WAYPOINT_UPDATED")
+RunTimers()
+check(#placed >= 1 and ns.Journeys:Driving(), "Daylight UI : notre virage reposé, l'itinéraire garde la main")
+-- il reprend sans arrêt : au bout de 3 fois en 30 s on lui laisse
+FireEvent("USER_WAYPOINT_UPDATED"); RunTimers()
+FireEvent("USER_WAYPOINT_UPDATED"); RunTimers()
+FireEvent("USER_WAYPOINT_UPDATED"); RunTimers()
+check(not ns.Journeys:Driving(), "Daylight UI insiste : on lui laisse le point")
+-- option coupée : règle normale
+for k in pairs(ns.Journeys.daylightRetakes) do ns.Journeys.daylightRetakes[k] = nil end
+ns.Journeys:SetOpt("overDaylight", false)
+FireEvent("USER_WAYPOINT_UPDATED"); RunTimers()
+check(not ns.Journeys:Driving(), "option coupée : on laisse Daylight UI guider")
+ns.Journeys:SetOpt("overDaylight", true)
+C_AddOns.IsAddOnLoaded = oldLoaded
+C_Map.HasUserWaypoint = oldHas
+
 -- slash
 SlashCmdList.QUESTWEAVER("paths")
 print("ALL TESTS PASSED")

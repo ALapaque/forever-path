@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.6.2
+
+- **Avec Daylight UI, ses points bleus suivent notre itinéraire.** Le module Quêtes de Daylight UI épingle le point de la quête suivie et trace ses points bleus vers lui en ligne droite ; Questweaver lui laissait la main. Maintenant Questweaver reprend ce point et le pose virage par virage le long de son itinéraire : les points bleus et le marqueur de Daylight UI suivent le même chemin que le tracé vert de la minimap. Si Daylight UI reprend le point plus de 3 fois en 30 secondes, Questweaver le lui laisse pour ne pas se le disputer. Option « Avec Daylight UI : reprendre son point… » dans le module Itinéraires.
+
 ## v1.6.1
 
 - **Correctif (alertes de danger)** : erreur « attempt to compare … a secret string value » en ciblant certains monstres. Le jeu masque parfois l'identifiant et le nom de la cible aux addons ; Questweaver ne les compare plus dans ce cas, affiche « ta cible » à la place du nom et évite de répéter l'alerte plus d'une fois toutes les 8 secondes.

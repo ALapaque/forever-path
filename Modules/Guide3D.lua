@@ -249,7 +249,7 @@ end)
 
 function M:Refresh()
     local step = ns.Engine.NavStep()
-    f.icon:SetTexture(step and ICONS[step.type] or (ns.MEDIA .. "pin"))
+    ns.SetStepIcon(f.icon, step, step and ICONS[step.type] or (ns.MEDIA .. "pin"))
     if step and not ICONS[step.type] then
         local a = ns.Theme().accent
         f.icon:SetVertexColor(a[1], a[2], a[3])
@@ -266,6 +266,7 @@ function M:OnDisable() f:Hide(); hideTrail(); setBlizzardHidden(false) end
 function M:OnOptionChanged() self:Refresh() end
 M:On("FP_STEP_CHANGED", function() M:Refresh() end)
 M:On("SUPER_TRACKING_CHANGED", function() M:Refresh() end)
+M:On("QUEST_LOG_UPDATE", function() if M.enabled then M:Refresh() end end)
 M:On("NAVIGATION_FRAME_CREATED", function() navFrame = nil; M:Refresh() end)
 M:On("NAVIGATION_FRAME_DESTROYED", function() navFrame = nil end)
 ns.On("FP_THEME_CHANGED", function() if M.enabled then M:Refresh() end end)

@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.5.1
+
+- **Bonnes icônes de quête** sur le marqueur 3D et dans la fenêtre du guide : le « ! » jaune du jeu pour prendre une quête, le « ? » jaune pour la rendre (gris tant qu'elle n'est pas terminée), comme au-dessus des PNJ. Les anciens fichiers d'icônes ne correspondaient plus à ce client et affichaient un « ! » même pour rendre.
+
 ## v1.5.0
 
 - **Nouveau module « Objets de quête dans les sacs »** (Confort, actif par défaut). Dans l'infobulle d'un objet :

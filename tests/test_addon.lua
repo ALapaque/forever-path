@@ -212,4 +212,25 @@ do
   ns.Guide:Update()
   check(ns.db.theme == "dark", "retour au thème doré")
 end
+
+-- icônes de quête du jeu : « ! » pour prendre, « ? » pour rendre (gris si pas terminée)
+do
+  C_Texture = { GetAtlasInfo = function(n) return (n == "QuestNormal" or n == "QuestTurnin") and {} or nil end }
+  local tex = { SetAtlas = function(self, a) self.atlas = a; self.file = nil end,
+    SetTexture = function(self, f) self.file = f; self.atlas = nil end,
+    SetDesaturated = function(self, d) self.desat = d end }
+  ns.SetStepIcon(tex, { type = "accept", quest = 5 }, "x")
+  check(tex.atlas == "QuestNormal" and not tex.desat, "prendre : point d'exclamation du jeu")
+  QLOG[900] = { complete = false }
+  local oldC = C_QuestLog.IsComplete
+  C_QuestLog.IsComplete = function(q) return QLOG[q] and QLOG[q].complete end
+  ns.SetStepIcon(tex, { type = "turnin", quest = 900 }, "x")
+  check(tex.atlas == "QuestTurnin" and tex.desat, "rendre, pas terminée : point d'interrogation gris")
+  QLOG[900].complete = true
+  ns.SetStepIcon(tex, { type = "turnin", quest = 900 }, "x")
+  check(tex.atlas == "QuestTurnin" and not tex.desat, "rendre, terminée : point d'interrogation jaune")
+  ns.SetStepIcon(tex, { type = "goto" }, "carte")
+  check(tex.file == "carte" and not tex.desat, "autres étapes : leur icône")
+  QLOG[900] = nil; C_QuestLog.IsComplete = oldC; C_Texture = nil
+end
 print("ALL TESTS PASSED")

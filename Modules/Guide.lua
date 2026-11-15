@@ -287,7 +287,7 @@ function M:Update()
         f.progress:SetText("")
         f.text:SetText(L.NO_GUIDE)
         f.sub:SetText("")
-        f.icon:SetTexture("Interface\\Icons\\INV_Misc_Map_01")
+        ns.SetStepIcon(f.icon, nil, "Interface\\Icons\\INV_Misc_Map_01")
         f.bar:SetMinMaxValues(0, 1); f.bar:SetValue(0)
         f.upcoming:SetText("")
         wipe(M.upData)
@@ -301,7 +301,7 @@ function M:Update()
 
     if not step then
         f.text:SetText(L.GUIDE_DONE)
-        f.icon:SetTexture("Interface\\Icons\\Achievement_Quests_Completed_01")
+        ns.SetStepIcon(f.icon, nil, "Interface\\Icons\\Achievement_Quests_Completed_01")
         f.sub:SetText("")
         f.upcoming:SetText("")
         wipe(M.upData)
@@ -310,7 +310,7 @@ function M:Update()
     end
 
     local label, st = M.StepLabel(step)
-    f.icon:SetTexture(st.icon)
+    ns.SetStepIcon(f.icon, step, st.icon)
     f.text:SetText(caps(label))
     local sub = {}
     local z = ns.ZoneByKey[step.map or ""] or ns.ZoneByMap[step.map or 0]

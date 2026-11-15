@@ -183,6 +183,33 @@ local function setFont(fo, path, size, flags)
 end
 ns._setFont = setFont
 
+-- Icônes de quête du jeu (atlas) : « ! » jaune pour prendre, « ? » jaune pour rendre (gris tant
+-- que la quête n'est pas terminée). Les anciens fichiers GossipFrame\*QuestIcon ne correspondent
+-- plus aux icônes affichées au-dessus des PNJ sur ce client.
+ns.QUEST_ATLAS = { accept = "QuestNormal", turnin = "QuestTurnin" }
+local function atlasExists(name)
+    if not (C_Texture and C_Texture.GetAtlasInfo) then return false end
+    local ok, info = pcall(C_Texture.GetAtlasInfo, name)
+    return ok and info ~= nil
+end
+function ns.SetStepIcon(tex, step, fallback)
+    local kind = step and step.type
+    local atlas = kind and ns.QUEST_ATLAS[kind]
+    if atlas and tex.SetAtlas and atlasExists(atlas) then
+        tex:SetAtlas(atlas)
+        local waiting = false
+        if kind == "turnin" and step.quest and C_QuestLog and C_QuestLog.IsComplete then
+            local inLog = C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetLogIndexForQuestID(step.quest)
+            waiting = inLog ~= nil and not C_QuestLog.IsComplete(step.quest)
+        end
+        if tex.SetDesaturated then tex:SetDesaturated(waiting) end
+        return true
+    end
+    if tex.SetDesaturated then tex:SetDesaturated(false) end
+    tex:SetTexture(fallback)
+    return false
+end
+
 ns.GENERAL_FONT = ns.Tr("Police générale (Apparence)")
 ns.FontPath = function(name) return fontPath(name) end
 

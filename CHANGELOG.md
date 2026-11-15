@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.6.1
+
+- **Correctif (alertes de danger)** : erreur « attempt to compare … a secret string value » en ciblant certains monstres. Le jeu masque parfois l'identifiant et le nom de la cible aux addons ; Questweaver ne les compare plus dans ce cas, affiche « ta cible » à la place du nom et évite de répéter l'alerte plus d'une fois toutes les 8 secondes.
+
 ## v1.6.0
 
 - **Rares sur la carte : butin dans l'infobulle.** En survolant l'étoile d'un rare, tu vois son butin possible : équipement, sacs et recettes, avec icône et couleur de qualité. Les objets propres à ce rare (que seuls un ou deux monstres lâchent) passent en premier, marqués « propre à ce rare », puis le reste par qualité. Les objets pas encore connus du jeu sont chargés et l'infobulle se met à jour toute seule. Option « Butin dans l'infobulle » dans le module.

@@ -391,6 +391,7 @@ ns.EN = {
     ["niveau ??"] = "level ??",
     ["non enregistré"] = "not saved",
     ["nouveau transport"] = "new transport",
+    ["ta cible"] = "your target",
     ["texte vide"] = "empty text",
     ["verrouillées"] = "locked",
     ["|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:12|t |cffff7f3fQuête de groupe|r : %s%s"] = "|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:12|t |cffff7f3fGroup quest|r: %s%s",

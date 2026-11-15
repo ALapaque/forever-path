@@ -403,4 +403,5 @@ ns.DE = {
     ["… et %d autre(s) objet(s)"] = "… und %d weitere Gegenstände",
     [" |cffffd100(propre à ce rare)|r"] = " |cffffd100(nur dieser Seltene)|r",
     ["Chargement des objets…"] = "Gegenstände werden geladen…",
+    ["ta cible"] = "dein Ziel",
 }

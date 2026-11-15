@@ -233,4 +233,29 @@ do
   check(tex.file == "carte" and not tex.desat, "autres étapes : leur icône")
   QLOG[900] = nil; C_QuestLog.IsComplete = oldC; C_Texture = nil
 end
+
+-- alertes de danger : GUID et nom de la cible « secrets » (Midnight) -> pas de comparaison, nom générique
+do
+  local SECRET = setmetatable({}, { __eq = function() error("comparaison d'une valeur secrète") end })
+  local oldSecret = issecretvalue
+  issecretvalue = function(v) return v == nil and false or rawequal(v, SECRET) end
+  local oldGUID, oldName, oldExists, oldAttack, oldDead, oldClassif, oldLvl = UnitGUID, UnitName, UnitExists, UnitCanAttack, UnitIsDead, UnitClassification, UnitLevel
+  UnitGUID = function() return SECRET end
+  UnitName = function(u) if u == "target" then return SECRET end return "Tester" end
+  UnitExists = function() return true end
+  UnitCanAttack = function() return true end
+  UnitIsDead = function() return false end
+  UnitClassification = function() return "elite" end
+  UnitLevel = function(u) if u == "target" then return 30 end return PLAYER.level end
+  ns.SetModuleEnabled("danger", true)
+  local toasts = {}
+  local oldToast = ns.Toast
+  ns.Toast = function(msg) toasts[#toasts + 1] = msg end
+  FireEvent("PLAYER_TARGET_CHANGED")
+  FireEvent("PLAYER_TARGET_CHANGED")
+  ns.Toast = oldToast
+  check(#toasts == 1 and toasts[1]:find("ta cible"), "danger avec GUID secret : une alerte, nom générique ("..#toasts..")")
+  UnitGUID, UnitName, UnitExists, UnitCanAttack, UnitIsDead, UnitClassification, UnitLevel = oldGUID, oldName, oldExists, oldAttack, oldDead, oldClassif, oldLvl
+  issecretvalue = oldSecret
+end
 print("ALL TESTS PASSED")

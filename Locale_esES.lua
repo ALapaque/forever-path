@@ -403,4 +403,5 @@ ns.ES = {
     ["… et %d autre(s) objet(s)"] = "… y %d objeto(s) más",
     [" |cffffd100(propre à ce rare)|r"] = " |cffffd100(solo este raro)|r",
     ["Chargement des objets…"] = "Cargando objetos…",
+    ["ta cible"] = "tu objetivo",
 }

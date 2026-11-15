@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.4.1
+
+- **Flèche de direction : police et taille du texte réglables.** Nouvelles options « Police du texte » (n'importe quelle police de la liste, ou la police générale d'Apparence) et « Taille du texte » (10 à 24) pour l'étape, l'étape suivante, la distance et le temps affichés sous la flèche.
+
 ## v1.4.0
 
 - **Nouvelle flèche « Pointe »** (style par défaut) : une pointe de flèche à deux facettes, une éclairée et une dans l'ombre, légèrement inclinée vers le sol. Dessous, en majuscules avec un contour épais : l'étape en cours, l'étape suivante, puis la distance et le **temps de trajet estimé** (selon que tu cours ou que tu es sur ta monture). Vert d'eau dans la bonne direction, ambre de côté, rouge à l'opposé. Options : majuscules, étape suivante affichée ou non.

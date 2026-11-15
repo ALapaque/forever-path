@@ -9,6 +9,13 @@ local M = ns.RegisterModule({
         { key = "style", label = ns.Tr("Style"), type = "select", values = { ns.Tr("3D (posée au sol)"), ns.Tr("Plate"), ns.Tr("Pointe (étapes dessous)") }, default = 3, width = 150 },
         { key = "caps", label = ns.Tr("Texte en majuscules (style Pointe)"), type = "check", default = true },
         { key = "next", label = ns.Tr("Étape suivante sous la flèche (style Pointe)"), type = "check", default = true },
+        { key = "font", label = ns.Tr("Police du texte"), type = "select", store = "value", width = 160,
+          values = function()
+              local list = { ns.GENERAL_FONT }
+              for _, n in ipairs(ns.FontList()) do list[#list + 1] = n end
+              return list
+          end },
+        { key = "textSize", label = ns.Tr("Taille du texte"), type = "slider", min = 10, max = 24, step = 1, default = 14 },
         { key = "size", label = ns.Tr("Taille"), type = "slider", min = 32, max = 96, step = 4, default = 56 },
         { key = "hideClose", label = ns.Tr("Masquer à l'arrivée"), type = "check", default = true },
     },
@@ -231,7 +238,15 @@ f:SetScript("OnUpdate", function(self, dt)
     end
 end)
 
+local function applyTextFont()
+    local name, size = M:Opt("font"), M:Opt("textSize") or 14
+    ns.SetFontOverride("QuestweaverFontArrow", name, size)
+    ns.SetFontOverride("QuestweaverFontArrowGold", name, size)
+end
+ns.On("PLAYER_LOGIN", function() C_Timer.After(3.5, applyTextFont) end)
+
 function M:Apply()
+    applyTextFont()
     local s = self:Opt("size") or 56
     f.tex:SetSize(s, s)
     layout3d(s * 1.25)

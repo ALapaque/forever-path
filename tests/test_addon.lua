@@ -59,6 +59,12 @@ do
   ns.Modules.arrow:SetOpt("style", 3); up(QuestweaverArrow, 0.05); up(QuestweaverArrow, 0.05)
   ns.Engine.NavStep, ns.Geo.Vector, ns.Geo.RelativeAngle = E, G, RA
   check(true, "flèches pointe, 3D et plate dessinées")
+  ns.SetModuleEnabled("arrow", true)
+  ns.Modules.arrow:SetOpt("font", "Arial Narrow"); ns.Modules.arrow:SetOpt("textSize", 18)
+  local p, sz = QuestweaverFontArrow:GetFont()
+  check(p and p:find("ARIALN") and sz == 18, "police du texte de la flèche : "..tostring(p).." "..tostring(sz))
+  check((QuestweaverFontNormal:GetFont() or ""):find("ARIALN") == nil, "le reste garde la police générale")
+  ns.Modules.arrow:SetOpt("font", ns.GENERAL_FONT); ns.Modules.arrow:SetOpt("textSize", 14)
 end
 
 -- options : construction des cartes + aperçus

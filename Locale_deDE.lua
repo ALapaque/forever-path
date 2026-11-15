@@ -374,4 +374,6 @@ ns.DE = {
     ["Texte en majuscules (style Pointe)"] = "Text in Großbuchstaben (Stil Pfeilspitze)",
     ["Étape suivante sous la flèche (style Pointe)"] = "Nächster Schritt unter dem Pfeil (Stil Pfeilspitze)",
     ["Rendre : La menace kobold"] = "Abgeben: Die Koboldplage",
+    ["Police générale (Apparence)"] = "Allgemeine Schrift (Aussehen)",
+    ["Police du texte"] = "Schrift des Textes",
 }

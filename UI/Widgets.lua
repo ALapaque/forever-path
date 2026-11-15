@@ -183,6 +183,16 @@ local function setFont(fo, path, size, flags)
 end
 ns._setFont = setFont
 
+ns.GENERAL_FONT = ns.Tr("Police générale (Apparence)")
+ns.FontPath = function(name) return fontPath(name) end
+
+-- Police propre à un groupe d'objets (ex. textes de la flèche) : name = nil ou "" -> police générale
+local overrides = {}       -- [objet] = { name = ..., size = ... }
+function ns.SetFontOverride(objName, fontName, size)
+    overrides[objName] = { name = fontName, size = size }
+    ns.ApplyFonts()
+end
+
 function ns.ApplyFonts()
     local t = ns.Theme()
     local path = fontPath(ns.db and ns.db.font)
@@ -190,8 +200,10 @@ function ns.ApplyFonts()
     for _, def in ipairs(FONT_OBJECTS) do
         local fo = _G[def[1]]
         local b = baseSize[def[1]]
-        local size = math.max(6, math.floor(b.size * scale + 0.5))
-        if not setFont(fo, path, size, b.flags) then fo:SetFont(ns.FONTS[1].path, size, b.flags) end
+        local ov = overrides[def[1]]
+        local size = math.max(6, math.floor(((ov and ov.size) or b.size) * scale + 0.5))
+        local p = (ov and ov.name and ov.name ~= "" and ov.name ~= ns.GENERAL_FONT and ov.name ~= "Police générale (Apparence)") and fontPath(ov.name) or path
+        if not setFont(fo, p, size, b.flags) then fo:SetFont(ns.FONTS[1].path, size, b.flags) end
         local c = def[3] == "accent" and t.accent or def[3] == "text" and t.text
             or def[3] == "white" and { 1, 1, 1 } or def[3] == "gold" and { 1, 0.82, 0.1 } or { 0.55, 0.55, 0.58 }
         fo:SetTextColor(c[1], c[2], c[3])

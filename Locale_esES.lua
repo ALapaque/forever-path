@@ -374,4 +374,6 @@ ns.ES = {
     ["Texte en majuscules (style Pointe)"] = "Texto en mayúsculas (estilo Punta)",
     ["Étape suivante sous la flèche (style Pointe)"] = "Paso siguiente bajo la flecha (estilo Punta)",
     ["Rendre : La menace kobold"] = "Entregar: La amenaza kóbold",
+    ["Police générale (Apparence)"] = "Fuente general (Apariencia)",
+    ["Police du texte"] = "Fuente del texto",
 }

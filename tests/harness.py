@@ -83,7 +83,8 @@ function geterrorhandler() return function(e) print("ERR: "..tostring(e)) table.
 PLAYER = {level=1, race="Human", class="WARRIOR", faction="Alliance", map=1429, x=0.482, y=0.429}
 function UnitLevel() return PLAYER.level end
 function UnitRace() return "Humain", PLAYER.race end
-function UnitClass() return "Guerrier", PLAYER.class end
+local CLASS_IDS = { WARRIOR = 1, PALADIN = 2, HUNTER = 3, ROGUE = 4, PRIEST = 5, SHAMAN = 7, MAGE = 8, WARLOCK = 9, DRUID = 11 }
+function UnitClass() return "Guerrier", PLAYER.class, CLASS_IDS[PLAYER.class] end
 function UnitFactionGroup() return PLAYER.faction end
 function UnitName() return "Tester" end
 function IsShiftKeyDown() return false end

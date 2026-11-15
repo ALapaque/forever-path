@@ -1,5 +1,16 @@
 # Questweaver
 
+## v1.5.0
+
+- **Nouveau module « Objets de quête dans les sacs »** (Confort, actif par défaut). Dans l'infobulle d'un objet :
+  - la ou les quêtes auxquelles il sert, qu'il lance ou qui le fournissent, avec leur niveau ;
+  - où tu en es : en cours, déjà faite, pas encore prise, ou disponible à partir de tel niveau ;
+  - l'XP qu'elle rapporte encore à ton niveau (pleine jusqu'à 5 niveaux d'écart, puis de moins en moins) et si elle est prévue dans ta route ;
+  - un verdict : **à garder**, **peu utile** (quête grise, presque plus d'XP) ou **inutile** (toutes ses quêtes sont rendues).
+- Les quêtes de l'autre faction et des autres classes sont écartées. Les objets ordinaires que des quêtes demandent aussi (tissu, cuir…) n'ont jamais de conseil « à jeter » : seulement la liste des quêtes encore à faire.
+- **`/qw sac`** passe tout ton sac en revue et range les objets de quête en trois groupes : inutiles, peu utiles, à garder.
+- Données : 3 865 objets reliés à 3 852 quêtes, tirées de QuestieDB (Classic et nouveau contenu de Forever).
+
 ## v1.4.1
 
 - **Flèche de direction : police et taille du texte réglables.** Nouvelles options « Police du texte » (n'importe quelle police de la liste, ou la police générale d'Apparence) et « Taille du texte » (10 à 24) pour l'étape, l'étape suivante, la distance et le temps affichés sous la flèche.

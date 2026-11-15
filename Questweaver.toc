@@ -25,6 +25,7 @@ UI\Widgets.lua
 UI\DaylightUI.lua
 Data\Zones.lua
 Data\World.lua
+Data\QuestItems.lua
 Parser.lua
 Geo.lua
 Engine.lua
@@ -68,6 +69,7 @@ Modules\Flights.lua
 Modules\Dialogue.lua
 Modules\Supplies.lua
 Modules\QuestLog.lua
+Modules\QuestItems.lua
 Modules\Hardcore.lua
 Modules\CatchUp.lua
 Modules\Dungeons.lua

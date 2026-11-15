@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.2.2
+
+- Première version envoyée automatiquement sur CurseForge par la CI (même contenu que la v1.2.1).
+
 ## v1.2.1
 
 - Publication automatique sur CurseForge : chaque version part maintenant aussi sur https://www.curseforge.com/wow/addons/questweaver.

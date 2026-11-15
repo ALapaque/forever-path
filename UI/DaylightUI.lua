@@ -71,12 +71,33 @@ function B.BuildTheme()
     return t
 end
 
-local function refresh()
-    B.BuildTheme()
-    if ns.db and (ns.db.theme == "daylight" or ns.db.font == B.FONT_NAME) then ns.ApplyLook() end
+B.FONT_NAME = "Police de Daylight UI"
+B.QUEST_FONT_NAME = "Police des quêtes de Daylight UI"
+
+-- Police du suivi des quêtes de Daylight UI (Quêtes > Suivi > Texte). L'API publique de DUI ne
+-- donne que la police générale : on lit le choix de la zone « quests » avec précaution, et on
+-- retombe sur la police générale si DUI change sa structure ou si le module Quêtes est absent.
+function B.QuestFontPath()
+    local a = api()
+    if not (a and a.FontFile) then return end
+    local loaded = C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("DaylightUI_Quests")
+    if not loaded then return end
+    local pick
+    local media = type(DaylightUI) == "table" and DaylightUI.Media
+    if type(media) == "table" and type(media.Pick) == "function" then
+        local ok, v = pcall(media.Pick, "quests.font")
+        if ok and type(v) == "string" then pick = v end
+    end
+    local ok, path = pcall(a.FontFile, pick or "general")
+    if ok and type(path) == "string" and path ~= "" then return path end
 end
 
-B.FONT_NAME = "Police de Daylight UI"
+local function refresh()
+    B.BuildTheme()
+    if ns.db and (ns.db.theme == "daylight" or ns.db.font == B.FONT_NAME or ns.db.font == B.QUEST_FONT_NAME) then
+        ns.ApplyLook()
+    end
+end
 
 function B.Register()
     if B.registered or type(DaylightUI) ~= "table" then return end

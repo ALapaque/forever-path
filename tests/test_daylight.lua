@@ -32,6 +32,24 @@ check(math.abs(t.text[1] - 0.9) < 1e-6, "couleur de texte lue depuis API.Colors"
 check(ns.FontList()[1] == ns.Daylight.FONT_NAME, "police DUI proposée en premier")
 check(commands.path ~= nil, "commande /dui path")
 
+-- police du suivi des quêtes de DUI (Quêtes > Suivi > Texte)
+DaylightUI.API.FontFile = function(key)
+  if key == "general" then return "Interface\\AddOns\\DaylightUI\\Media\\Inter.ttf" end
+  if key == "alfaslab" then return "Interface\\AddOns\\SharedMedia\\AlfaSlabOne.ttf" end
+end
+DaylightUI.Media = { Pick = function(id) return id == "quests.font" and "alfaslab" or nil end }
+C_AddOns = C_AddOns or {}
+local oldLoaded = C_AddOns.IsAddOnLoaded
+C_AddOns.IsAddOnLoaded = function(n) return n == "DaylightUI_Quests" end
+check(ns.FontList()[2] == ns.Daylight.QUEST_FONT_NAME, "police des quêtes de DUI proposée")
+ns.db.font = ns.Daylight.QUEST_FONT_NAME; ns.ApplyFonts()
+check((QuestweaverFontNormal:GetFont() or ""):find("AlfaSlabOne") ~= nil, "police des quêtes de DUI appliquée : "..tostring(QuestweaverFontNormal:GetFont()))
+DaylightUI.Media = nil   -- DUI change sa structure : on suit sa police générale
+ns.ApplyFonts()
+check((QuestweaverFontNormal:GetFont() or ""):find("Inter") ~= nil, "repli sur la police générale de DUI")
+C_AddOns.IsAddOnLoaded = oldLoaded
+ns.db.font = ns.Daylight.FONT_NAME; ns.ApplyFonts()
+
 -- changement de style dans DUI -> thème mis à jour
 accent = { 1.0, 0.4, 0.1 }
 events.StyleChanged()

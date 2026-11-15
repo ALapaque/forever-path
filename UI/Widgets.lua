@@ -80,6 +80,9 @@ function ns.FontList()
     local list, seen = {}, {}
     if ns.Daylight and ns.Daylight.registered and ns.Daylight.FontPath() then
         list[#list + 1] = ns.Daylight.FONT_NAME; seen[ns.Daylight.FONT_NAME] = true
+        if ns.Daylight.QuestFontPath() then
+            list[#list + 1] = ns.Daylight.QUEST_FONT_NAME; seen[ns.Daylight.QUEST_FONT_NAME] = true
+        end
     end
     for _, f in ipairs(ns.FONTS) do list[#list + 1] = f.name; seen[f.name] = true end
     local media = lsm()
@@ -94,6 +97,10 @@ end
 local function fontPath(name)
     if ns.Daylight and name == ns.Daylight.FONT_NAME then
         local p = ns.Daylight.FontPath()
+        if p then return p end
+    end
+    if ns.Daylight and name == ns.Daylight.QUEST_FONT_NAME then
+        local p = ns.Daylight.QuestFontPath() or ns.Daylight.FontPath()
         if p then return p end
     end
     for _, f in ipairs(ns.FONTS) do if f.name == name then return f.path end end

@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.3.2
+
+- **Police des quêtes de Daylight UI** : nouveau choix « Police des quêtes de Daylight UI » dans Apparence > Police. Questweaver prend alors la police réglée dans Daylight UI > Quêtes > Suivi > Texte (par exemple Alfa Slab One), et la suit quand tu la changes. Si le module Quêtes de Daylight UI n'est pas chargé, c'est la police générale de Daylight UI qui est utilisée.
+
 ## v1.3.1
 
 - **Tracé de la route sur la carte : fini les ralentissements sur les longs trajets.** Le tracé entier était recalculé 5 fois par seconde tant que la carte était ouverte (conversion de chaque point de l'itinéraire, jusqu'à 600 points repositionnés). Maintenant :

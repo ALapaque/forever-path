@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.2.1
+
+- Publication automatique sur CurseForge : chaque version part maintenant aussi sur https://www.curseforge.com/wow/addons/questweaver.
+
 ## v1.2.0
 
 - **Nouveau panneau d'options** (`/qw config`), bien plus lisible maintenant qu'il y a 46 modules :

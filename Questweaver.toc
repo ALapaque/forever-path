@@ -7,6 +7,7 @@
 ## OptionalDeps: TomTom, LibSharedMedia-3.0, DaylightUI, Questweaver_Terrain
 ## X-License: GPL-3.0
 ## X-Website: https://github.com/ALapaque/quest-weaver
+## X-Curse-Project-ID: 1806942
 ## Category: Quests
 ## Category-frFR: Quêtes
 ## SavedVariables: QuestweaverDB, QuestweaverNavDB

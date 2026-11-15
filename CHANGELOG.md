@@ -1,5 +1,13 @@
 # Questweaver
 
+## v1.7.0
+
+- **Nouveau panneau des quêtes** (bouton livre dans le guide, `/qw quetes` ou `/qw groupe`), deux onglets :
+  - **Mes quêtes** : tout ton journal, les quêtes prêtes à rendre en premier, puis celles de ta route ; la progression des objectifs ; et pour chaque quête, qui du groupe l'a aussi (« aussi : Jaina ») ou ne l'a pas (« pas : Thrall »).
+  - **Groupe** : pour chaque membre qui utilise Questweaver, son niveau, son segment et son étape en cours, puis ses quêtes rangées en trois groupes : **en commun** avec toi, **dans ta route aussi** (tu pourrais la prendre), et les autres. Les quêtes prêtes à rendre sont signalées.
+- **Chacun suit sa propre route en groupe** (par défaut). Un bouton en bas du panneau, « Route : la mienne / celle du chef », permet de suivre la route du chef de groupe si vous préférez avancer ensemble. Option aussi dans le module Progression du groupe.
+- Le groupe partage maintenant tout le journal de quêtes (et pas seulement les quêtes de la route), avec celles prêtes à rendre. Les membres qui ont une version plus ancienne restent affichés avec les quêtes de leur route.
+
 ## v1.6.3
 
 - **Butin des rares en détail** : un clic sur l'étoile d'un rare ouvre une petite fenêtre avec son butin. Survole un objet pour l'infobulle complète du jeu (caractéristiques, niveau requis, emplacement, ensemble…). Maj-clic pour mettre le lien dans la discussion, Ctrl-clic pour l'essayer en cabine. Un second clic sur l'étoile ou la fermeture de la carte la referme.

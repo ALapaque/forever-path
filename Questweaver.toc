@@ -57,6 +57,7 @@ Modules\Rewards.lua
 Modules\XPTracker.lua
 Modules\Reminders.lua
 Modules\GroupSync.lua
+Modules\QuestPanel.lua
 Modules\Danger.lua
 Modules\Recorder.lua
 Modules\Detour.lua

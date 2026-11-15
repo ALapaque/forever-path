@@ -10,31 +10,59 @@ local M = ns.RegisterModule({
     desc = ns.Tr("En groupe, affiche l'étape de chaque membre qui utilise Questweaver (en avance, en retard), signale qui n'a pas la quête de l'étape et propose de la partager."),
     options = {
         { key = "share", label = ns.Tr("Proposer de partager les quêtes"), type = "check", default = true },
+        { key = "follow", label = ns.Tr("Suivre la route du chef de groupe"), type = "check", default = false },
     },
 })
 
 local members = {}   -- [name] = { guide, index, total, level, quests = { [id] = true }, time }
 
--- quêtes de la route présentes dans mon journal
+-- tout mon journal de quêtes (celles de la route d'abord), et lesquelles sont prêtes à rendre
 local function myQuests()
-    local out, wanted = {}, ns.Engine.GuideQuests()
+    local route, other, ready = {}, {}, {}
+    local wanted = ns.Engine.GuideQuests()
     for i = 1, C_QuestLog.GetNumQuestLogEntries() do
         local info = C_QuestLog.GetInfo(i)
-        if info and info.questID and not info.isHeader and wanted[info.questID] then
-            out[#out + 1] = info.questID
-            if #out >= 25 then break end
+        local q = info and not info.isHeader and info.questID
+        if q and not ns.IsSecret(q) then
+            if wanted[q] then route[#route + 1] = q else other[#other + 1] = q end
+            if C_QuestLog.IsComplete and C_QuestLog.IsComplete(q) then ready[#ready + 1] = q end
         end
     end
-    return out
+    for _, q in ipairs(other) do route[#route + 1] = q end
+    return route, ready
+end
+M.MyQuests = myQuests
+
+-- liste « 1,2,3 » qui tient dans `budget` caractères (sans couper un numéro)
+local function fit(list, budget)
+    local out, len = {}, 0
+    for _, q in ipairs(list) do
+        local s = tostring(q)
+        if len + #s + 1 > budget then break end
+        out[#out + 1] = s
+        len = len + #s + 1
+    end
+    return table.concat(out, ",")
 end
 
 function M.Encode()
     local g, _, i = ns.Engine.Current()
     if not g then return end
-    return ("2:%s:%d:%d:%d:%s"):format(g.id, i, #g.steps, ns.PlayerLevel(), table.concat(myQuests(), ","))
+    local quests, ready = myQuests()
+    local head = ("3:%s:%d:%d:%d:"):format(g.id, i, #g.steps, ns.PlayerLevel())
+    local readyTxt = fit(ready, 60)
+    return head .. fit(quests, 250 - #head - #readyTxt - 1) .. ":" .. readyTxt
 end
 
 function M.Decode(msg)
+    local v3 = { msg:match("^3:(.-):(%d+):(%d+):(%d+):([%d,]*):([%d,]*)$") }
+    if v3[1] then
+        local q, r = {}, {}
+        for id in v3[5]:gmatch("%d+") do q[tonumber(id)] = true end
+        for id in v3[6]:gmatch("%d+") do r[tonumber(id)] = true end
+        return { guide = v3[1], index = tonumber(v3[2]), total = tonumber(v3[3]), level = tonumber(v3[4]),
+            quests = q, ready = r, full = true }
+    end
     local v2 = { msg:match("^2:(.-):(%d+):(%d+):(%d+):([%d,]*)$") }
     if v2[1] then
         local q = {}

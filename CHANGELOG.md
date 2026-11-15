@@ -1,5 +1,15 @@
 # Questweaver
 
+## v1.2.0
+
+- **Nouveau panneau d'options** (`/qw config`), bien plus lisible maintenant qu'il y a 46 modules :
+  - à gauche, l'**Accueil** et les catégories, avec le nombre de modules actifs dans chacune ;
+  - au milieu, les modules de la catégorie, une ligne chacun : case à cocher, nom, résumé d'une ligne, nombre de réglages ;
+  - à droite, le module choisi en grand : aperçu agrandi, description complète, bouton Activé / Désactivé et ses réglages.
+- **Recherche** en haut : tape « vol », « flèche » ou « hardcore » pour retrouver un module dans toutes les catégories (accents et majuscules ignorés).
+- **Accueil** : ta route (changer, recommencer le segment), les quatre **profils rapides** en un clic, et le bilan des modules actifs par catégorie.
+- Le panneau se souvient de la dernière catégorie et du dernier module ouverts.
+
 ## v1.1.1
 
 - **Guidage 3D : points au sol** entre ton personnage et l'objectif. Ils se resserrent au loin, comme posés sur le sol, et avancent doucement vers le point. Option « Points au sol jusqu'à l'objectif » dans le module Guidage 3D.

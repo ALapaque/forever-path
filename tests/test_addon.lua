@@ -42,6 +42,18 @@ ns.Modules.guide:SetOpt("upcoming", 3); check(ns.Modules.guide:Opt("upcoming") =
 -- options : construction des cartes + aperçus
 ns.Options:Open()
 check(ns.Options.built, "panneau d'options construit")
+-- chaque catégorie, chaque module (aperçu + réglages construits sans erreur)
+rawset(QuestweaverOptions, "IsShown", function() return true end)
+local seen = 0
+for _, cat in ipairs({ "guide", "nav", "targets", "comfort", "safety", "community", "look" }) do
+  ns.Options:Show(cat)
+  for _, id in ipairs(ns.ModuleOrder) do
+    ns.Options:Select(ns.Modules[id]); seen = seen + 1
+  end
+end
+check(seen > 0, "fiches de tous les modules affichées")
+ns.Options:Show("home"); ns.Options:Refresh()
+check(ns.db.optView == "home", "accueil mémorisé")
 
 -- quête acceptée -> turnin
 QLOG[783] = {complete = true}

@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.3.3
+
+- **Flèche 3D redessinée** : sa forme était tordue (le jeu coupe une texture déformée en deux triangles). Elle est maintenant tournée puis aplatie au sol par ses coordonnées de texture, une transformation exacte : la flèche garde sa forme sous tous les angles. Épaisseur plus fine, ombre plus discrète, distance placée sous la flèche sans la chevaucher.
+
 ## v1.3.2
 
 - **Police des quêtes de Daylight UI** : nouveau choix « Police des quêtes de Daylight UI » dans Apparence > Police. Questweaver prend alors la police réglée dans Daylight UI > Quêtes > Suivi > Texte (par exemple Alfa Slab One), et la suit quand tu la changes. Si le module Quêtes de Daylight UI n'est pas chargé, c'est la police générale de Daylight UI qui est utilisée.

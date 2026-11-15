@@ -23,80 +23,67 @@ f.tex:SetPoint("TOP", 0, 0)
 f.tex:SetTexture(ns.MEDIA .. "arrow")
 
 ---------------------------------------------------------------------------
--- Flèche 3D : la flèche est posée sur un sol vu en perspective (caméra derrière le personnage,
--- inclinée vers le bas). Chaque coin de la texture est projeté à l'écran (SetVertexOffset) :
--- quand l'étape est devant, la flèche s'enfonce dans l'écran ; sur le côté, elle s'allonge
--- vers la gauche ou la droite. Quelques couches décalées vers le bas lui donnent une épaisseur,
--- et une ombre floue la pose au sol.
+-- Flèche 3D : la flèche est posée sur un sol vu en biais (comme la caméra derrière le
+-- personnage). On ne déforme pas la texture coin par coin (le jeu la coupe en deux triangles,
+-- ce qui la tordait) : on tourne puis on aplatit ses coordonnées de texture, une transformation
+-- exacte. Droit devant, la flèche « s'enfonce » (écrasée) ; sur le côté, elle s'allonge.
+-- Trois couches décalées vers le bas lui donnent une épaisseur, une ombre la pose au sol.
 ---------------------------------------------------------------------------
-local CAM_DIST, CAM_PITCH = 2.6, math.rad(38)
-local LAYERS = 5                               -- couches d'épaisseur (dessous -> dessus)
+local FLAT = 0.55                                  -- écrasement vertical du sol vu en biais
+local LAYERS = 3
 local holder3d = CreateFrame("Frame", nil, f)
 holder3d:SetPoint("TOP", 0, 0)
 holder3d:Hide()
 local shadow = holder3d:CreateTexture(nil, "BACKGROUND")
 shadow:SetTexture(ns.MEDIA .. "arrow")
-shadow:SetPoint("CENTER", 0, -4)
 local layers = {}
 for i = 1, LAYERS do
     local t = holder3d:CreateTexture(nil, "ARTWORK", nil, i - 1)
     t:SetTexture(ns.MEDIA .. "arrow")
-    t:SetPoint("CENTER", 0, (i - LAYERS) * 2)     -- dessous plus bas : l'épaisseur
     layers[i] = t
 end
-local CORNERS = { { -1, 1 }, { -1, -1 }, { 1, 1 }, { 1, -1 } }   -- UL, LL, UR, LR (indices de SetVertexOffset)
 
-local function project(u, v, r, half)
+-- Coordonnées de texture pour une flèche tournée de r (sens trigo) puis aplatie au sol.
+-- Coins de l'écran (y vers le haut) -> point du sol -> point de la texture.
+local SCREEN = { { -1, 1 }, { -1, -1 }, { 1, 1 }, { 1, -1 } }    -- UL, LL, UR, LR
+local function groundCoords(t, r)
     local c, sn = math.cos(r), math.sin(r)
-    local x = u * c - v * sn
-    local z = u * sn + v * c                      -- z > 0 : vers l'avant (au loin)
-    local k = CAM_DIST / (CAM_DIST + z * math.cos(CAM_PITCH))
-    return x * k * half, z * math.sin(CAM_PITCH) * k * half
+    local out = {}
+    for _, p in ipairs(SCREEN) do
+        local gx, gy = p[1], p[2] / FLAT
+        local u = gx * c + gy * sn
+        local v = -gx * sn + gy * c
+        out[#out + 1] = 0.5 + u * 0.5
+        out[#out + 1] = 0.5 - v * 0.5
+    end
+    t:SetTexCoord(unpack(out))
 end
 
-local function warp(t, r, half, grow)
-    for i, cn in ipairs(CORNERS) do
-        local px, py = project(cn[1] * grow, cn[2] * grow, r, half)
-        t:SetVertexOffset(i, px - cn[1] * half, py - cn[2] * half)
+local supports3d = true
+local shown = nil                                  -- angle affiché, lissé
+
+local function layout3d(size)
+    holder3d:SetSize(size, size * (FLAT + 0.25))
+    shadow:SetSize(size * 1.08, size * 1.08)
+    shadow:ClearAllPoints(); shadow:SetPoint("CENTER", 0, -size * 0.07)
+    for i, t in ipairs(layers) do
+        t:SetSize(size, size)
+        t:ClearAllPoints(); t:SetPoint("CENTER", 0, (i - LAYERS) * math.max(1, size / 40))
     end
 end
 
-local supports3d = f.tex.SetVertexOffset ~= nil
-local shown = nil                                  -- angle affiché, lissé
-
 local function draw3d(rel, r, g, b, dt)
-    -- lissage de la rotation (en passant par le plus court chemin)
+    -- lissage de la rotation (par le plus court chemin)
     if not shown then shown = rel end
     local diff = (rel - shown + math.pi) % (2 * math.pi) - math.pi
     shown = shown + diff * math.min(1, (dt or 0.03) * 10)
-    local size = M:Opt("size") or 56
-    local half = size * 0.75
-    holder3d:SetSize(size * 1.6, size * 1.2)
-    shadow:SetSize(half * 2, half * 2)
-    warp(shadow, shown, half, 1.12)
-    shadow:SetVertexColor(0, 0, 0, 0.45)
+    groundCoords(shadow, shown)
+    shadow:SetVertexColor(0, 0, 0, 0.4)
     for i, t in ipairs(layers) do
-        t:SetSize(half * 2, half * 2)
-        warp(t, shown, half, 1)
-        local top = i == LAYERS
-        local shade = top and 1 or (0.35 + 0.1 * i)
-        t:SetVertexColor(r * shade, g * shade, b * shade, 1)
+        groundCoords(t, shown)
+        local k = i == LAYERS and 1 or (0.35 + 0.15 * i)
+        t:SetVertexColor(r * k, g * k, b * k, 1)
     end
-end
-
-f.dist = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontNormal")
-f.dist:SetPoint("TOP", f.tex, "BOTTOM", 0, -2)
-f.label = f:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
-f.label:SetPoint("TOP", f.dist, "BOTTOM", 0, -1)
-f.label:SetWidth(160)
-f.label:SetWordWrap(false)
-
-local function color(rel)
-    -- 0 = droit devant ; vert -> jaune -> rouge selon l'écart
-    local off = rel > math.pi and (2 * math.pi - rel) or rel
-    local t = off / math.pi
-    if t < 0.5 then return t * 2, 1, 0.2 end
-    return 1, 1 - (t - 0.5) * 2, 0.2
 end
 
 local function use3d() return supports3d and (M:Opt("style") or 1) == 1 end
@@ -146,9 +133,10 @@ end)
 function M:Apply()
     local s = self:Opt("size") or 56
     f.tex:SetSize(s, s)
+    layout3d(s * 1.25)
     f.dist:ClearAllPoints()
     if use3d() then
-        f.dist:SetPoint("TOP", f.tex, "TOP", 0, -s * 1.15)
+        f.dist:SetPoint("TOP", holder3d, "BOTTOM", 0, -2)
     else
         f.dist:SetPoint("TOP", f.tex, "BOTTOM", 0, -2)
     end
@@ -158,14 +146,14 @@ function M:OnDisable() f:Hide() end
 function M:OnOptionChanged() self:Apply() end
 
 function M.preview(p)
-    local half = 26
+    local size = 64
     local sh = p:CreateTexture(nil, "BACKGROUND")
-    sh:SetTexture(ns.MEDIA .. "arrow"); sh:SetSize(half * 2, half * 2); sh:SetPoint("CENTER", 0, 4)
+    sh:SetTexture(ns.MEDIA .. "arrow"); sh:SetSize(size * 1.08, size * 1.08); sh:SetPoint("CENTER", 0, 6)
     local ls = {}
     for i = 1, LAYERS do
         local t = p:CreateTexture(nil, "ARTWORK", nil, i - 1)
-        t:SetTexture(ns.MEDIA .. "arrow"); t:SetSize(half * 2, half * 2)
-        t:SetPoint("CENTER", 0, 8 + (i - LAYERS) * 1.2)
+        t:SetTexture(ns.MEDIA .. "arrow"); t:SetSize(size, size)
+        t:SetPoint("CENTER", 0, 10 + (i - LAYERS) * 1.5)
         ls[i] = t
     end
     local d = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallGold")
@@ -177,13 +165,11 @@ function M.preview(p)
         a = a + dt
         local rr = math.sin(a * 1.2) * 1.3
         local r, g, b = color(rr < 0 and 2 * math.pi + rr or rr)
-        if sh.SetVertexOffset then
-            warp(sh, rr, half, 1.12)
-            for _, t in ipairs(ls) do warp(t, rr, half, 1) end
-        end
-        sh:SetVertexColor(0, 0, 0, 0.45)
+        groundCoords(sh, rr)
+        sh:SetVertexColor(0, 0, 0, 0.4)
         for i, t in ipairs(ls) do
-            local k = i == LAYERS and 1 or (0.35 + 0.1 * i)
+            groundCoords(t, rr)
+            local k = i == LAYERS and 1 or (0.35 + 0.15 * i)
             t:SetVertexColor(r * k, g * k, b * k)
         end
     end)

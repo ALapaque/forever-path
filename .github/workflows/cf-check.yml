@@ -4,6 +4,9 @@ name: Tester CurseForge
 # CURSE_FORGE_API_KEY est accepté et que la version de jeu de WoW Forever existe sur CurseForge.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/cf-check.yml"]
 
 jobs:
   check:
@@ -24,7 +27,6 @@ jobs:
           fi
           echo "Versions qui ressemblent à Forever (1.60.x / 16xxx) :"
           jq -r '.[] | select(.name|test("^1\\.6[0-9]")) | "\(.id)\t\(.name)\ttype \(.gameVersionTypeID)"' versions.json | head -20
-          echo "{\"ok\":true}" > /dev/null
           {
             echo "### Jeton CurseForge accepté"
             echo ""

@@ -5,7 +5,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "rares", category = "safety", default = true,
     name = "Rares sur la carte",
-    desc = "Affiche sur la carte du monde les monstres rares de la zone et leur niveau (étoile argentée : rare, dorée : rare élite). Survole pour le nom. Pour les chasser… ou les éviter en Hardcore.",
+    desc = "Affiche sur la carte du monde les monstres rares de la zone et leur niveau (étoile argentée : rare, dorée : rare élite). Survole pour le nom. Pour les chasser… ou les éviter.",
     options = {
         { key = "range", label = "Seulement autour de mon niveau (± niveaux)", type = "slider", min = 3, max = 60, step = 1, default = 10 },
     },

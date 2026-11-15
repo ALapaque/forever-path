@@ -39,6 +39,28 @@ ns.SetModuleEnabled("danger", true); check(ns.IsEnabled("danger"), "activation �
 ns.SetModuleEnabled("arrow", false); check(not ns.IsEnabled("arrow"), "désactivation à chaud")
 ns.Modules.guide:SetOpt("upcoming", 3); check(ns.Modules.guide:Opt("upcoming") == 3, "option module")
 
+-- police choisie appliquée même quand SetFont ne renvoie rien (comme le client)
+ns.db.font = "Arial Narrow"; ns.ApplyFonts()
+check((QuestweaverFontNormal:GetFont() or ""):find("ARIALN") ~= nil, "police choisie appliquée : "..tostring(QuestweaverFontNormal:GetFont()))
+ns.db.font = "Police inconnue"; ns.ApplyFonts()
+check((QuestweaverFontNormal:GetFont() or ""):find("FRIZQT") ~= nil, "police inconnue : retour à Friz Quadrata")
+ns.db.font = "Friz Quadrata (Blizzard)"; ns.ApplyFonts()
+
+-- flèche 3D : projection au sol sans erreur, flèche plate en option
+do
+  local E, G = ns.Engine.NavStep, ns.Geo.Vector
+  local RA = ns.Geo.RelativeAngle
+  ns.Engine.NavStep = function() return { x = 50, y = 50, map = 1429, type = "goto" } end
+  ns.Geo.Vector = function() return 120, 1.0 end
+  ns.Geo.RelativeAngle = function() return 0.8 end
+  local up = QuestweaverArrow._scripts.OnUpdate
+  ns.Modules.arrow:SetOpt("style", 1); up(QuestweaverArrow, 0.05); up(QuestweaverArrow, 0.05)
+  ns.Modules.arrow:SetOpt("style", 2); up(QuestweaverArrow, 0.05)
+  ns.Modules.arrow:SetOpt("style", 1)
+  ns.Engine.NavStep, ns.Geo.Vector, ns.Geo.RelativeAngle = E, G, RA
+  check(true, "flèche 3D et flèche plate dessinées")
+end
+
 -- options : construction des cartes + aperçus
 ns.Options:Open()
 check(ns.Options.built, "panneau d'options construit")

@@ -5,7 +5,7 @@ local _, ns = ...
 local M = ns.RegisterModule({
     id = "profiles", category = "look", default = true, locked = true,
     name = "Profils",
-    desc = "Quatre profils prêts à l'emploi (Découverte, Speedrun, Hardcore, Minimal) qui cochent les bons modules d'un coup, proposés au premier lancement. /qw profil <nom>, /qw profil export pour partager tes réglages, /qw profil import pour les reprendre.",
+    desc = "Quatre profils prêts à l'emploi (Découverte, Speedrun, Prudent, Minimal) qui cochent les bons modules d'un coup, proposés au premier lancement. /qw profil <nom>, /qw profil export pour partager tes réglages, /qw profil import pour les reprendre.",
     options = {},
 })
 
@@ -16,7 +16,7 @@ M.PRESETS = {
       desc = "Tout pour aller vite : vols, dialogues et achats automatiques, écran de splits, chrono.",
       on = { "splits", "supplies", "flights", "dialogue", "automation", "chrono", "catchup" },
       off = { "npcmodel", "rares", "secondary", "gold", "dungeons" } },
-    { key = "hardcore", name = "Hardcore", icon = "Interface\\TargetingFrame\\UI-TargetingFrame-Skull",
+    { key = "prudent", name = "Prudent", icon = "Interface\\Icons\\INV_Shield_06",
       desc = "Route prudente : quêtes dangereuses sautées, alertes de danger, rares sur la carte, secourisme.",
       on = { "hardcore", "danger", "rares", "secondary", "grouphint", "supplies" }, off = { "splits" } },
     { key = "minimal", name = "Minimal", icon = "Interface\\Icons\\INV_Misc_Note_01",
@@ -30,6 +30,7 @@ M.PRESETS = {
 for _, p in ipairs(M.PRESETS) do p.name, p.desc = ns.Tr(p.name), ns.Tr(p.desc) end
 
 function M.Apply(key)
+    if key == "hardcore" then key = "prudent" end   -- ancien nom du profil
     local preset
     for _, p in ipairs(M.PRESETS) do if p.key == key then preset = p end end
     if not preset then return false end
@@ -132,7 +133,7 @@ ns.SlashExt.profil = function(arg)
     if cmd == "export" then ns.ShowExport(M.Export(), ns.Tr("Profil Questweaver (Ctrl+A, Ctrl+C)"))
     elseif cmd == "import" then ns.ShowImport(ns.Tr("Colle le profil puis Importer"), M.Import)
     elseif cmd == "" then M.ShowWizard()
-    elseif not M.Apply(cmd) then ns.Print("/qw profil decouverte | speedrun | hardcore | minimal | export | import") end
+    elseif not M.Apply(cmd) then ns.Print("/qw profil decouverte | speedrun | prudent | minimal | export | import") end
 end
 ns.SlashExt.profile = ns.SlashExt.profil
 

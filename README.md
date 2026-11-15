@@ -54,7 +54,7 @@ Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin offici
 | Quêtes de groupe signalées | ✔ |
 | Chrono par niveau, records, rapport de parcours anonyme | ✔ |
 | Aperçu 3D du PNJ | — |
-| Alertes de danger (Hardcore) | — |
+| Alertes de danger | — |
 | Enregistreur de route | — |
 
 ## Commandes

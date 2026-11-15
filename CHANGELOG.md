@@ -1,5 +1,11 @@
 # Questweaver
 
+## v1.3.0
+
+- **Police enfin appliquée.** Le jeu ne renvoie rien quand on change la police d'un texte, et Questweaver prenait ce silence pour un échec : il revenait à Friz Quadrata à chaque fois, quelle que soit la police choisie. Il vérifie maintenant la police réellement en place. Nouvelle commande `/qw police` pour voir la police choisie, le fichier attendu et celui affiché.
+- **Flèche de direction en 3D** (nouveau style par défaut) : la flèche est posée au sol, vue en perspective depuis la caméra, avec une épaisseur et une ombre. Droit devant, elle s'enfonce dans l'écran ; sur le côté, elle s'étire vers la gauche ou la droite. Sa rotation est lissée. Option « Style » du module Flèche de direction pour revenir à la flèche plate.
+- **Le profil « Hardcore » devient « Prudent »** : il ne correspond pas aux règles des royaumes Hardcore, c'est une route prudente. Le module « Mode Hardcore » s'appelle maintenant « Route prudente », et « Alertes de danger » perd la mention Hardcore. `/qw profil prudent` (l'ancien `/qw profil hardcore` marche encore).
+
 ## v1.2.2
 
 - Première version envoyée automatiquement sur CurseForge par la CI (même contenu que la v1.2.1).

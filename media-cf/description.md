@@ -12,8 +12,8 @@
 - **Targeting**: step monsters and NPCs highlighted on nameplates, a « Target » button that works in a crowd, a quest item button.
 - **Your time matters**: play sessions ("I have 45 minutes" → stop point and nearest inn), class trainer detours, automatic flights and dialogues, auto merchant, gathering along the route.
 - **Better together**: group progress, missing quests and one-click sharing, follow the leader's route.
-- **Safety**: Hardcore mode (dangerous quests skipped), danger alerts, rares on the map.
-- **Fully modular**: 45 modules with live previews, 4 ready-made profiles (Discovery, Speedrun, Hardcore, Minimal), themes, colorblind-friendly colors.
+- **Safety**: safe route (dangerous quests skipped), danger alerts, rares on the map.
+- **Fully modular**: 45 modules with live previews, 4 ready-made profiles (Discovery, Speedrun, Cautious, Minimal), themes, colorblind-friendly colors.
 - **Works with** Daylight UI (official plugin), Naowh Forever, TomTom, Pawn, LibDataBroker displays.
 - **Languages**: English, French; German and Spanish (short texts).
 
@@ -39,7 +39,7 @@ Quest data: QuestieDB (GPL-3.0). Not affiliated with Blizzard Entertainment.
 - **Repérage** : monstres et PNJ de l'étape surlignés, bouton « Cibler », bouton d'objet de quête.
 - **Confort** : sessions de jeu, maître de classe, vols et dialogues automatiques, marchand, récolte sur la route.
 - **Groupe** : progression de chacun, quêtes manquantes, partage en un clic, suivre la route du chef.
-- **Sécurité** : mode Hardcore, alertes de danger, rares sur la carte.
+- **Sécurité** : route prudente, alertes de danger, rares sur la carte.
 - **À la carte** : 45 modules avec aperçu, 4 profils prêts à l'emploi, thèmes, couleurs pour daltoniens.
 
 Documentation complète : https://alapaque.github.io/quest-weaver/ · `/qw` pour le guide, `/qw config` pour les options.

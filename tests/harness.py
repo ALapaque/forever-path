@@ -53,7 +53,7 @@ function CreateFont(name)
   rawset(f, "GetFont", function() return font[1], font[2], font[3] end)
   rawset(f, "SetFont", function(self, path, h, flags)
     if type(h) ~= "number" or h <= 0 then error(name..":SetFont(): Invalid font height ("..tostring(h).."): height must be > 0") end
-    font = { path, h, flags }; return true end)
+    font = { path, h, flags } end)
   rawset(f, "CopyFontObject", function(self, o) font = { o:GetFont() } end)
   _G[name] = f; return f end
 BackdropTemplateMixin = {}

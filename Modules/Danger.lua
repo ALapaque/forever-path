@@ -3,8 +3,8 @@ local _, ns = ...
 -- Pensé pour le mode Hardcore de Forever : alerte quand tu cibles un monstre dangereux.
 local M = ns.RegisterModule({
     id = "danger", category = "safety", default = false,
-    name = ns.Tr("Alertes de danger (Hardcore)"),
-    desc = ns.Tr("Prévient quand tu cibles un élite, un rare ou un monstre trop haut niveau, et signale les étapes risquées. Idéal en mode Hardcore."),
+    name = ns.Tr("Alertes de danger"),
+    desc = ns.Tr("Prévient quand tu cibles un élite, un rare ou un monstre trop haut niveau, et signale les étapes risquées. Idéal pour jouer prudemment."),
     options = {
         { key = "diff", label = ns.Tr("Écart de niveau dangereux"), type = "slider", min = 2, max = 6, step = 1, default = 3 },
         { key = "sound", label = "Son d'alerte", type = "check", default = true },

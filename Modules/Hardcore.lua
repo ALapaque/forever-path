@@ -4,7 +4,7 @@ local _, ns = ...
 -- (repérées à la génération) sont sautées, et l'entrée dans une zone trop haute est signalée.
 local M = ns.RegisterModule({
     id = "hardcore", category = "safety", default = false,
-    name = "Mode Hardcore (route prudente)",
+    name = "Route prudente",
     desc = "Saute les quêtes dont les monstres sont nettement plus hauts que toi (prise, objectif et rendu) et prévient quand tu entres dans une zone trop haute. À combiner avec les alertes de danger.",
     options = {
         { key = "skip", label = "Sauter les quêtes dangereuses", type = "check", default = true },

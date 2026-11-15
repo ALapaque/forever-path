@@ -115,6 +115,19 @@ function ns.FormatDistance(yards)
     return ("%d m"):format(n)
 end
 
+-- SetFont ne renvoie rien sur certains clients (et true / false sur d'autres) : on ne se fie pas à
+-- son retour. On vérifie avec GetFont que le fichier demandé est bien celui en place.
+local function baseName(p)
+    return type(p) == "string" and (p:lower():gsub("/", "\\"):match("([^\\]+)$")) or nil
+end
+local function setFont(fo, path, size, flags)
+    local ok, res = pcall(fo.SetFont, fo, path, size, flags)
+    if not ok or res == false then return false end
+    local cur = fo:GetFont()
+    return cur ~= nil and baseName(cur) == baseName(path)
+end
+ns._setFont = setFont
+
 function ns.ApplyFonts()
     local t = ns.Theme()
     local path = fontPath(ns.db and ns.db.font)
@@ -123,7 +136,7 @@ function ns.ApplyFonts()
         local fo = _G[def[1]]
         local b = baseSize[def[1]]
         local size = math.max(6, math.floor(b.size * scale + 0.5))
-        if not fo:SetFont(path, size, b.flags) then fo:SetFont(ns.FONTS[1].path, size, b.flags) end
+        if not setFont(fo, path, size, b.flags) then fo:SetFont(ns.FONTS[1].path, size, b.flags) end
         local c = def[3] == "accent" and t.accent or def[3] == "text" and t.text or { 0.55, 0.55, 0.58 }
         fo:SetTextColor(c[1], c[2], c[3])
     end
@@ -280,3 +293,13 @@ ns.On("PLAYER_LOGIN", function()
     end
 end)
 ns.On("PLAYER_ENTERING_WORLD", reapplyFonts)
+
+-- /qw police : quelle police est choisie, quel fichier elle donne, et ce que le jeu affiche vraiment
+ns.SlashExt.police = function()
+    local want = ns.db and ns.db.font or "?"
+    local cur = QuestweaverFontNormal and QuestweaverFontNormal:GetFont()
+    ns.Print(ns.Tr("Police choisie : %s"):format(tostring(want)))
+    ns.Print(ns.Tr("Fichier attendu : %s"):format(tostring(fontPath(want))))
+    ns.Print(ns.Tr("Fichier affiché : %s"):format(tostring(cur)))
+end
+ns.SlashExt.font = ns.SlashExt.police

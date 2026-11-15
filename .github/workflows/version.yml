@@ -139,6 +139,17 @@ jobs:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mv .packager "${RUNNER_TEMP}/packager"
+          # Le jeton CurseForge est testé avant : s'il est refusé, le packager abandonnerait tout,
+          # release GitHub comprise. On publie alors sur GitHub seulement, avec un avertissement.
+          if [[ -n "${CF_API_KEY}" ]]; then
+            code="$(curl -s -o /dev/null -w '%{http_code}' -H "X-Api-Token: ${CF_API_KEY}" https://wow.curseforge.com/api/game/versions || true)"
+            echo "Jeton CurseForge : HTTP ${code}"
+            if [[ "${code}" != "200" ]]; then
+              echo "::warning title=CurseForge::Jeton refusé (HTTP ${code}). Release GitHub seulement. Crée un jeton d'envoi sur https://wow.curseforge.com/account/api-tokens et mets-le dans le secret CURSE_FORGE_API_KEY."
+              echo "> ⚠️ CurseForge : jeton refusé (HTTP ${code}), version publiée sur GitHub seulement." >> "$GITHUB_STEP_SUMMARY"
+              unset CF_API_KEY
+            fi
+          fi
           GITHUB_REF="refs/tags/${VERSION}" GITHUB_EVENT_NAME="push" \
             bash "${RUNNER_TEMP}/packager/release.sh"
 

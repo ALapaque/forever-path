@@ -342,4 +342,6 @@ ns.ES = {
     ["écart"] = "desvío",
     ["élite"] = "élite",
     ["étape"] = "paso",
+    ["Points au sol jusqu'à l'objectif"] = "Puntos en el suelo hasta el objetivo",
+    ["Laisser la place au marqueur de Daylight UI"] = "Dejar paso al marcador de Daylight UI",
 }

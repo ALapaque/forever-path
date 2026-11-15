@@ -12,7 +12,9 @@ local M = ns.RegisterModule({
     options = {
         { key = "beam", label = "Faisceau lumineux", type = "check", default = true },
         { key = "label", label = ns.Tr("Nom de l'étape sous le marqueur"), type = "check", default = true },
+        { key = "trail", label = ns.Tr("Points au sol jusqu'à l'objectif"), type = "check", default = true },
         { key = "hideBlizzard", label = ns.Tr("Masquer le marqueur de Blizzard"), type = "check", default = true },
+        { key = "yieldDaylight", label = ns.Tr("Laisser la place au marqueur de Daylight UI"), type = "check", default = true },
         { key = "scale", label = ns.Tr("Taille"), type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
     },
 })
@@ -101,18 +103,98 @@ local function keepBlizzardHidden()
     end
 end
 
+---------------------------------------------------------------------------
+-- Points au sol : une traînée de points entre le personnage et l'objectif. Le jeu ne donne pas la
+-- position du personnage à l'écran ; la caméra le garde au centre, un peu sous le milieu. Les points
+-- se resserrent et rapetissent en s'éloignant (effet de perspective) et avancent doucement vers
+-- l'objectif.
+---------------------------------------------------------------------------
+local trail = CreateFrame("Frame", nil, UIParent)
+trail:SetAllPoints(UIParent)
+trail:SetFrameStrata("BACKGROUND")
+trail:SetFrameLevel(0)
+trail:Hide()
+local trailDots = {}
+local FEET_Y = 0.40          -- hauteur des pieds du personnage, en fraction de l'écran (depuis le bas)
+
+local function trailDot(i)
+    local d = trailDots[i]
+    if not d then
+        d = trail:CreateTexture(nil, "BACKGROUND")
+        d:SetTexture(ns.MEDIA .. "dot")
+        d:SetBlendMode("ADD")
+        trailDots[i] = d
+    end
+    return d
+end
+
+local function hideTrail(from)
+    if (from or 1) == 1 then M.trailDots = 0 end
+    for i = from or 1, #trailDots do trailDots[i]:Hide() end
+    if (from or 1) == 1 then trail:Hide() end
+end
+
+local function drawTrail(tx, ty, dist, accent, phase)
+    if not M:Opt("trail") or (dist and not ns.IsSecret(dist) and dist < 10) then hideTrail() return end
+    local w, h = UIParent:GetWidth(), UIParent:GetHeight()
+    local px, py = w / 2, h * FEET_Y
+    ty = ty - 8                                     -- pied du faisceau, sous l'icône
+    local dx, dy = tx - px, ty - py
+    local len = math.sqrt(dx * dx + dy * dy)
+    if len < 70 then hideTrail() return end
+    -- léger arc : le chemin part droit devant le personnage puis tourne vers l'objectif
+    local cx, cy = px + dx * 0.2, py + dy * 0.65
+    local n = math.max(6, math.min(36, math.floor(len / 30)))
+    trail:Show()
+    local used = 0
+    for i = 1, n do
+        local u = (i - 1 + phase) / n
+        -- répartition en perspective : espacés près du personnage, serrés au loin
+        local p = 1 - (1 - math.max(u, 0)) ^ 1.7
+        if u > 0 and p > 0.08 and p < 0.96 then
+            used = used + 1
+            local d = trailDot(used)
+            local q = 1 - p
+            local x = q * q * px + 2 * q * p * cx + p * p * tx
+            local y = q * q * py + 2 * q * p * cy + p * p * ty
+            local size = 14 - 9 * p
+            d:SetSize(size, size * 0.7)            -- un peu écrasés : posés au sol
+            d:ClearAllPoints()
+            d:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
+            local fade = math.min(1, (p - 0.08) / 0.12, (0.96 - p) / 0.1)
+            d:SetVertexColor(accent[1], accent[2], accent[3], (0.35 + 0.45 * q) * fade)
+            d:Show()
+        end
+    end
+    hideTrail(used + 1)
+    M.trailDots = used
+end
+
+-- Daylight UI (module Quêtes) a son propre marqueur : on évite d'en afficher deux l'un sur l'autre.
+local function daylightMarkerShown()
+    local d = _G.DaylightUIQuestMarker
+    if type(d) ~= "table" or not d.IsVisible then return false end
+    local ok, vis = pcall(d.IsVisible, d)
+    if not ok or not vis or ns.IsSecret(vis) then return false end
+    local ok2, a = pcall(d.GetEffectiveAlpha or d.GetAlpha, d)
+    return ok2 and type(a) == "number" and not ns.IsSecret(a) and a > 0.05
+end
+
+local function off(self) self:SetAlpha(0); hideTrail() end
+
 local t = 0
 f:SetScript("OnUpdate", function(self, dt)
     t = t + dt
     local nav = getNav()
-    if not (nav and ourWaypoint() and M.enabled) then self:SetAlpha(0) return end
-    if C_Navigation.HasValidScreenPosition and not C_Navigation.HasValidScreenPosition() then self:SetAlpha(0) return end
+    if not (nav and ourWaypoint() and M.enabled) then off(self) return end
+    if M:Opt("yieldDaylight") and daylightMarkerShown() then off(self) return end
+    if C_Navigation.HasValidScreenPosition and not C_Navigation.HasValidScreenPosition() then off(self) return end
     local state = C_Navigation.GetTargetState and C_Navigation.GetTargetState()
-    if state == (Enum.NavigationState and Enum.NavigationState.Disabled or 3) then self:SetAlpha(0) return end
+    if state == (Enum.NavigationState and Enum.NavigationState.Disabled or 3) then off(self) return end
 
     -- position : centre du cadre de navigation (en coordonnées d'UIParent)
     local cx, cy = nav:GetCenter()
-    if not cx or ns.IsSecret(cx) then self:SetAlpha(0) return end
+    if not cx or ns.IsSecret(cx) then off(self) return end
     local ns_ = nav:GetEffectiveScale() / UIParent:GetEffectiveScale()
     cx, cy = cx * ns_, cy * ns_
     self:ClearAllPoints()
@@ -137,10 +219,12 @@ f:SetScript("OnUpdate", function(self, dt)
         self.edge:SetVertexColor(a[1], a[2], a[3])
         self.edge:Show()
         self.beam:Hide(); self.beamGlow:Hide(); self.disc:Hide(); self.icon:Hide(); self.label:Hide()
+        hideTrail()
         return
     end
 
     self.edge:Hide()
+    drawTrail(cx, cy, dist, a, (t * 0.6) % 1)
     local occluded = state == (Enum.NavigationState and Enum.NavigationState.Occluded or 1)
     local pulse = 0.75 + math.sin(t * 2.4) * 0.25
     local showBeam = M:Opt("beam")
@@ -178,7 +262,7 @@ function M:Refresh()
 end
 
 function M:OnEnable() f:Show(); self:Refresh() end
-function M:OnDisable() f:Hide(); setBlizzardHidden(false) end
+function M:OnDisable() f:Hide(); hideTrail(); setBlizzardHidden(false) end
 function M:OnOptionChanged() self:Refresh() end
 M:On("FP_STEP_CHANGED", function() M:Refresh() end)
 M:On("SUPER_TRACKING_CHANGED", function() M:Refresh() end)
@@ -209,6 +293,17 @@ function M.preview(p)
     local d = p:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmallGold")
     d:SetPoint("TOP", disc, "BOTTOM", 0, -1)
     d:SetText("42 m")
+    -- points au sol, du bas de l'aperçu jusqu'au faisceau
+    for i = 1, 6 do
+        local k = i / 7
+        local dot = p:CreateTexture(nil, "ARTWORK")
+        dot:SetTexture(ns.MEDIA .. "dot")
+        dot:SetBlendMode("ADD")
+        local sz = 9 - 5 * k
+        dot:SetSize(sz, sz * 0.7)
+        dot:SetPoint("CENTER", p, "BOTTOM", 30 - 50 * k, 4 + 22 * k)
+        dot:SetVertexColor(a[1], a[2], a[3], 0.8 - 0.4 * k)
+    end
     local edge = p:CreateTexture(nil, "OVERLAY")
     edge:SetTexture(ns.MEDIA .. "arrow")
     edge:SetSize(22, 22)

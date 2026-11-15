@@ -342,4 +342,6 @@ ns.DE = {
     ["écart"] = "Umweg",
     ["élite"] = "Elite",
     ["étape"] = "Schritt",
+    ["Points au sol jusqu'à l'objectif"] = "Bodenpunkte bis zum Ziel",
+    ["Laisser la place au marqueur de Daylight UI"] = "Dem Daylight-UI-Marker den Vortritt lassen",
 }

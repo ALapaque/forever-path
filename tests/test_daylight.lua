@@ -67,6 +67,20 @@ check(SuperTrackedFrame.DistanceText.a == 0 and SuperTrackedFrame.Icon.a == 0, "
 SuperTrackedFrame.DistanceText.a = 1   -- le jeu le réaffiche
 onUpdate(QuestweaverGuide3D, 0.1)
 check(SuperTrackedFrame.DistanceText.a == 0, "marqueur de Blizzard gardé masqué")
+rawset(UIParent, "GetWidth", function() return 1920 end)
+rawset(UIParent, "GetHeight", function() return 1080 end)
+navX, navY = 900, 800
+onUpdate(QuestweaverGuide3D, 0.1)
+check((ns.Modules.guide3d.trailDots or 0) >= 6, "points au sol dessinés : "..tostring(ns.Modules.guide3d.trailDots))
+ns.Modules.guide3d:SetOpt("trail", false)
+onUpdate(QuestweaverGuide3D, 0.1)
+check(ns.Modules.guide3d.trailDots == 0, "points au sol désactivables")
+ns.Modules.guide3d:SetOpt("trail", true)
+DaylightUIQuestMarker = { IsVisible = function() return true end, GetEffectiveAlpha = function() return 1 end }
+onUpdate(QuestweaverGuide3D, 0.1)
+check(ns.Modules.guide3d.trailDots == 0, "place laissée au marqueur de Daylight UI")
+DaylightUIQuestMarker = nil
+navX, navY = 600, 300
 check(ns.FormatDistance(64.6) == "65 mètres", "distance au format du jeu : "..ns.FormatDistance(64.6))
 ns.Modules.guide3d:SetOpt("hideBlizzard", false)
 check(SuperTrackedFrame.DistanceText.a == 1, "marqueur de Blizzard réaffiché sur demande")

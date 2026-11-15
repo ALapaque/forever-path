@@ -1,5 +1,10 @@
 # Questweaver
 
+## v1.1.1
+
+- **Guidage 3D : points au sol** entre ton personnage et l'objectif. Ils se resserrent au loin, comme posés sur le sol, et avancent doucement vers le point. Option « Points au sol jusqu'à l'objectif » dans le module Guidage 3D.
+- **Avec Daylight UI** : quand son marqueur de quête est affiché, Questweaver lui laisse la place au lieu de dessiner un second marqueur par-dessus (plus de distances superposées). Option « Laisser la place au marqueur de Daylight UI » pour garder les deux.
+
 ## v1.1.0
 
 - **ForeverPath devient Questweaver.** Le nom était déjà pris sur CurseForge par un autre addon. Nouveau dossier `Questweaver` (et `Questweaver_Terrain`), nouvelle commande **`/qw`** (ou `/questweaver`), nouveau dépôt : https://github.com/ALapaque/quest-weaver.

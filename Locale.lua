@@ -34,7 +34,8 @@ local fr = {
     HELP = {
         "/qw — afficher/masquer",
         "/qw next | prev | skip — naviguer",
-        "/qw zones — zones recommandées",
+        "/qw zones — zones recommandées, et changer de zone (clic)",
+        "/qw zone <nom> — suivre la route dans une autre zone",
         "/qw guides — liste des guides",
         "/qw load <id> — charger un guide",
         "/qw rec on|off|clear — enregistreur de quêtes",
@@ -74,7 +75,8 @@ local en = {
     HELP = {
         "/qw — show/hide",
         "/qw next | prev | skip — navigate",
-        "/qw zones — recommended zones",
+        "/qw zones — recommended zones, and change zone (click)",
+        "/qw zone <name> — follow the route in another zone",
         "/qw guides — list guides",
         "/qw load <id> — load a guide",
         "/qw rec on|off|clear — quest recorder",

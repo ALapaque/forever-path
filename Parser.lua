@@ -24,6 +24,8 @@ Options (après le texte, sans espaces dans la valeur, _ = espace) :
   opt=1        étape optionnelle
   group=1      quête de groupe / élite : passée sauf si l'option « Inclure les quêtes de groupe » est cochée
   lvl=<niv>    niveau de la quête (rattrapage : prise sautée si elle est devenue grise)
+  skill=COOKING:50   métier requis (clé ou ligne de compétence, ex. 185:50) : étape marquée, et passée
+               si le personnage n'a pas ce niveau (module Quêtes de métier). Sinon : Data/QuestLinks.lua
 ]==]
 
 local TYPES = {
@@ -78,6 +80,10 @@ function ns.ParseGuide(text)
                     elseif k == "danger" then step.danger = true
                     elseif k == "opt" then step.optional = true
                     elseif k == "group" then step.group = true
+                    elseif k == "skill" then
+                        local sk, rk = v:match("^([%w_]+):?(%d*)$")
+                        step.skill = sk and (tonumber(sk) or (ns.SKILL_KEYS and ns.SKILL_KEYS[sk:upper()]))
+                        step.skillRank = tonumber(rk) or 1
                     elseif k == "map" then step.map = tonumber(v) or v
                     end
                 end

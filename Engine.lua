@@ -70,6 +70,9 @@ function E.IsDone(step, idx)
         local gh = ns.Modules.grouphint
         if not (gh and gh.enabled and gh:Opt("include")) then return true end
     end
+    -- quête de métier (ex. Cuisine 50) que le personnage ne peut pas faire : passée, sauf si déjà prise
+    local pq = ns.Modules.profquests
+    if step.quest and pq and pq.Skip and not questInLog(step.quest) and pq.Skip(step) then return true end
     -- quête que son PNJ ne proposait pas (prérequis manquant, donnée fausse) : prise passée
     if step.type == "accept" and step.quest and ns.cdb.notOffered and ns.cdb.notOffered[step.quest] then return true end
     -- rattrapage : quête devenue grise et pas encore prise
@@ -168,6 +171,7 @@ end
 
 function E.Load(id, silent)
     if not ns.Guides[id] then ns.Print(L.UNKNOWN_GUIDE, tostring(id)) return end
+    if ns.cdb.pinned ~= id then ns.cdb.pinned = nil end
     ns.cdb.guideId = id
     ns.cdb.stepIndex = 1
     ns.cdb.skipped[id] = ns.cdb.skipped[id] or {}
@@ -307,6 +311,7 @@ end
 function E.CheckLevel()
     local g = ns.Guides[ns.cdb.guideId or ""]
     if not g then return end
+    if ns.cdb.pinned == g.id then return end     -- zone choisie à la main (panneau Zones)
     local lvl = ns.PlayerLevel()
     if g.maxLevel and lvl >= g.maxLevel + 2 then
         local id = E.PickDefault(lvl)

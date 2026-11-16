@@ -1,5 +1,14 @@
 # Questweaver
 
+## v1.9.0
+
+Retours de joueurs : quêtes hors route, quêtes de métier, et changement de zone.
+
+- **Quêtes aux mêmes monstres (nouveau module, actif par défaut).** Questweaver regarde ton journal de quêtes, y compris les quêtes hors de la route : quand l'étape en cours porte sur les mêmes monstres qu'une autre de tes quêtes (à tuer, ou qui lâchent l'objet demandé), le guide affiche « Mêmes monstres : fais aussi … » et marque aussi ces monstres (barres de nom, bouton Cibler). Une quête terminée à rendre au même PNJ que l'étape est signalée (« À rendre ici aussi »). Dans le panneau des quêtes, une quête hors route indique l'étape de ta route qui porte sur les mêmes monstres (« dans 12 étapes »).
+- **Quêtes de métier (nouveau module, actif par défaut).** Les quêtes qui demandent un métier sont marquées dans le guide, par exemple « (Cuisine 50) », en orange s'il te manque, en gris si tu l'as. Si ton personnage n'a pas le métier au niveau demandé, la quête est passée toute seule ; elle revient dans la route dès que tu l'apprends ou que tu montes assez. Option pour ne jamais les passer. Corrigé à la main : « Kébab de loup assaisonné » (Bois de la Pénombre) demande Cuisine 50.
+- **Changer de zone.** Le panneau Zones a une section « Changer de zone » : les zones de ta route à ton niveau, avec le nombre de quêtes qu'il reste à prendre ; un clic pour suivre la route dans cette zone. La zone choisie reste en place jusqu'à la fin de son segment (plus de retour automatique au passage de niveau), et « Revenir à la route conseillée » te ramène au segment prévu. Aussi en commande : `/qw zone <nom>`.
+- Données : `Data/QuestLinks.lua` (2 216 quêtes avec leurs monstres, 232 quêtes de métier), généré par `tools/gen_links.py` ; `tools/overrides.json` accepte `skill` (ex. `[185, 50]`) ; option de guide `skill=COOKING:50`.
+
 ## v1.8.0
 
 Refonte des routes, après vérification avec les sources propres à WoW Forever. Les deux reproches étaient fondés : des quêtes prises trop haut, et trop de quêtes sautées.

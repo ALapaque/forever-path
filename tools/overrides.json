@@ -1,8 +1,26 @@
 {
- "_doc": "Corrections manuelles des données QuestieDB pour WoW Forever, appliquées par tools/gen_routes.py. Par quête : lvl (niveau de quête), req (niveau requis), pre (liste de quêtes à rendre avant), exclude (true : quête retirée des routes), confirm (true : quête d'ID 9666-89999 confirmée dans Forever, sinon ces IDs sont écartés car ils viennent d'autres versions du jeu), note (source). À remplir zone par zone, par exemple avec la colonne « Changes » de la base Forever de Wowhead et les retours des joueurs (/qw signalements).",
+ "_doc": "Corrections manuelles des données QuestieDB pour WoW Forever, appliquées par tools/gen_routes.py. Par quête : lvl (niveau de quête), req (niveau requis), pre (liste de quêtes à rendre avant), exclude (true : quête retirée des routes), confirm (true : quête d'ID 9666-89999 confirmée dans Forever, sinon ces IDs sont écartés car ils viennent d'autres versions du jeu), skill ([métier, niveau], ex. [185, 50] pour Cuisine 50 : quête marquée et passée si le personnage n'a pas ce niveau ; null pour retirer un métier faux de la base), note (source). À remplir zone par zone, par exemple avec la colonne « Changes » de la base Forever de Wowhead et les retours des joueurs (/qw signalements).",
  "quests": {
-  "92841": { "req": 35, "note": "Valley of Bones (Shen'dralas) : niveau requis passé de 30 à 35 le 8 octobre 2026 (notes de bêta)" },
-  "93034": { "req": 35, "note": "Valley of Bones (Shen'dralas), autre faction : même changement" },
-  "79192": { "confirm": true, "lvl": 24, "req": 14, "note": "Stepping Stones (Tarides) : listée dans la base Forever de Wowhead" }
+  "92841": {
+   "req": 35,
+   "note": "Valley of Bones (Shen'dralas) : niveau requis passé de 30 à 35 le 8 octobre 2026 (notes de bêta)"
+  },
+  "93034": {
+   "req": 35,
+   "note": "Valley of Bones (Shen'dralas), autre faction : même changement"
+  },
+  "79192": {
+   "confirm": true,
+   "lvl": 24,
+   "req": 14,
+   "note": "Stepping Stones (Tarides) : listée dans la base Forever de Wowhead"
+  },
+  "90": {
+   "skill": [
+    185,
+    50
+   ],
+   "note": "Seasoned Wolf Kabobs (Bois de la Pénombre) : il faut Cuisine 50 pour que Chef Grual la propose (retour de joueur, 16/11/2026)"
+  }
  }
 }

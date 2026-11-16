@@ -25,8 +25,16 @@ SlashCmdList.QUESTWEAVER = function(msg)
         ns.Engine.Next()
     elseif cmd == "prev" then
         ns.Engine.Prev()
-    elseif cmd == "zones" then
+    elseif cmd == "zones" or (cmd == "zone" and (arg or "") == "") then
         ns.ZonePanel:Toggle()
+    elseif cmd == "zone" then
+        -- /qw zone <nom ou clé> : suivre la route dans cette zone
+        local want = arg:lower()
+        for _, sg in ipairs(ns.Recommend.Segments(nil)) do
+            local name = sg.zone and ns.ZoneName(sg.zone):lower() or ""
+            if sg.key == want or name:find(want, 1, true) then ns.Recommend.Choose(sg.guide) return end
+        end
+        ns.Print(ns.Tr("Pas de segment de ta route dans « %s » à ton niveau. /qw zones pour la liste."), arg)
     elseif cmd == "guides" then
         for _, id in ipairs(ns.GuideOrder) do
             local g = ns.Guides[id]

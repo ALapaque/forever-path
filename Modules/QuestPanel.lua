@@ -138,6 +138,13 @@ function M.RenderMe()
         else progress = "" end
         local tags = {}
         if it.route then tags[#tags + 1] = c(BLUE, ns.Tr("route")) end
+        -- quête hors route : à faire avec une étape de la route sur les mêmes monstres
+        local ql = ns.QuestLinksModule
+        if not it.route and not it.ready and ql and ql.enabled and ql.RouteStepFor then
+            local _, ahead = ql.RouteStepFor(it.quest)
+            if ahead == 0 then tags[#tags + 1] = c(BLUE, ns.Tr("mêmes monstres que l'étape en cours"))
+            elseif ahead then tags[#tags + 1] = c(BLUE, ns.Tr("mêmes monstres qu'une étape de ta route (dans %d étapes)"):format(ahead)) end
+        end
         local with, without = {}, {}
         for _, m in ipairs(team) do
             if m.d.quests and m.d.quests[it.quest] then with[#with + 1] = m.name

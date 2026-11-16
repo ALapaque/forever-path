@@ -26,6 +26,7 @@ UI\DaylightUI.lua
 Data\Zones.lua
 Data\World.lua
 Data\QuestItems.lua
+Data\QuestLinks.lua
 Data\RareLoot.lua
 Parser.lua
 Geo.lua
@@ -67,6 +68,7 @@ Modules\Session.lua
 Modules\Merchant.lua
 Modules\Gather.lua
 Modules\GroupHint.lua
+Modules\QuestLinks.lua
 Modules\Chrono.lua
 Modules\Flights.lua
 Modules\Dialogue.lua

@@ -59,17 +59,96 @@ function R.Color(z, lvl)
     return 0.6, 0.6, 0.6
 end
 
+-- Segments de la route par zone : pour changer de zone à la main.
+-- Clé de zone tirée de l'id du segment (« horde-orc-22-ashenvale-2 » -> « ashenvale »).
+function R.SegmentZone(g) return g and g.id and g.id:match("^.-%-%d+%-(%a+)") end
+
+-- quêtes encore à prendre dans un segment
+function R.Remaining(g)
+    local n = 0
+    for i, s in ipairs(g.steps) do
+        if s.type == "accept" and ns.Engine.Applies(s) and not ns.Engine.IsDone(s, i) then n = n + 1 end
+    end
+    return n
+end
+
+-- { { zone = <entrée de Data/Zones>, key, guide = id, min, max, left } }, une ligne par zone : le segment
+-- le plus proche de ton niveau qui a encore des quêtes à prendre
+function R.Segments(lvl)
+    lvl = lvl or ns.PlayerLevel()
+    local cur = ns.Guides[ns.cdb.guideId or ""]
+    local path, faction = cur and cur.path, ns.PlayerFaction()
+    local best = {}
+    for _, id in ipairs(ns.GuideOrder) do
+        local g = ns.Guides[id]
+        local key = R.SegmentZone(g)
+        if key and (not g.faction or g.faction == faction) and (not path or g.path == path)
+            and (g.minLevel or 1) <= lvl + 3 and (g.maxLevel or 60) >= lvl - 6 then
+            local left = R.Remaining(g)
+            if left > 0 then
+                local mid = ((g.minLevel or 1) + (g.maxLevel or 60)) / 2
+                local d = math.abs(mid - lvl) + ((g.minLevel or 1) > lvl and 2 or 0)
+                if not best[key] or d < best[key].d then
+                    best[key] = { key = key, zone = ns.ZoneByKey[key], guide = id, min = g.minLevel or 1,
+                                  max = g.maxLevel or 60, left = left, d = d }
+                else
+                    best[key].left = best[key].left + left
+                end
+            end
+        end
+    end
+    local out = {}
+    for _, v in pairs(best) do out[#out + 1] = v end
+    table.sort(out, function(a, b) if a.d ~= b.d then return a.d < b.d end return a.key < b.key end)
+    return out
+end
+
+-- Charge le segment choisi ; il reste en place même s'il est sous ton niveau (plus de retour
+-- automatique au segment « idéal » avant la fin du segment choisi).
+function R.Choose(id)
+    if not ns.Guides[id] then return end
+    ns.Engine.Load(id)
+    ns.cdb.pinned = id
+    if ns.ZonePanel and ns.ZonePanel:IsShown() then ns.ZonePanel:Refresh() end
+end
+
 -- Panneau
 local p = CreateFrame("Frame", "QuestweaverZonePanel", UIParent, "BackdropTemplate")
 p:SetSize(330, 10)
 p:Hide()
 ns.Skin(p, 0.92, 0.6)
 p.lines = {}
+p.rows = {}
 
 local function hex(r, g, b) return ("ff%02x%02x%02x"):format(math.floor(r * 255), math.floor(g * 255), math.floor(b * 255)) end
 
 function p:Refresh()
     for _, fs in ipairs(self.lines) do fs:Hide() end
+    for _, b in ipairs(self.rows) do b:Hide() end
+    local nr = 0
+    -- ligne cliquable (changer de zone)
+    local function row(text, onClick, tip)
+        nr = nr + 1
+        local b = self.rows[nr]
+        if not b then
+            b = CreateFrame("Button", nil, self)
+            b:SetSize(310, 16)
+            b.fs = b:CreateFontString(nil, "OVERLAY", "QuestweaverFontSmall")
+            b.fs:SetAllPoints(); b.fs:SetJustifyH("LEFT")
+            b.hl = b:CreateTexture(nil, "HIGHLIGHT")
+            b.hl:SetAllPoints(); b.hl:SetColorTexture(1, 1, 1, 0.08)
+            b:SetScript("OnClick", function(btn) if btn.onClick then btn.onClick() end end)
+            b:SetScript("OnEnter", function(btn)
+                if not btn.tip then return end
+                GameTooltip:SetOwner(btn, "ANCHOR_RIGHT"); GameTooltip:SetText(btn.tip, 1, 1, 1, 1, true); GameTooltip:Show()
+            end)
+            b:SetScript("OnLeave", function() GameTooltip:Hide() end)
+            self.rows[nr] = b
+        end
+        b.onClick, b.tip = onClick, tip
+        b.fs:SetText(text)
+        return b
+    end
     local lvl = ns.PlayerLevel()
     local here = ns.CurrentZone()
     local n, y = 0, -8
@@ -98,6 +177,36 @@ function p:Refresh()
         if here == z then s = s .. " |cff3fbf3f(" .. L.YOU_ARE_HERE .. ")|r" end
         add(s)
         if z.note then add("   |cff888888" .. z.note .. "|r") end
+    end
+    -- changer de zone : segments de ta route, un clic pour y aller
+    local segs = R.Segments(lvl)
+    local curKey = R.SegmentZone(ns.Guides[ns.cdb.guideId or ""])
+    if #segs > 0 then
+        y = y - 4
+        add(ns.Tr("Changer de zone"), true)
+        for k = 1, math.min(8, #segs) do
+            local sg = segs[k]
+            local r, g, b = R.Color({ min = sg.min, max = sg.max }, lvl)
+            local name = sg.zone and ns.ZoneName(sg.zone) or sg.key
+            local s = ("|c%s%d-%d|r  %s  |cffaaaaaa"):format(hex(r, g, b), sg.min, sg.max, name)
+                .. ns.Tr("%d quête(s)"):format(sg.left) .. "|r"
+            if sg.key == curKey then s = s .. " |cff3fbf3f(" .. ns.Tr("en cours") .. ")|r" end
+            local id = sg.guide
+            local bt = row(s, function() R.Choose(id) end, ns.Tr("Clic : suivre la route dans cette zone"))
+            bt:ClearAllPoints(); bt:SetPoint("TOPLEFT", 10, y); bt:Show()
+            y = y - 18
+        end
+        local cur = ns.Guides[ns.cdb.guideId or ""]
+        if ns.cdb.pinned and cur then
+            local bt = row("|cff66ccff" .. ns.Tr("Revenir à la route conseillée") .. "|r", function()
+                ns.cdb.pinned = nil
+                local id = ns.Engine.PickDefault()
+                if id then ns.Engine.Load(id) end
+                p:Refresh()
+            end)
+            bt:ClearAllPoints(); bt:SetPoint("TOPLEFT", 10, y); bt:Show()
+            y = y - 18
+        end
     end
     local dj = R.Dungeons(lvl)
     if #dj > 0 then

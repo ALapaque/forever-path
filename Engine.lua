@@ -56,9 +56,9 @@ function E.Distance(step)
     return d
 end
 
-function E.IsDone(step, idx)
+function E.IsDone(step, idx, guideId)
     if step.removed then return true end          -- retirée avec l'éditeur
-    local skipped = ns.cdb.skipped[ns.cdb.guideId]
+    local skipped = ns.cdb.skipped[guideId or ns.cdb.guideId]
     if skipped and skipped[idx] then return true end
     if not E.Applies(step) then return true end
     if step.upto and ns.PlayerLevel() >= step.upto then return true end
@@ -155,7 +155,12 @@ function E.Refresh()
     ns.cdb.stepIndex = i
     if not g.steps[i] and changed then
         local nextId = g.next
-        if not (nextId and ns.Guides[nextId]) then
+        if g.chosen then
+            -- zone choisie à la main, terminée : retour à la route conseillée
+            ns.cdb.pinned, ns.cdb.zoneChoice = nil, nil
+            ns.Toast(ns.Tr("Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."), "Interface\\Icons\\INV_Misc_Map_01", 1, 0.85, 0.3)
+            nextId = E.PickDefault()
+        elseif not (nextId and ns.Guides[nextId]) then
             local pick = E.PickDefault()
             if pick ~= g.id then nextId = pick end
         end
@@ -170,8 +175,10 @@ function E.Refresh()
 end
 
 function E.Load(id, silent)
+    if not ns.Guides[id] and ns.RebuildGuide then ns.RebuildGuide(id) end
     if not ns.Guides[id] then ns.Print(L.UNKNOWN_GUIDE, tostring(id)) return end
     if ns.cdb.pinned ~= id then ns.cdb.pinned = nil end
+    if not ns.Guides[id].chosen then ns.cdb.zoneChoice = nil end
     ns.cdb.guideId = id
     ns.cdb.stepIndex = 1
     ns.cdb.skipped[id] = ns.cdb.skipped[id] or {}
@@ -333,6 +340,8 @@ end
 
 ns.On("FP_READY", function()
     -- personnage transféré / changé de faction, ou guide d'un autre parcours : on repart du bon segment
+    -- zone choisie à la main avant un /reload : son guide est reconstruit
+    if ns.cdb.guideId and not ns.Guides[ns.cdb.guideId] and ns.RebuildGuide then ns.RebuildGuide(ns.cdb.guideId) end
     local cur = ns.cdb.guideId and ns.Guides[ns.cdb.guideId]
     if cur and cur.faction and cur.faction ~= ns.PlayerFaction() then ns.cdb.guideId = nil end
     if not ns.cdb.guideId or not ns.Guides[ns.cdb.guideId] then

@@ -112,6 +112,7 @@ jobs:
           python3 tests/harness.py . tests/test_questitems.lua
           python3 tests/harness.py . tests/test_stepcare.lua
           python3 tests/harness.py . tests/test_questlinks.lua
+          python3 tests/harness.py . tests/test_perf.lua
           python3 tests/test_routes.py
           python3 tests/test_merge.py
           FP_LOCALE=deDE python3 tests/harness.py . tests/test_locale_de.lua

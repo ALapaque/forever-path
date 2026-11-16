@@ -63,17 +63,36 @@ end
 -- Clé de zone tirée de l'id du segment (« horde-orc-22-ashenvale-2 » -> « ashenvale »).
 function R.SegmentZone(g) return g and g.id and g.id:match("^.-%-%d+%-(%a+)") end
 
--- quêtes encore à prendre dans un segment
+-- quêtes encore à prendre dans un segment (avec les étapes passées de CE segment)
 function R.Remaining(g)
     local n = 0
     for i, s in ipairs(g.steps) do
-        if s.type == "accept" and ns.Engine.Applies(s) and not ns.Engine.IsDone(s, i) then n = n + 1 end
+        if s.type == "accept" and ns.Engine.Applies(s) and not ns.Engine.IsDone(s, i, g.id) then n = n + 1 end
     end
     return n
 end
 
--- { { zone = <entrée de Data/Zones>, key, guide = id, min, max, left } }, une ligne par zone : le segment
--- le plus proche de ton niveau qui a encore des quêtes à prendre
+-- Parcours (path) suivi : celui du segment en cours, ou de la zone choisie
+local function currentPath()
+    local cur = ns.Guides[ns.cdb.guideId or ""]
+    return cur and cur.path
+end
+
+-- Segments du parcours dans une zone, utiles à ton niveau (de 6 niveaux sous toi à 3 au-dessus)
+function R.ZoneSegments(key, lvl, path)
+    lvl, path = lvl or ns.PlayerLevel(), path or currentPath()
+    local faction, out = ns.PlayerFaction(), {}
+    for _, id in ipairs(ns.GuideOrder) do
+        local g = ns.Guides[id]
+        if R.SegmentZone(g) == key and (not g.faction or g.faction == faction) and (not path or g.path == path)
+            and (g.minLevel or 1) <= lvl + 3 and (g.maxLevel or 60) >= lvl - 6 then
+            out[#out + 1] = g
+        end
+    end
+    return out
+end
+
+-- { { zone = <entrée de Data/Zones>, key, min, max, left } }, une ligne par zone de la route
 function R.Segments(lvl)
     lvl = lvl or ns.PlayerLevel()
     local cur = ns.Guides[ns.cdb.guideId or ""]
@@ -86,30 +105,70 @@ function R.Segments(lvl)
             and (g.minLevel or 1) <= lvl + 3 and (g.maxLevel or 60) >= lvl - 6 then
             local left = R.Remaining(g)
             if left > 0 then
-                local mid = ((g.minLevel or 1) + (g.maxLevel or 60)) / 2
-                local d = math.abs(mid - lvl) + ((g.minLevel or 1) > lvl and 2 or 0)
-                if not best[key] or d < best[key].d then
-                    best[key] = { key = key, zone = ns.ZoneByKey[key], guide = id, min = g.minLevel or 1,
-                                  max = g.maxLevel or 60, left = left, d = d }
-                else
-                    best[key].left = best[key].left + left
+                local b = best[key]
+                if not b then
+                    b = { key = key, zone = ns.ZoneByKey[key], min = g.minLevel or 1, max = g.maxLevel or 60, left = 0 }
+                    best[key] = b
                 end
+                b.min, b.max = math.min(b.min, g.minLevel or 1), math.max(b.max, g.maxLevel or 60)
+                b.left = b.left + left
             end
         end
     end
     local out = {}
-    for _, v in pairs(best) do out[#out + 1] = v end
+    for _, v in pairs(best) do
+        local mid = (v.min + v.max) / 2
+        v.d = math.abs(mid - lvl) + (v.min > lvl and 2 or 0)
+        out[#out + 1] = v
+    end
     table.sort(out, function(a, b) if a.d ~= b.d then return a.d < b.d end return a.key < b.key end)
     return out
 end
 
--- Charge le segment choisi ; il reste en place même s'il est sous ton niveau (plus de retour
--- automatique au segment « idéal » avant la fin du segment choisi).
-function R.Choose(id)
-    if not ns.Guides[id] then return end
-    ns.Engine.Load(id)
-    ns.cdb.pinned = id
+-- Zone choisie à la main : un guide « zone » qui enchaîne TOUS les segments de ta route dans cette
+-- zone à ton niveau (les routes coupent une zone en plusieurs passages : suivre un seul passage
+-- renvoyait ailleurs dès qu'il était fini, par exemple de Bois de la Pénombre vers Orneval). Quand
+-- il n'y a plus rien à faire dans la zone, retour à la route conseillée.
+local ZPREFIX = "zone:"
+function R.BuildZoneGuide(key, path, lvl)
+    local segs = R.ZoneSegments(key, lvl, path)
+    if #segs == 0 then return end
+    local id = ZPREFIX .. (path or "-") .. ":" .. key
+    local steps, minL, maxL, faction = {}, 99, 1, nil
+    for _, g in ipairs(segs) do
+        for _, s in ipairs(g.steps) do steps[#steps + 1] = s end
+        minL, maxL = math.min(minL, g.minLevel or 1), math.max(maxL, g.maxLevel or 60)
+        faction = faction or g.faction
+    end
+    local z = ns.ZoneByKey[key]
+    local g = { id = id, name = ("%s %d-%d"):format(z and ns.ZoneName(z) or key, minL, maxL), faction = faction,
+                path = path, minLevel = minL, maxLevel = maxL, steps = steps, zoneKey = key, chosen = true }
+    ns.Guides[id] = g                -- pas dans GuideOrder : jamais choisi automatiquement
+    return g
+end
+
+-- après un /reload : reconstruire le guide « zone » enregistré
+function ns.RebuildGuide(id)
+    local path, key = (id or ""):match("^" .. ZPREFIX .. "(.-):(%a+)$")
+    if not key then return end
+    local saved = ns.cdb.zoneChoice
+    return R.BuildZoneGuide(key, path ~= "-" and path or nil, saved and saved.level)
+end
+
+function R.Choose(key)
+    -- compat : id de segment
+    if ns.Guides[key] and not ns.Guides[key].chosen then key = R.SegmentZone(ns.Guides[key]) or key end
+    local path, lvl = currentPath(), ns.PlayerLevel()
+    local g = R.BuildZoneGuide(key, path, lvl)
+    if not g then return end
+    ns.cdb.zoneChoice = { key = key, path = path, level = lvl }
+    -- nouveau choix : la liste des passages peut avoir changé, les étapes passées à la main
+    -- d'un choix précédent ne correspondent plus (les quêtes faites restent reconnues)
+    ns.cdb.skipped[g.id] = {}
+    ns.Engine.Load(g.id)
+    ns.cdb.pinned = g.id
     if ns.ZonePanel and ns.ZonePanel:IsShown() then ns.ZonePanel:Refresh() end
+    return g
 end
 
 -- Panneau
@@ -180,7 +239,8 @@ function p:Refresh()
     end
     -- changer de zone : segments de ta route, un clic pour y aller
     local segs = R.Segments(lvl)
-    local curKey = R.SegmentZone(ns.Guides[ns.cdb.guideId or ""])
+    local curG = ns.Guides[ns.cdb.guideId or ""]
+    local curKey = curG and (curG.zoneKey or R.SegmentZone(curG))
     if #segs > 0 then
         y = y - 4
         add(ns.Tr("Changer de zone"), true)
@@ -191,15 +251,15 @@ function p:Refresh()
             local s = ("|c%s%d-%d|r  %s  |cffaaaaaa"):format(hex(r, g, b), sg.min, sg.max, name)
                 .. ns.Tr("%d quête(s)"):format(sg.left) .. "|r"
             if sg.key == curKey then s = s .. " |cff3fbf3f(" .. ns.Tr("en cours") .. ")|r" end
-            local id = sg.guide
-            local bt = row(s, function() R.Choose(id) end, ns.Tr("Clic : suivre la route dans cette zone"))
+            local zkey = sg.key
+            local bt = row(s, function() R.Choose(zkey) end, ns.Tr("Clic : suivre la route dans cette zone"))
             bt:ClearAllPoints(); bt:SetPoint("TOPLEFT", 10, y); bt:Show()
             y = y - 18
         end
         local cur = ns.Guides[ns.cdb.guideId or ""]
         if ns.cdb.pinned and cur then
             local bt = row("|cff66ccff" .. ns.Tr("Revenir à la route conseillée") .. "|r", function()
-                ns.cdb.pinned = nil
+                ns.cdb.pinned, ns.cdb.zoneChoice = nil, nil
                 local id = ns.Engine.PickDefault()
                 if id then ns.Engine.Load(id) end
                 p:Refresh()

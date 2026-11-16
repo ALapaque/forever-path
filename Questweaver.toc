@@ -41,6 +41,7 @@ Guides\_NpcNames.lua
 
 Modules\Guide.lua
 Modules\Appearance.lua
+Modules\Perf.lua
 Modules\ActionBar.lua
 Modules\Objectives.lua
 Modules\Zones.lua

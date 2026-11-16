@@ -1,5 +1,24 @@
 # Questweaver
 
+## v1.10.0
+
+- **Routes régénérées** avec la dernière version de QuestieDB (données de Forever mises à jour) : 616 quêtes en moyenne par parcours (598 avant), part du farm de 19 % (21 % avant), environ 79 h jusqu'au 60.
+- **Quêtes lancées par un objet, dans les routes.** Quand un monstre nommé (le seul, ou l'un des deux, à lâcher l'objet) est sur ton chemin, la route t'y envoie : « Tue ce monstre : son butin lance la quête », puis la quête est rendue au passage. 4 à 13 quêtes par parcours (par exemple « Flûte de Xavaric », 5 450 XP au niveau 54). Les objets que des dizaines de monstres peuvent lâcher ne sont pas planifiés (trop aléatoires) : ils sont pris quand ils tombent (voir plus bas).
+- **Correctif : zone choisie à la main.** En choisissant une zone dans le panneau Zones (par exemple Bois de la Pénombre), Questweaver ne chargeait qu'un seul passage de la route dans cette zone ; une fois ce passage fini, ou tout de suite si ses quêtes étaient déjà faites, il repartait vers la suite de la route conseillée (par exemple Orneval). Maintenant, choisir une zone enchaîne tous les passages de ta route dans cette zone à ton niveau, la zone reste choisie après un /reload et au passage de niveau, et ce n'est qu'une fois qu'il n'y a plus rien à y faire que tu reviens à la route conseillée (avec un message). Le nombre de quêtes affiché pour chaque zone est aussi corrigé.
+- **Guidage 3D beaucoup plus léger** (des joueurs avaient des ralentissements, surtout avec une grosse suite d'addons comme celle de Naowh). En cause : du travail refait à chaque image. Le guidage 3D relisait les éléments du marqueur de Blizzard et créait plusieurs tables à chaque image, que le ramasse-miettes de Lua devait ensuite nettoyer ; plus il y a d'addons chargés, plus ce nettoyage coûte cher. La flèche recalculait le texte de l'étape 33 fois par seconde, et le tracé de la minimap replaçait jusqu'à 250 points 10 fois par seconde même à l'arrêt. Maintenant :
+  - le marqueur 3D ne refait que suivre l'objectif à chaque image ; les points au sol sont dessinés 30 fois par seconde au plus (24 points au lieu de 36), les vérifications lentes 4 fois par seconde, les textes seulement quand ils changent ;
+  - la flèche ne recalcule le texte de l'étape que quand l'étape ou le journal change ;
+  - le tracé de la minimap n'est refait que si tu bouges, tournes ou changes le zoom ;
+  - le niveau de tes métiers (quêtes de métier, v1.9.0) n'est plus relu à chaque affichage.
+- **Nouveau : mode Économie** (Apparence > Performances). En automatique, il s'active quand le jeu passe sous 40 images/s pendant 3 secondes : plus de points au sol ni de pulsation du faisceau, flèche et tracé de la minimap moins fréquents, plus de rebond sur les barres de nom ni de rotation du modèle du PNJ. Il se coupe après 10 secondes au-dessus de 55 images/s. Aussi « Toujours complet » ou « Toujours en économie ».
+- **Objets qui lancent une quête.** Certains monstres lâchent un objet qui lance une quête, souvent une simple livraison : de l'XP pour quelques pas. Quand un tel objet arrive dans ton sac (quête pas encore faite, pas grise), Questweaver l'annonce, l'affiche dans le guide avec l'XP qu'il rapporte, et un bouton (barre d'action de Questweaver) lance la quête en un clic. Ensuite, le guide dit où la rendre : chez un PNJ où ta route passe de toute façon (« dans 12 étapes »), sinon un bouton de détour s'il est à moins de 600 yards (réglable). Données : lieu de rendu de 300 quêtes lancées par un objet.
+- **`/qw perf`** mesure pendant 10 secondes les images/s, la mémoire allouée par Questweaver et, si le profilage est actif, son temps processeur : à nous envoyer en cas de ralentissement.
+- **Quêtes en plusieurs parties plus claires.** Certaines quêtes gardent le même nom à chaque partie (« La légende de Stalvan » en a 13) : le guide affichait « Prendre » puis « Rendre » la même quête sans dire laquelle, et la route s'arrête parfois après une partie. Maintenant :
+  - le numéro de la partie suit le nom, par exemple « La légende de Stalvan (1/13) » ;
+  - à la prise, le guide dit quelles parties ta route fait (« ta route fait les parties 1 à 1, pas la suite ») ;
+  - au rendu de la dernière partie prévue, il dit que la suite n'est pas dans ta route et qu'il n'y a pas besoin de la prendre.
+  Option « Quêtes en plusieurs parties » dans le module Quêtes aux mêmes monstres. Données : 2 683 quêtes en chaîne dans `Data/QuestLinks.lua`.
+
 ## v1.9.0
 
 Retours de joueurs : quêtes hors route, quêtes de métier, et changement de zone.

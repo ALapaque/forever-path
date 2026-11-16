@@ -32,7 +32,7 @@ SlashCmdList.QUESTWEAVER = function(msg)
         local want = arg:lower()
         for _, sg in ipairs(ns.Recommend.Segments(nil)) do
             local name = sg.zone and ns.ZoneName(sg.zone):lower() or ""
-            if sg.key == want or name:find(want, 1, true) then ns.Recommend.Choose(sg.guide) return end
+            if sg.key == want or name:find(want, 1, true) then ns.Recommend.Choose(sg.key) return end
         end
         ns.Print(ns.Tr("Pas de segment de ta route dans « %s » à ton niveau. /qw zones pour la liste."), arg)
     elseif cmd == "guides" then

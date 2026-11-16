@@ -33,6 +33,7 @@ OVERRIDES_PATH = os.path.join(HERE, "overrides.json")
 OVERRIDES = json.load(open(OVERRIDES_PATH, encoding="utf-8")).get("quests", {}) if os.path.exists(OVERRIDES_PATH) else {}
 SAN = Counter()
 FOREVER_MIN = 90000         # premiers IDs de quêtes propres à Forever
+MAX_DROPPERS = 2            # quête lancée par un objet : seulement s'il ne tombe que sur 1-2 monstres
 ERA_MAX = 9665              # dernier ID de quête Classic Era
 
 def sanitize():
@@ -314,6 +315,21 @@ def analyse(qid, faction, maps_order):
          [(("obj", o), all_pts(g(O.get(o), 4))) for o in lst(g(start, 2))]
     ec = [(("npc", n), all_pts(g(N.get(n), 7))) for n in lst(g(finish, 1))] + \
          [(("obj", o), all_pts(g(O.get(o), 4))) for o in lst(g(finish, 2))]
+    # quête lancée par un objet que lâche un monstre nommé (1 ou 2 monstres seulement : butin quasi sûr,
+    # contrairement aux objets rares que des dizaines de monstres peuvent lâcher) : la « prise » se fait
+    # en tuant ce monstre. Les monstres élites sont laissés de côté (quêtes de groupe).
+    drop = None
+    if not gc:
+        for it in lst(g(start, 3)):
+            droppers = [n for n in lst(g(I.get(it), 2)) if n in N]
+            if 1 <= len(droppers) <= MAX_DROPPERS:
+                for nid in droppers:
+                    if (g(N[nid], 6, 0) or 0) in (1, 2, 3):
+                        continue
+                    gc.append((("drop", nid), all_pts(g(N[nid], 7))))
+                if gc:
+                    drop = it
+                    break
     gv, en = pick(gc, maps_order), pick(ec, maps_order)
     if not gv or not en:
         DROP["donneur ou receveur hors du parcours" if (gc and ec and any(by for _, by in gc) and any(by for _, by in ec))
@@ -390,7 +406,8 @@ def analyse(qid, faction, maps_order):
         "req": req, "lvl": lvl, "xp": xp, "races": races, "scales": scales,
         "preSingle": lst(g(q, 13)), "preGroup": lst(g(q, 12)), "exclusive": lst(g(q, 16)),
         "kill": bool(mobs), "group": group, "soft": q.get("soft"), "estimated": bool(q.get("estimated")),
-        "moblvl": max([g(N.get(m), 5, 0) or 0 for m in mobs] or [0]),
+        "moblvl": max([g(N.get(m), 5, 0) or 0 for m in mobs + ([gv[0][1]] if drop else [])] or [0]),
+        "drop": (gv[0][1], drop) if drop else None,
     }
 
 # ---------------------------------------------------------------- simulation
@@ -415,6 +432,7 @@ class Char:
         self.dist = 0.0
         self.zones = 0
         self.quests = 0
+        self.drops = 0          # quêtes lancées par un objet de monstre nommé
 
     def walk(self, d):
         self.dist += d
@@ -506,6 +524,9 @@ def visit(zone, ch, infos, remaining_maps, travel_time, long_stay, grind_to=None
         steps.append(("A", info))
         ch.ahead[0 if info.get("scales") else info["lvl"] - ch.level] += 1
         ch.time += T_TALK
+        if info.get("drop"):
+            ch.time += T_OTHER                # le monstre à tuer pour avoir l'objet
+            ch.drops += 1
         log[info["id"]] = "ready" if not info["opos"] else "todo"
         ch.logage[info["id"]] = ch.zones
         for e in info["exclusive"]:
@@ -655,12 +676,19 @@ def render(zone, steps, stop):
         if kind in ("A", "T"):
             who = info["giver"] if kind == "A" else info["ender"]
             p = info["gpos"] if kind == "A" else info["epos"]
+            text = ""
             if who[0] == "npc":
                 opts.append("id=%d" % who[1])
                 used_npcs.add(who[1])
+            elif who[0] == "drop":
+                # objet lâché par un monstre nommé : on le tue, puis clic droit sur l'objet
+                # (nom du monstre affiché par le guide, dans la langue du client, grâce à mobs=)
+                opts.append("mobs=%d" % who[1])
+                used_npcs.add(who[1])
+                text = ' "Tue ce monstre : son butin lance la quête"'
             if kind == "A":
                 opts.append("lvl=%d" % info["lvl"])
-            lines.append("%s %d %s %s" % (kind, info["id"], fmt(p), " ".join(opts)))
+            lines.append("%s %d%s %s %s" % (kind, info["id"], text, fmt(p), " ".join(opts)))
         elif kind == "C":
             if info["mobs"]:
                 opts.append("mobs=" + ",".join(str(m) for m in info["mobs"]))
@@ -736,7 +764,7 @@ def metrics_of(pid, ch):
             "grind_share": round(ch.src.get("grind", 0) / max(1, total_xp), 3),
             "cross_continent": ch.cross, "max_ahead": max(ch.ahead or [0]), "at_plus2": ch.ahead.get(2, 0), "at_plus1": ch.ahead.get(1, 0),
             "estimated_req": sum(1 for q in ch.done if ch.infos.get(q, {}).get("estimated")),
-            "group_quests": sum(1 for v in ch.glog.values() if v == "done")}
+            "group_quests": sum(1 for v in ch.glog.values() if v == "done"), "drop_quests": ch.drops}
 
 def main():
     apply_sets()

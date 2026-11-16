@@ -31,9 +31,18 @@ local function overlayFor(plate)
     o.icon:SetSize(22, 22)
     o.icon:SetPoint("BOTTOM", o, "TOP", 0, 2)
     o.t = 0
+    o.acc = 0
     o:SetScript("OnUpdate", function(self, dt)
-        if not M:Opt("bounce") then return end
         self.t = self.t + dt
+        self.acc = self.acc + dt
+        if self.acc < 1 / 30 then return end         -- 30 fois/s suffisent pour un rebond
+        self.acc = 0
+        local still = not M:Opt("bounce") or (ns.Eco and ns.Eco())
+        if still then
+            if self.bouncing then self.bouncing = false; self.icon:SetPoint("BOTTOM", self, "TOP", 0, 2) end
+            return
+        end
+        self.bouncing = true
         self.icon:SetPoint("BOTTOM", self, "TOP", 0, 2 + math.abs(math.sin(self.t * 4)) * 6)
     end)
     overlays[plate] = o

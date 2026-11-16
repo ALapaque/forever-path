@@ -331,6 +331,7 @@ function M.MinimapOffset(p, player, zoom, indoor, rotate, facing, radiusPx)
     return east * scale, north * scale
 end
 
+local mmPt = {}         -- point courant du tracé (réutilisé : pas de table par point)
 function M:DrawMinimap()
     for _, d in ipairs(mm.dots) do d:Hide() end
     if not (self.enabled and self:Opt("minimap") and journey and Minimap and Minimap:IsShown()) then return end
@@ -359,8 +360,8 @@ function M:DrawMinimap()
             local steps = math.max(1, math.floor(len * (t1 - t0) / 14))
             for k = 0, steps do
                 local t = t0 + (t1 - t0) * k / steps
-                local q = { x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t }
-                local ox, oy = M.MinimapOffset(q, player, zoom, indoor, rotate, facing, radius)
+                mmPt.x, mmPt.y = a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t
+                local ox, oy = M.MinimapOffset(mmPt, player, zoom, indoor, rotate, facing, radius)
                 if ox * ox + oy * oy < (radius - 4) ^ 2 then
                     n = n + 1
                     if n > 250 then return end
@@ -378,13 +379,23 @@ end
 ---------------------------------------------------------------------------
 -- Événements
 ---------------------------------------------------------------------------
+-- Tracé de la minimap : 10 fois/s (4 en économie), et seulement si le personnage a bougé, tourné
+-- ou changé le zoom (jusqu'à 250 points à replacer à chaque fois).
 local mmTicker = CreateFrame("Frame")
-local acc = 0
+local acc, lastKey = 0, nil
 mmTicker:SetScript("OnUpdate", function(_, dt)
     acc = acc + dt
-    if acc < 0.1 then return end
+    if acc < ((ns.Eco and ns.Eco()) and 0.25 or 0.1) then return end
     acc = 0
-    if M.enabled and journey then M:DrawMinimap() end
+    if not (M.enabled and journey) then lastKey = nil return end
+    local pl = Nav.Player()
+    local facing = GetPlayerFacing and GetPlayerFacing()
+    if facing and ns.IsSecret(facing) then facing = nil end
+    local key = pl and ("%d:%d:%d:%s:%s:%d:%d"):format(pl.x or 0, pl.y or 0, pl.c or 0, Minimap and Minimap:GetZoom() or 0,
+        facing and math.floor(facing * 50) or "-", leg or 0, corner or 0) or nil
+    if key and key == lastKey and journey == M.drawnJourney then return end
+    lastKey, M.drawnJourney = key, journey
+    M:DrawMinimap()
 end)
 
 function M:OnEnable()

@@ -101,25 +101,113 @@ print("questlinks OK")
 -- 4) changer de zone à la main (panneau Zones / /qw zone)
 ns.SetModuleEnabled("questlinks", true)
 QLOG = {}; DONE = {}
-PLAYER.level = 22
+PLAYER.level = 26
+ns.cdb.notOffered = {}
 E.Load(E.PickDefault())
 local start = ns.cdb.guideId
 local R = ns.Recommend
 local segs = R.Segments()
-check(#segs >= 2, "plusieurs zones proposées au niveau 22 (" .. #segs .. ")")
-local curKey = R.SegmentZone(ns.Guides[start])
-local other
-for _, sg in ipairs(segs) do if sg.key ~= curKey then other = sg break end end
-check(other, "une autre zone que " .. tostring(curKey))
-R.Choose(other.guide)
-check(ns.cdb.guideId == other.guide and ns.cdb.pinned == other.guide, "zone choisie chargée : " .. other.guide)
+check(#segs >= 2, "plusieurs zones proposées au niveau 26 (" .. #segs .. ")")
+local zsegs = R.ZoneSegments("duskwood")
+check(#zsegs >= 2, "Bois de la Pénombre : " .. #zsegs .. " passages de la route à ce niveau")
+local zg = R.Choose("duskwood")
+check(zg and ns.cdb.guideId == zg.id and ns.cdb.pinned == zg.id, "zone choisie : guide « zone » chargé (" .. tostring(zg and zg.name) .. ")")
+local total = 0
+for _, sg in ipairs(zsegs) do total = total + #sg.steps end
+check(#zg.steps == total, "il enchaîne tous les passages de la zone (" .. total .. " étapes)")
+-- le premier passage terminé : on reste dans la zone (avant : on partait vers la suite de la route, ex. Orneval)
+local firstLen = #zsegs[1].steps
+ns.cdb.stepIndex = firstLen
+for k = 1, firstLen do ns.cdb.skipped[zg.id][k] = true end
+E.Refresh()
+check(ns.cdb.guideId == zg.id and select(3, E.Current()) > firstLen, "premier passage fini : toujours dans Bois de la Pénombre (étape " .. select(3, E.Current()) .. ")")
+-- niveau qui monte : la zone choisie reste
 PLAYER.level = 40
 E.CheckLevel()
-check(ns.cdb.guideId == other.guide, "zone choisie gardée malgré le niveau")
+check(ns.cdb.guideId == zg.id, "zone choisie gardée malgré le niveau")
+PLAYER.level = 26
+-- /reload : le guide « zone » est reconstruit à l'identique
+local savedId, savedIdx = zg.id, select(3, E.Current())
+ns.Guides[savedId] = nil
+FireEvent("PLAYER_LOGIN")
+ns.Fire("FP_READY")
+check(ns.Guides[savedId] and ns.cdb.guideId == savedId and select(3, E.Current()) == savedIdx, "après /reload : même zone, même étape")
+-- tout fait dans la zone : retour à la route conseillée
+for k = 1, #ns.Guides[savedId].steps do ns.cdb.skipped[savedId][k] = true end
+E.Refresh()
+check(ns.cdb.guideId ~= savedId and not ns.cdb.pinned and not ns.cdb.zoneChoice, "zone finie : retour à la route conseillée (" .. tostring(ns.cdb.guideId) .. ")")
 ns.ZonePanel:Refresh()
-PLAYER.level = 22
-SlashCmdList.QUESTWEAVER("zone " .. curKey)
-check(R.SegmentZone(ns.Guides[ns.cdb.guideId]) == curKey, "/qw zone " .. curKey .. " : retour dans cette zone")
-E.Load(other.guide, true)
-check(not ns.cdb.pinned, "chargement automatique : plus de zone épinglée")
+SlashCmdList.QUESTWEAVER("zone duskwood")
+check(ns.Guides[ns.cdb.guideId].zoneKey == "duskwood", "/qw zone duskwood")
+E.Load(start, true)
+check(not ns.cdb.pinned and not ns.cdb.zoneChoice, "chargement d'un segment : plus de zone choisie")
 print("zones OK")
+
+-- 5) quête en plusieurs parties (La légende de Stalvan) : la route ne fait que la partie 1
+QLOG = {}; DONE = {}
+PLAYER.level = 26
+ns.QuestLinks[801] = "e=267;c=1/3;n=802"
+ns.QuestLinks[802] = "c=2/3;n=803"
+ns.QuestLinks[803] = "c=3/3"
+ns.QuestLinks[811] = "c=1/2;n=812"
+ns.QuestLinks[812] = "c=2/2"
+ns.RegisterGuide({ id = "test-chain", name = "Chaîne", faction = "Alliance", minLevel = 1, maxLevel = 60, text = [[
+M elwynn
+A 801 @40.0,60.0 id=265 lvl=28
+T 801 @41.0,61.0 id=267
+A 811 @41.0,61.0 id=267
+T 811 @41.0,61.0 id=267
+A 812 @41.0,61.0 id=267
+T 812 @41.0,61.0 id=267
+]] })
+E.Load("test-chain")
+local gc = ns.Guides["test-chain"]
+check(ns.Guide.StepLabel(gc.steps[1]):find("(1/3)", 1, true), "partie de la chaîne dans le libellé : " .. ns.Guide.StepLabel(gc.steps[1]))
+local QL = ns.Modules.questlinks
+check((QL.ChainLine(gc.steps[1]) or ""):find("parties 1 à 1", 1, true), "à la prise : la route ne fait que la partie 1 sur 3")
+check((QL.ChainLine(gc.steps[2]) or ""):find("2/3", 1, true), "au rendu : la partie 2/3 n'est pas dans la route")
+check((QL.ChainLine(gc.steps[3]) or ""):find("toutes", 1, true), "chaîne complète dans la route : dit")
+check(QL.ChainLine(gc.steps[4]) == nil, "rendu d'une partie suivie de la suivante : rien à dire")
+DONE[802] = true
+check(QL.ChainLine(gc.steps[2]) == nil, "suite déjà faite : rien à dire")
+print("chaînes OK")
+
+-- 6) objet lâché qui lance une quête (Goldtooth -> « Le collectionneur ») : bouton, puis où la rendre
+QLOG = {}; DONE = {}
+PLAYER.level = 10; PLAYER.map = 1429; PLAYER.x = 0.45; PLAYER.y = 0.60
+local QLM = ns.Modules.questlinks
+local BAG = { [0] = { [1] = 1307 } }
+C_Container = { GetContainerNumSlots = function(b) return b == 0 and 4 or 0 end,
+    GetContainerItemID = function(b, s) return BAG[b] and BAG[b][s] end }
+local st = QLM.Starters()
+check(#st == 1 and st[1].quest == 123 and st[1].xp > 0, "objet 1307 dans le sac : lance la quête 123 (+" .. tostring(st[1] and st[1].xp) .. " XP)")
+QLM:Update()
+local sbtn = _G.QuestweaverStarterButton
+check(sbtn.itemID == 1307, "bouton « lancer la quête » prêt")
+-- quête prise et terminée (simple livraison) : où la rendre
+BAG[0][1] = nil
+QLOG[123] = { complete = true }
+local ti = QLM.TurnIns()
+check(#ti == 1 and ti[1].quest == 123 and ti[1].dist, "quête lancée par l'objet : lieu de rendu connu (" .. tostring(ti[1] and ti[1].dist) .. " yards)")
+QLM:Update()
+check(QLM.detourTarget and QLM.detourTarget.quest == 123, "assez près : détour proposé")
+QLM.Detour(QLM.detourTarget)
+check(E.Detour() and E.Detour().kind == "questlinks", "détour vers le PNJ qui reçoit la quête")
+E.SetDetour(nil)
+QLM:SetOpt("detour", 0)
+QLM:Update()
+check(QLM.detourTarget == nil, "détour max à 0 : plus proposé")
+QLM:SetOpt("detour", 600)
+QLOG = {}
+print("objets de quête OK")
+
+-- 7) routes : quêtes lancées par l'objet d'un monstre nommé (étape « prendre » sur le monstre)
+local found
+for _, id in ipairs(ns.GuideOrder) do
+    for _, s in ipairs(ns.Guides[id].steps) do
+        if s.type == "accept" and s.text and s.text:find("son butin", 1, true) then found = s break end
+    end
+    if found then break end
+end
+check(found and found.mobs and next(found.mobs) and not found.npcID and found.quest, "étape « tue ce monstre : son butin lance la quête » dans les routes (quête " .. tostring(found and found.quest) .. ")")
+print("butin OK")

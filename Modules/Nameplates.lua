@@ -103,6 +103,7 @@ local function refreshUnit(unit)
         o.glow:SetVertexColor(st.r, st.g, st.b, 0.85)
         o.icon:SetTexture(st.icon)
         o:Show()
+        o.kind = kind
         active[unit] = o
     else
         o:Hide()
@@ -117,6 +118,15 @@ local function refreshAll()
     end
 end
 M.RefreshAll = refreshAll
+
+-- Barre de nom du PNJ de l'étape, si elle est à l'écran : elle est exactement au-dessus de lui
+-- (le guidage 3D s'y accroche de près, les coordonnées de la base pouvant être décalées de quelques mètres).
+function M.NpcPlate()
+    if not M.enabled then return end
+    for _, o in pairs(active) do
+        if o.kind == "npc" and o:IsVisible() then return o end
+    end
+end
 
 M:On("NAME_PLATE_UNIT_ADDED", function(unit) pcall(refreshUnit, unit) end)
 M:On("NAME_PLATE_UNIT_REMOVED", function(unit)

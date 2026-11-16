@@ -1,5 +1,9 @@
 # Questweaver
 
+## v1.10.1
+
+- **Marqueur 3D posé sur le PNJ.** Le marqueur visait la position du PNJ donnée par la base de quêtes, souvent décalée de quelques mètres dans Forever (par exemple Nataka Longhorn, à 7 m du faisceau). Maintenant, à moins de 40 yards, dès que la barre de nom du PNJ de l'étape est à l'écran, le marqueur se place juste au-dessus d'elle, donc exactement sur le PNJ (sans faisceau ni points au sol, inutiles de si près). Option « De près, se placer sur le PNJ » dans le module Guidage 3D ; les barres de nom des PNJ amicaux doivent être affichées (réglage par défaut du module Repérage).
+
 ## v1.10.0
 
 - **Routes régénérées** avec la dernière version de QuestieDB (données de Forever mises à jour) : 616 quêtes en moyenne par parcours (598 avant), part du farm de 19 % (21 % avant), environ 79 h jusqu'au 60.

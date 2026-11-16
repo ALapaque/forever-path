@@ -2,6 +2,7 @@ local _, ns = ...
 
 -- Traduction esES (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.ES = {
+    ["De près, se placer sur le PNJ (barre de nom)"] = "De cerca, colocarse sobre el PNJ (placa de nombre)",
     ["Tue ce monstre : son butin lance la quête"] = "Mata a este monstruo: su botín empieza la misión",
     ["Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."] = "No queda nada que hacer en esta zona a tu nivel: vuelta a la ruta recomendada.",
     ["son PNJ"] = "su PNJ",

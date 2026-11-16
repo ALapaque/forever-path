@@ -52,6 +52,26 @@ for _ = 1, 240 do onUpdate(g3, 1 / 120) end         -- 2 s à 120 i/s
 check(regionsCalls <= 1, "2 s à 120 i/s : éléments de Blizzard lus " .. regionsCalls .. " fois (avant : 240)")
 check(#LUA_ERRORS == 0, "guidage 3D sans erreur")
 check((ns.Modules.guide3d.trailDots or 0) > 0, "mode complet : points au sol dessinés")
+-- de près, le PNJ de l'étape a sa barre de nom à l'écran : le marqueur s'y accroche
+local plate = mockobj()
+rawset(plate, "GetCenter", function() return 700, 500 end)
+rawset(plate, "GetEffectiveScale", function() return 1 end)
+local np = ns.Modules.nameplates
+local origPlate = np.NpcPlate
+np.NpcPlate = function() return plate end
+C_Navigation.GetDistance = function() return 7 end
+ns.Modules.guide3d.navNpc = true
+local anchored
+local origSetPoint = g3.SetPoint
+rawset(g3, "SetPoint", function(_, a, rel, b, x, y) anchored = { x, y } end)
+for _ = 1, 30 do onUpdate(g3, 1 / 60) end
+check(ns.Modules.guide3d.snapped and anchored and anchored[1] == 700, "à 7 m du PNJ : marqueur accroché à sa barre de nom (x=" .. tostring(anchored and anchored[1]) .. ")")
+check((ns.Modules.guide3d.trailDots or 0) == 0, "accroché : pas de points au sol")
+C_Navigation.GetDistance = function() return 123.4 end
+for _ = 1, 30 do onUpdate(g3, 1 / 60) end
+check(not ns.Modules.guide3d.snapped and anchored[1] == 400, "loin : retour au point de navigation")
+np.NpcPlate = origPlate
+rawset(g3, "SetPoint", origSetPoint)
 P:SetOpt("mode", 3)
 for _ = 1, 60 do onUpdate(g3, 1 / 60) end
 check((ns.Modules.guide3d.trailDots or 0) == 0, "économie : pas de points au sol")

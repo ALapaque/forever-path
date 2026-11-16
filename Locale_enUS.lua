@@ -3,6 +3,7 @@ local _, ns = ...
 -- Traduction anglaise (clients non francophones). Clés : textes français exacts du code ;
 -- les textes avec %d / %s servent aussi de modèles pour les textes déjà formatés (voir ns.Tr).
 ns.EN = {
+    ["Quête maintenant proposée : retour à sa prise."] = "Quest now offered: back to picking it up.",
     ["De près, se placer sur le PNJ (barre de nom)"] = "Up close, snap onto the NPC (nameplate)",
     ["Tue ce monstre : son butin lance la quête"] = "Kill this monster: its loot starts the quest",
     ["Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."] = "Nothing left to do in this zone at your level: back to the suggested route.",

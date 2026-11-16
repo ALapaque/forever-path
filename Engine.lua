@@ -116,15 +116,51 @@ function E.MarkNotOffered(silentReport)
     return true
 end
 
+-- Juste après un rendu, le PNJ met parfois un instant à proposer la suite (la fenêtre qui se rouvre
+-- ne la liste pas encore) : pendant quelques secondes, on ne conclut pas qu'elle n'est pas proposée.
+-- Sinon la suite d'une chaîne (ex. « Les Veilleurs » 2/3) était passée à tort.
+local turnedInAt = -1000
+ns.On("QUEST_TURNED_IN", function() turnedInAt = GetTime() end)
+E.SETTLE = 4
+
 -- l'étape en cours est une prise chez ce PNJ (celui avec qui on parle) ?
 local function offerStep()
     local g, step = E.Current()
     if not (g and step and step.type == "accept" and step.quest and step.npcID) then return end
     if ns.NpcIDFromUnit("npc") ~= step.npcID then return end
+    if GetTime() - turnedInAt < E.SETTLE then return end
     return step
 end
 
+-- Quête passée plus tôt parce qu'elle n'était pas proposée, et que ce PNJ propose maintenant
+-- (niveau atteint, prérequis fait, ou fausse alerte) : on revient à sa prise.
+function E.Reoffered(ids)
+    local g, _, cur = E.Current()
+    local no = ns.cdb.notOffered
+    if not (g and no and next(no)) then return end
+    for _, q in ipairs(ids) do
+        if no[q] then
+            for j = 1, (cur or 1) - 1 do
+                local s = g.steps[j]
+                if s.type == "accept" and s.quest == q and E.Applies(s) then
+                    no[q] = nil
+                    ns.cdb.stepIndex = j
+                    ns.Toast(ns.Tr("Quête maintenant proposée : retour à sa prise."), "Interface\\GossipFrame\\AvailableQuestIcon", 0.4, 0.9, 0.5, 4)
+                    E.Refresh()
+                    ns.Fire("FP_STEP_CHANGED", true)
+                    return true
+                end
+            end
+        end
+    end
+end
+
 function E.CheckOffered()
+    if C_GossipInfo and C_GossipInfo.GetAvailableQuests then
+        local ids = {}
+        for _, info in ipairs(C_GossipInfo.GetAvailableQuests() or {}) do ids[#ids + 1] = info.questID end
+        if E.Reoffered(ids) then return end
+    end
     local step = offerStep()
     if not step then return end
     if not (C_GossipInfo and C_GossipInfo.GetAvailableQuests) then return end
@@ -139,6 +175,11 @@ end
 -- PNJ sans dialogue, avec seulement des quêtes : fenêtre « quêtes » (plusieurs) ou directement le
 -- détail d'une autre quête (une seule proposée). Dans les deux cas, on sait si la nôtre y est.
 function E.CheckGreeting()
+    if GetNumAvailableQuests and GetAvailableQuestInfo then
+        local ids = {}
+        for k = 1, GetNumAvailableQuests() or 0 do ids[#ids + 1] = select(5, GetAvailableQuestInfo(k)) end
+        if E.Reoffered(ids) then return end
+    end
     local step = offerStep()
     if not (step and GetNumAvailableQuests and GetAvailableQuestInfo) then return end
     for k = 1, GetNumAvailableQuests() or 0 do
@@ -155,6 +196,7 @@ local listedAt = -1000          -- dernière liste de quêtes (dialogue ou fenê
 ns.On("GOSSIP_SHOW", function() listedAt = GetTime() end)
 ns.On("QUEST_GREETING", function() listedAt = GetTime() end)
 function E.CheckDetail()
+    if GetQuestID and E.Reoffered({ GetQuestID() }) then return end
     local step = offerStep()
     -- détail ouvert depuis une liste : c'est le joueur qui a choisi une autre quête, on ne conclut rien
     if not (step and GetQuestID) or GetTime() - listedAt < 60 then return end

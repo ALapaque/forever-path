@@ -110,4 +110,33 @@ local g3, st3, i3 = E.Current()
 ns.StepReport.Add("unavailable", g3, st3, i3, true)
 check(ns.cdb.notOffered[613] and select(3, E.Current()) == 4, "signalée « pas disponible » : prise passée")
 GetTime = oldTime
+
+-- 6) suite d'une chaîne juste après un rendu (« Les Veilleurs ») : pas de fausse alerte, et retour
+ns.RegisterGuide({ id = "test-chain2", name = "Veilleurs", faction = "Alliance", minLevel = 1, maxLevel = 5, text = [[
+M elwynn
+A 621 @40.0,60.0 id=88 lvl=3
+T 621 @40.0,60.0 id=88
+A 622 @40.0,60.0 id=88 lvl=3
+C 622 @45.0,62.0
+T 622 @40.0,60.0 id=88
+N "Fin"
+]] })
+local oldT = GetTime
+local t0 = 9000
+GetTime = function() return t0 end
+QLOG = {}; DONE = { [621] = true }; ns.cdb.notOffered = {}
+E.Load("test-chain2")
+check(select(3, E.Current()) == 3, "après le rendu de la partie 1 : prendre la partie 2")
+FireEvent("QUEST_TURNED_IN", 621, 100)
+C_GossipInfo.GetAvailableQuests = function() return {} end          -- le PNJ ne la liste pas encore
+FireEvent("GOSSIP_SHOW")
+check(not ns.cdb.notOffered[622] and select(3, E.Current()) == 3, "fenêtre rouverte juste après le rendu : pas de conclusion hâtive")
+t0 = t0 + 10
+FireEvent("GOSSIP_SHOW")
+check(ns.cdb.notOffered[622] and select(3, E.Current()) == 6, "toujours pas proposée 10 s après : passée")
+-- plus tard, le PNJ la propose : retour à sa prise
+C_GossipInfo.GetAvailableQuests = function() return { { questID = 622 } } end
+FireEvent("GOSSIP_SHOW")
+check(not ns.cdb.notOffered[622] and select(3, E.Current()) == 3, "proposée plus tard : retour à la prise de la partie 2")
+GetTime = oldT
 print("ALL TESTS PASSED")

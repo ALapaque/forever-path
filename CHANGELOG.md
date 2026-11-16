@@ -1,5 +1,10 @@
 # Questweaver
 
+## v1.10.2
+
+- **Suite d'une chaîne passée à tort.** Juste après avoir rendu une quête, le PNJ met parfois un instant à proposer la suite : sa fenêtre se rouvre sans elle. Le garde-fou « quête pas proposée » concluait trop vite et passait la suite (par exemple « Les Veilleurs », partie 2). Il attend maintenant quelques secondes après un rendu avant de conclure.
+- **Retour automatique.** Une quête passée parce que son PNJ ne la proposait pas revient dans la route dès qu'un PNJ la propose (niveau atteint, prérequis fait, ou fausse alerte) : le guide revient à sa prise.
+
 ## v1.10.1
 
 - **Quêtes que le PNJ ne propose pas.** Au Village des Magram (Désolace), la route faisait prendre « De grosses, non, de massives haches en fer » à Grolkar, qui ne la propose pas : il faut lui apporter des haches forgées (Forge), et la base de quêtes ne le dit pas. Même cas pour 5 autres quêtes des centaures (couture, travail du cuir, enchantement, alchimie, couronne à rapporter des Terres ingrates) : retirées des routes. Le générateur écarte maintenant tout seul les quêtes « apporte tel objet » au même PNJ sans objectif connu (objet fabriqué ou acheté).

@@ -76,4 +76,38 @@ C_GossipInfo.GetAvailableQuests = function() return { { questID = 95001, title =
 FireEvent("GOSSIP_SHOW")
 check(ns.db.collect.pre and ns.db.collect.pre[95001] == 602, "déblocage noté : 95001 après 602")
 check(C.Export():find("P;95001;602"), "déblocage exporté")
+
+-- 5) PNJ sans dialogue : fenêtre « quêtes », détail direct d'une autre quête, ou rien du tout
+ns.RegisterGuide({ id = "test-offer", name = "Offre", faction = "Alliance", minLevel = 1, maxLevel = 5, text = [[
+M elwynn
+A 611 @40.0,60.0 id=88 lvl=3
+A 612 @40.0,60.0 id=88 lvl=3
+A 613 @40.0,60.0 id=88 lvl=3
+N "Fin"
+]] })
+QLOG = {}; ns.cdb.notOffered = {}
+E.Load("test-offer")
+local oldTime = GetTime
+local now = 5000
+GetTime = function() return now end
+GetNumAvailableQuests = function() return 1 end
+GetAvailableQuestInfo = function() return false, 0, false, false, 611 end
+GetNumActiveQuests = function() return 0 end
+FireEvent("QUEST_GREETING")
+check(select(3, E.Current()) == 1, "fenêtre « quêtes » avec la nôtre : l'étape reste")
+GetAvailableQuestInfo = function() return false, 0, false, false, 999 end
+FireEvent("QUEST_GREETING")
+check(ns.cdb.notOffered[611] and select(3, E.Current()) == 2, "fenêtre « quêtes » sans la nôtre : prise passée")
+-- détail d'une autre quête juste après une liste : choix du joueur, on ne conclut rien
+GetQuestID = function() return 999 end
+FireEvent("QUEST_DETAIL")
+check(select(3, E.Current()) == 2, "détail choisi dans une liste : l'étape reste")
+now = now + 120
+FireEvent("QUEST_DETAIL")
+check(ns.cdb.notOffered[612] and select(3, E.Current()) == 3, "détail direct d'une autre quête : prise passée")
+-- rien ne s'ouvre : « Quête pas disponible » dans le menu de signalement passe l'étape
+local g3, st3, i3 = E.Current()
+ns.StepReport.Add("unavailable", g3, st3, i3, true)
+check(ns.cdb.notOffered[613] and select(3, E.Current()) == 4, "signalée « pas disponible » : prise passée")
+GetTime = oldTime
 print("ALL TESTS PASSED")

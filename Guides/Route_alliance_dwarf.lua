@@ -1093,10 +1093,10 @@ ns.RegisterGuide({
     name = "Désolace 33-34",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 33, maxLevel = 34,
-    next = "alliance-dwarf-34-dustwallow",
+    next = "alliance-dwarf-33-dustwallow",
     text = [[
 M desolace
-G "Rejoins Désolace" @66.7,10.9 r=40 upto=36
+G "Rejoins Désolace" @66.7,10.9 r=40 upto=35
 A 1382 @66.7,10.9 id=5396 lvl=35
 A 1385 @66.7,10.9 id=5396 lvl=35
 T 1385 @75.0,68.2 id=5398
@@ -1108,30 +1108,16 @@ T 1382 @36.2,79.2 id=5397
 A 1384 @36.2,79.2 id=5397 lvl=32
 C 1369 @39.7,93.7
 T 1369 @75.0,68.2 id=5398
-A 92818 @69.8,77.9 id=253163 lvl=35
-T 92818 @69.8,77.9 id=253163
 C 1384 @72.3,44.6 mobs=4636,4635,4634,4633,4632
 T 1384 @36.2,79.2 id=5397
-A 1370 @36.2,79.2 id=5397 lvl=35
-A 1439 @54.9,26.1 id=5644 lvl=33 danger=1
-C 1439 @53.0,29.1 mobs=5643 danger=1
-T 1439 @54.9,26.1 id=5644 danger=1
-C 1370 @73.0,74.7
-T 1370 @36.2,79.2 id=5397
-A 92817 @34.5,86.9 id=253166 lvl=35
-T 92817 @34.5,86.9 id=253166
-A 92814 @35.7,92.2 id=253140 lvl=35
-T 92814 @35.7,92.2 id=253140
-A 92755 @69.8,78.0 id=253096 lvl=35
-T 92755 @69.8,78.0 id=253096
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-34-dustwallow",
-    name = "Marécage d'Âprefange 34-35",
+    id = "alliance-dwarf-33-dustwallow",
+    name = "Marécage d'Âprefange 33-34",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 34, maxLevel = 35,
+    minLevel = 33, maxLevel = 34,
     next = "alliance-dwarf-34-stv-2",
     text = [[
 M dustwallow
@@ -1161,10 +1147,10 @@ ns.RegisterGuide({
     name = "Vallée de Strangleronce 34-35",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 34, maxLevel = 35,
-    next = "alliance-dwarf-35-arathi-2",
+    next = "alliance-dwarf-34-swamp",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @35.6,10.6 r=40 upto=37
+G "Rejoins Vallée de Strangleronce" @35.6,10.6 r=40 upto=36
 T 5762 @35.7,10.8 id=715
 A 186 @35.6,10.6 id=717 lvl=33
 A 191 @35.5,10.6 id=718 lvl=33
@@ -1186,6 +1172,41 @@ T 191 @35.5,10.6 id=718
 T 194 @35.7,10.8 id=715
 T 187 @35.6,10.6 id=717
 T 98463 @27.0,77.2 id=2832
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-dwarf-34-swamp",
+    name = "Marais des Chagrins 34-35",
+    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
+    minLevel = 34, maxLevel = 35,
+    next = "alliance-dwarf-34-stv-3",
+    text = [[
+M swamp
+G "Rejoins Marais des Chagrins" @26.0,31.4 r=40 upto=36
+A 1389 @26.0,31.4 id=1776 lvl=35
+A 93429 @24.7,32.6 id=254775 lvl=35
+A 93430 @26.5,30.4 id=254770 lvl=35 danger=1
+T 93429 @24.7,32.6 id=254775
+A 93585 @22.3,50.4 id=255597 lvl=34
+T 93585 @26.0,31.4 id=1776
+C 93430 @53.5,30.2 mobs=757 danger=1
+C 1389 @62.4,22.7
+T 1389 @26.0,31.4 id=1776
+T 93430 @26.5,30.4 id=254770 danger=1
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-dwarf-34-stv-3",
+    name = "Vallée de Strangleronce 34-35",
+    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
+    minLevel = 34, maxLevel = 35,
+    next = "alliance-dwarf-35-arathi-2",
+    text = [[
+M stv
+L 35 "Tue des monstres autour de toi jusqu'au niveau 35"
+G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=37
 A 189 @27.0,77.1 id=737 lvl=35 danger=1
 A 213 @27.0,77.1 id=737 lvl=36
 A 577 @28.3,77.6 id=2495 lvl=36
@@ -1279,7 +1300,7 @@ ns.RegisterGuide({
     name = "Rives Claires 36-37",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 36, maxLevel = 37,
-    next = "alliance-dwarf-36-swamp",
+    next = "alliance-dwarf-37-stv-4",
     text = [[
 M riverglades
 G "Rejoins Rives Claires" @66.7,81.0 r=40 upto=38
@@ -1298,49 +1319,7 @@ A 95147 @23.7,67.8 id=260026 lvl=37
 T 95147 @39.6,74.7 id=259353
 A 95148 @39.6,74.7 id=259353 lvl=37
 T 95148 @66.7,81.0 id=257558
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-36-swamp",
-    name = "Marais des Chagrins 36-37",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 36, maxLevel = 37,
-    next = "alliance-dwarf-37-riverglades-2",
-    text = [[
-M swamp
-G "Rejoins Marais des Chagrins" @26.0,31.4 r=40 upto=39
-A 1389 @26.0,31.4 id=1776 lvl=35
-A 93429 @24.7,32.6 id=254775 lvl=35
-A 93430 @26.5,30.4 id=254770 lvl=35
-T 93429 @24.7,32.6 id=254775
-A 93585 @22.3,50.4 id=255597 lvl=34
-A 1396 @26.7,59.8 id=5476 lvl=37
-T 93585 @26.0,31.4 id=1776
-C 1396 @38.0,34.8 mobs=767,858,1084
-C 93430 @53.5,30.2 mobs=757
-A 1392 "Tue ce monstre : son butin lance la quête" @55.7,34.4 mobs=5477 lvl=39
-C 1389 @62.4,22.7
-T 1389 @26.0,31.4 id=1776
-T 93430 @26.5,30.4 id=254770
-T 1392 @26.0,31.4 id=1776
-A 93464 @26.0,31.4 id=1776 lvl=38
-T 1396 @26.7,59.8 id=5476
-A 1421 @26.7,59.8 id=5476 lvl=35
-C 1421 @64.5,18.3
-T 1421 @26.7,59.8 id=5476
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-37-riverglades-2",
-    name = "Rives Claires 37-38",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 37, maxLevel = 38,
-    next = "alliance-dwarf-37-stv-3",
-    text = [[
-M riverglades
-G "Rejoins Rives Claires" @54.9,73.0 r=40 upto=39
+L 37 "Tue des monstres autour de toi jusqu'au niveau 37"
 A 94614 @54.9,73.0 id=258317 lvl=38
 C 94614 @50.6,78.4 mobs=258573,258574
 T 94614 @54.9,73.0 id=258317
@@ -1362,14 +1341,14 @@ T 95615 @61.8,83.1 id=262031
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-37-stv-3",
+    id = "alliance-dwarf-37-stv-4",
     name = "Vallée de Strangleronce 37-38",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 37, maxLevel = 38,
-    next = "alliance-dwarf-38-riverglades-3",
+    next = "alliance-dwarf-37-badlands-2",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @37.8,3.6 r=40 upto=40
+G "Rejoins Vallée de Strangleronce" @37.8,3.6 r=40 upto=39
 A 207 @37.8,3.6 id=739 lvl=38
 A 574 @38.0,3.3 id=733 lvl=38
 A 93443 @38.0,3.0 lvl=36
@@ -1382,13 +1361,32 @@ T 207 @37.8,3.6 id=739
 C 574 @46.0,7.7 mobs=938,941
 T 574 @38.0,3.0 id=469
 C 192 @49.2,22.7 mobs=684
-A 97047 @44.3,7.9 id=218230 lvl=38 danger=1
-C 97047 @49.0,6.2 mobs=939,978,813 danger=1
-T 97047 @44.3,7.9 id=218230 danger=1
-A 97048 @44.3,7.9 id=218230 lvl=38
 T 192 @35.5,10.6 id=718
-T 97048 @27.7,76.7 id=218229
 A 627 @26.9,77.2 id=773 lvl=37
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-dwarf-37-badlands-2",
+    name = "Terres ingrates 37-38",
+    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
+    minLevel = 37, maxLevel = 38,
+    next = "alliance-dwarf-38-riverglades-3",
+    text = [[
+M badlands
+G "Rejoins Terres ingrates" @53.8,43.3 r=40 upto=40
+A 718 @53.8,43.3 id=2860 lvl=38
+A 719 @53.4,43.4 id=2910 lvl=35 danger=1
+C 719 @42.2,29.4 mobs=2743,2742,2739,2740 danger=1
+T 719 @53.4,43.4 id=2910 danger=1
+C 718 @66.9,23.4
+T 718 @53.8,43.3 id=2860
+A 710 @25.9,44.9 id=2921 lvl=37 danger=1
+C 710 @20.4,44.6 mobs=2735 danger=1
+T 710 @25.9,44.9 id=2921 danger=1
+A 711 @25.9,44.9 id=2921 lvl=39 danger=1
+C 711 @42.9,81.7 mobs=92 danger=1
+T 711 @25.9,44.9 id=2921 danger=1
 ]],
 })
 
@@ -1463,7 +1461,7 @@ ns.RegisterGuide({
     name = "Rives Claires 39-40",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 39, maxLevel = 40,
-    next = "alliance-dwarf-39-badlands-2",
+    next = "alliance-dwarf-39-stv-5",
     text = [[
 M riverglades
 G "Rejoins Rives Claires" @47.7,47.3 r=40 upto=41
@@ -1487,61 +1485,37 @@ T 95329 @59.5,64.0 id=259352
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-39-badlands-2",
-    name = "Terres ingrates 39-40",
+    id = "alliance-dwarf-39-stv-5",
+    name = "Vallée de Strangleronce 39-40",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 39, maxLevel = 40,
-    next = "alliance-dwarf-40-stv-4",
-    text = [[
-M badlands
-G "Rejoins Terres ingrates" @53.8,43.3 r=40 upto=42
-A 718 @53.8,43.3 id=2860 lvl=38
-A 719 @53.4,43.4 id=2910 lvl=35
-A 1108 @42.2,52.7 id=4618 lvl=39 danger=1
-C 1108 @50.2,68.3 mobs=4856,4851,2893,2894,2892 danger=1
-T 1108 @42.2,52.7 id=4618 danger=1
-A 710 @25.9,44.9 id=2921 lvl=37
-C 710 @20.4,44.6 mobs=2735
-T 710 @25.9,44.9 id=2921
-A 711 @25.9,44.9 id=2921 lvl=39
-C 719 @42.2,29.4 mobs=2743,2742,2739,2740
-T 719 @53.4,43.4 id=2910
-C 718 @66.9,23.4
-T 718 @53.8,43.3 id=2860
-C 711 @42.9,81.7 mobs=92
-T 711 @25.9,44.9 id=2921
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-40-stv-4",
-    name = "Vallée de Strangleronce 40-41",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 40, maxLevel = 41,
     next = "alliance-dwarf-40-dunmorogh-2",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @35.7,10.8 r=40 upto=42
-A 196 @35.7,10.8 id=715 lvl=41
+G "Rejoins Vallée de Strangleronce" @35.7,10.5 r=40 upto=42
 A 339 @35.7,10.5 id=716 lvl=40
 A 340 @35.7,10.5 id=716 lvl=40
 A 341 @35.7,10.5 id=716 lvl=40
 A 342 @35.7,10.5 id=716 lvl=40
-A 205 @37.8,3.6 id=739 lvl=40 danger=1
+A 97047 @44.3,7.9 id=218230 lvl=38
+C 97047 @49.0,6.2 mobs=939,978,813
+T 97047 @44.3,7.9 id=218230
+A 97048 @44.3,7.9 id=218230 lvl=38
 C 341 @24.3,10.8 mobs=667,696,780,1096,701
 C 342 @24.5,11.1 mobs=667,696,780,1096,701
 T 341 @35.7,10.5 id=716
 T 342 @35.7,10.5 id=716
-C 196 @31.1,42.7 mobs=687
 C 339 @46.1,39.9 mobs=667,696,780,1096,701
 C 340 @46.3,40.0 mobs=667,696,780,1096,701
-C 205 @47.4,39.4 mobs=780,670 danger=1
-T 196 @35.7,10.8 id=715
 T 339 @35.7,10.5 id=716
 T 340 @35.7,10.5 id=716
-T 205 @37.8,3.6 id=739 danger=1
+A 196 @35.7,10.8 id=715 lvl=41
+A 205 @37.8,3.6 id=739 lvl=40 danger=1
+C 205 @47.4,39.4 mobs=780,670 danger=1
+C 196 @31.1,42.7 mobs=687
 B "Lie ta pierre de foyer à l'auberge" @27.0,77.3 id=6807
 T 627 @26.9,77.2 id=773
+T 97048 @27.7,76.7 id=218229
 A 595 @28.1,76.2 id=2490 lvl=41
 A 606 @27.8,77.1 id=2501 lvl=41
 A 622 @26.9,77.2 id=773 lvl=37
@@ -1554,6 +1528,8 @@ C 606 @33.2,66.0 mobs=1557
 T 606 @26.9,73.6 id=2502
 A 607 @26.9,73.6 id=2502 lvl=41
 T 607 @27.8,77.1 id=2501
+T 196 @35.7,10.8 id=715
+T 205 @37.8,3.6 id=739 danger=1
 T 622 @37.7,3.3 id=770
 ]],
 })
@@ -1563,7 +1539,7 @@ ns.RegisterGuide({
     name = "Dun Morogh 40-41",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 40, maxLevel = 41,
-    next = "alliance-dwarf-40-desolace-3",
+    next = "alliance-dwarf-40-swamp-2",
     text = [[
 M dunmorogh
 G "Rejoins Dun Morogh" @63.5,50.6 r=40 upto=42
@@ -1577,86 +1553,36 @@ T 97018 @63.5,50.6 race=Dwarf id=1261
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-40-desolace-3",
-    name = "Désolace 40-41",
+    id = "alliance-dwarf-40-swamp-2",
+    name = "Marais des Chagrins 40-41",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 40, maxLevel = 41,
-    next = "alliance-dwarf-41-dustwallow-2",
+    next = "alliance-dwarf-40-riverglades-5",
     text = [[
-M desolace
-G "Rejoins Désolace" @66.5,7.9 r=40 upto=43
-B "Lie ta pierre de foyer à l'auberge" @66.3,6.5 id=11103
-A 261 @66.5,7.9 id=1182 lvl=39
-A 5501 @62.3,39.0 id=11438 lvl=39
-C 5501 @52.8,59.1
-T 5501 @62.3,39.0 id=11438
-A 92743 @75.0,68.2 id=5398 lvl=40
-T 92743 @75.0,68.2 id=5398
-A 92841 @75.0,68.2 id=5398 lvl=40
-T 92841 @65.4,84.2 id=253136
-A 92844 @65.4,84.2 id=253136 lvl=42
-A 92846 @65.4,84.2 id=253136 lvl=40
-T 92844 @65.4,84.2 id=253136
-T 92846 @65.4,84.2 id=253136
-A 92847 @65.4,84.2 id=253136 lvl=42
-T 92847 @65.4,84.2 id=253136
-A 92873 @65.4,84.2 id=253136 lvl=41
-T 92873 @65.4,84.2 id=253136
-A 92893 @65.4,84.2 id=253136 lvl=42
-A 92894 @65.4,84.2 id=253136 lvl=40
-T 92893 @65.4,84.2 id=253136
-T 92894 @65.4,84.2 id=253136
-A 93066 @65.4,84.2 id=253136 lvl=43
-C 261 @63.5,90.0 mobs=11561
-A 6161 @36.1,30.4 lvl=36
-T 93464 @38.9,27.2 id=11863
-C 6161 @29.0,9.3 mobs=11562,4714,11563,4711,4719
-T 6161 @30.0,8.7
-H "Utilise ta pierre de foyer" @66.3,6.5 id=11103
-T 261 @66.5,7.9 id=1182
+M swamp
+G "Rejoins Marais des Chagrins" @55.7,34.4 r=40 upto=42
+A 1392 "Tue ce monstre : son butin lance la quête" @55.7,34.4 mobs=5477 lvl=39
+T 1392 @26.0,31.4 id=1776
+A 93464 @26.0,31.4 id=1776 lvl=38
+A 1396 @26.7,59.8 id=5476 lvl=37
+C 1396 @38.0,34.8 mobs=767,858,1084
+T 1396 @26.7,59.8 id=5476
+A 1421 @26.7,59.8 id=5476 lvl=35
+C 1421 @64.5,18.3
+T 1421 @26.7,59.8 id=5476
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-41-dustwallow-2",
-    name = "Marécage d'Âprefange 41-42",
+    id = "alliance-dwarf-40-riverglades-5",
+    name = "Rives Claires 40-41",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 41, maxLevel = 42,
-    next = "alliance-dwarf-41-riverglades-5",
-    text = [[
-M dustwallow
-G "Rejoins Marécage d'Âprefange" @35.1,38.3 r=40 upto=43
-A 1177 @35.1,38.3 id=4503 lvl=36
-A 1252 @29.8,48.2 lvl=40
-A 1206 @55.4,26.3 id=4792 lvl=35
-C 1177 @57.5,15.8 mobs=4359,4361,4362,4363,14230
-A 98233 @65.5,45.4 id=271167 lvl=42
-T 1252 @68.2,48.6 id=4944
-A 1259 @68.2,48.6 id=4944 lvl=40
-T 1259 @68.0,48.1 id=4948
-A 1285 @68.0,48.1 id=4948 lvl=38
-T 1285 @68.2,48.6 id=4944
-A 1286 @68.2,48.6 id=4944 lvl=38
-C 98233 @54.0,55.1 mobs=4392
-T 98233 @65.5,45.4 id=271167
-T 1286 @36.1,54.3 id=5089
-A 1287 @36.1,54.3 id=5089 lvl=38
-T 1177 @35.1,38.3 id=4503
-C 1206 @32.0,21.9 mobs=4379,4376,4378,4380
-T 1206 @55.4,26.3 id=4792
-T 1287 @68.2,48.6 id=4944
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-41-riverglades-5",
-    name = "Rives Claires 41-42",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 41, maxLevel = 42,
-    next = "alliance-dwarf-42-stv-5",
+    minLevel = 40, maxLevel = 41,
+    next = "alliance-dwarf-41-stv-6",
     text = [[
 M riverglades
-G "Rejoins Rives Claires" @79.5,52.7 r=40 upto=44
+L 41 "Tue des monstres autour de toi jusqu'au niveau 41"
+G "Rejoins Rives Claires" @79.5,52.7 r=40 upto=43
 A 95118 @79.5,52.7 id=259961 lvl=41
 A 95219 @77.1,52.9 id=255897 lvl=41
 A 95254 @78.5,53.9 lvl=42
@@ -1675,22 +1601,20 @@ C 95986 @59.8,52.8 group=1 mobs=263315
 A 95792 @30.2,69.1 id=262399 lvl=42
 C 95792 @30.1,72.2 mobs=262473,262477
 T 95792 @30.2,69.1 id=262399
-A 95119 @79.5,52.7 id=259961 lvl=43
-C 95119 @87.5,34.3 mobs=257901,257910
-T 95119 @79.5,52.7 id=259961
 T 96125 @68.6,12.7 id=259057
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-42-stv-5",
-    name = "Vallée de Strangleronce 42-43",
+    id = "alliance-dwarf-41-stv-6",
+    name = "Vallée de Strangleronce 41-42",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 42, maxLevel = 43,
-    next = "alliance-dwarf-43-riverglades-6",
+    minLevel = 41, maxLevel = 42,
+    next = "alliance-dwarf-42-badlands-3",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=44
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
+L 42 "Tue des monstres autour de toi jusqu'au niveau 42"
 A 209 @27.0,77.1 id=737 lvl=42 danger=1
 A 604 @27.2,77.0 id=2487 lvl=43
 A 617 @26.8,76.4 id=2494 lvl=43 danger=1
@@ -1701,31 +1625,44 @@ C 617 @23.6,27.7 mobs=262397,1907 danger=1
 T 209 @27.0,77.1 id=737 danger=1
 T 617 @26.8,76.4 id=2494 danger=1
 A 623 @26.8,76.4 id=2494 lvl=43
-L 43 "Tue des monstres autour de toi jusqu'au niveau 43"
-A 576 @28.6,75.9 id=2493 lvl=42 danger=1
-A 609 @27.8,77.1 id=2501 lvl=44
-A 2872 @27.8,77.1 id=2501 lvl=45
-A 587 @26.9,77.3 id=2488 lvl=41 danger=1
-A 2864 @26.9,77.2 id=773 lvl=45
-C 576 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
-C 587 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
-T 587 @26.9,77.3 id=2488 danger=1
-T 576 @28.6,75.9 id=2493 danger=1
-C 609 @35.1,51.6 mobs=2535,2536,2537
-T 609 @27.8,77.1 id=2501
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-43-riverglades-6",
-    name = "Rives Claires 43-44",
+    id = "alliance-dwarf-42-badlands-3",
+    name = "Terres ingrates 42-43",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 43, maxLevel = 44,
-    next = "alliance-dwarf-43-badlands-3",
+    minLevel = 42, maxLevel = 43,
+    next = "alliance-dwarf-42-riverglades-6",
+    text = [[
+M badlands
+G "Rejoins Terres ingrates" @51.4,76.9 r=40 upto=44
+A 732 @61.9,54.3 id=2888 lvl=43
+A 1108 @42.2,52.7 id=4618 lvl=39
+C 1108 @50.2,68.3 mobs=4856,4851,2893,2894,2892
+T 1108 @42.2,52.7 id=4618
+A 712 @25.9,44.9 id=2921 lvl=42 danger=1
+C 732 @12.6,75.5 mobs=2944
+C 712 @4.0,79.9 mobs=2736 danger=1
+T 712 @25.9,44.9 id=2921 danger=1
+T 732 @61.9,54.3 id=2888
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-dwarf-42-riverglades-6",
+    name = "Rives Claires 42-43",
+    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
+    minLevel = 42, maxLevel = 43,
+    next = "alliance-dwarf-43-stv-7",
     text = [[
 M riverglades
+L 43 "Tue des monstres autour de toi jusqu'au niveau 43"
 G "Rejoins Rives Claires" @66.8,81.1 r=40 upto=45
 A 94907 @66.8,81.1 id=257591 lvl=44
+A 95119 @79.5,52.7 id=259961 lvl=43
+C 95119 @87.5,34.3 mobs=257901,257910
+T 95119 @79.5,52.7 id=259961
 A 95122 @79.5,52.7 id=259961 lvl=44 danger=1
 C 95122 @78.5,34.3 mobs=257915,257916 danger=1
 T 95122 @79.5,52.7 id=259961 danger=1
@@ -1741,26 +1678,57 @@ T 94907 @66.8,81.1 id=257591
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-43-badlands-3",
-    name = "Terres ingrates 43-44",
+    id = "alliance-dwarf-43-stv-7",
+    name = "Vallée de Strangleronce 43-44",
+    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
+    minLevel = 43, maxLevel = 44,
+    next = "alliance-dwarf-43-dustwallow-2",
+    text = [[
+M stv
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
+A 587 @26.9,77.3 id=2488 lvl=41 danger=1
+A 609 @27.8,77.1 id=2501 lvl=44
+A 2864 @26.9,77.2 id=773 lvl=45
+A 2872 @27.8,77.1 id=2501 lvl=45
+A 576 @28.6,75.9 id=2493 lvl=42 danger=1
+C 587 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
+C 576 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
+T 587 @26.9,77.3 id=2488 danger=1
+T 576 @28.6,75.9 id=2493 danger=1
+C 609 @35.1,51.6 mobs=2535,2536,2537
+T 609 @27.8,77.1 id=2501
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-dwarf-43-dustwallow-2",
+    name = "Marécage d'Âprefange 43-44",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 43, maxLevel = 44,
     next = "alliance-dwarf-43-tanaris",
     text = [[
-M badlands
-G "Rejoins Terres ingrates" @42.4,52.9 r=40 upto=45
-A 703 @42.4,52.9 id=2817 lvl=40 danger=1
-A 733 @53.8,43.3 id=2860 lvl=40 danger=1
-A 732 @61.9,54.3 id=2888 lvl=43
-A 712 @25.9,44.9 id=2921 lvl=42
-C 703 @16.2,60.1 mobs=4692,4693,5429,5428,2578 danger=1
-C 733 @10.9,76.5 mobs=2717,2720,2716,2718,2719 danger=1
-C 732 @12.6,75.5 mobs=2944
-C 712 @4.0,79.9 mobs=2736
-T 712 @25.9,44.9 id=2921
-T 703 @42.4,52.9 id=2817 danger=1
-T 733 @53.8,43.3 id=2860 danger=1
-T 732 @61.9,54.3 id=2888
+M dustwallow
+G "Rejoins Marécage d'Âprefange" @41.0,75.7 r=40 upto=45
+A 98205 @41.0,75.7 id=270723 lvl=44
+A 98215 @41.0,75.7 id=270723 lvl=44
+C 98215 @44.1,66.3 mobs=4323,4331,4324,4329
+C 98205 @46.8,67.2 mobs=4323,4324
+T 98205 @41.0,75.7 id=270723
+T 98215 @41.0,75.7 id=270723
+A 1252 @29.8,48.2 lvl=40
+A 98233 @65.5,45.4 id=271167 lvl=42
+T 1252 @68.2,48.6 id=4944
+A 1259 @68.2,48.6 id=4944 lvl=40
+T 1259 @68.0,48.1 id=4948
+A 1285 @68.0,48.1 id=4948 lvl=38
+T 1285 @68.2,48.6 id=4944
+A 1286 @68.2,48.6 id=4944 lvl=38
+T 623 @68.8,53.2 id=2616
+C 98233 @54.0,55.1 mobs=4392
+T 98233 @65.5,45.4 id=271167
+T 1286 @36.1,54.3 id=5089
+A 1287 @36.1,54.3 id=5089 lvl=38
+T 1287 @68.2,48.6 id=4944
 ]],
 })
 
@@ -1769,30 +1737,30 @@ ns.RegisterGuide({
     name = "Tanaris 43-44",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 43, maxLevel = 44,
-    next = "alliance-dwarf-44-dustwallow-3",
+    next = "alliance-dwarf-44-desolace-3",
     text = [[
 M tanaris
 G "Rejoins Tanaris" @52.5,28.5 r=40 upto=46
 A 1690 @52.5,28.5 id=7407 lvl=43
-A 1707 @52.5,28.4 id=7408 lvl=44 danger=1
+A 1707 @52.5,28.4 id=7408 lvl=44
 A 97536 @52.3,26.9 id=14743 lvl=45
 T 97536 @52.3,26.9 id=14743
 T 2864 @51.6,26.8 id=7876
+A 95753 @43.0,41.3 id=222856 lvl=45
+C 95753 @45.7,37.8
+T 95753 @45.7,37.7 id=222857
 C 1690 @63.5,31.3 mobs=5616,5618
-C 1707 @63.5,31.3 mobs=5616,5617,5615,5618,5623 danger=1
+C 1707 @63.5,31.3 mobs=5616,5617,5615,5618,5623
 T 2872 @67.1,24.0 id=7881
 A 2873 @67.1,24.0 id=7881 lvl=45
 A 2875 @66.8,22.3 lvl=45
 A 8365 @66.6,22.3 id=15165 lvl=45
 A 8366 @67.1,23.9 id=7882 lvl=45
 T 1690 @52.5,28.5 id=7407
-T 1707 @52.5,28.4 id=7408 danger=1
+T 1707 @52.5,28.4 id=7408
 A 1691 @52.5,28.5 id=7407 lvl=44
 C 1691 @59.8,37.8 mobs=5617,5615,5623
 T 1691 @52.5,28.5 id=7407
-A 95753 @43.0,41.3 id=222856 lvl=45
-C 95753 @45.7,37.8
-T 95753 @45.7,37.7 id=222857
 C 2873 @72.2,46.8
 C 2875 @73.4,47.1 mobs=7883
 C 8365 @73.5,47.2 mobs=7858,7857,7856,7855,7883
@@ -1806,30 +1774,35 @@ A 2874 @67.1,24.0 id=7881 lvl=45
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-44-dustwallow-3",
-    name = "Marécage d'Âprefange 44-45",
+    id = "alliance-dwarf-44-desolace-3",
+    name = "Désolace 44-45",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 44, maxLevel = 45,
     next = "alliance-dwarf-44-feralas",
     text = [[
-M dustwallow
-G "Rejoins Marécage d'Âprefange" @41.0,75.7 r=40 upto=46
-A 98205 @41.0,75.7 id=270723 lvl=44
-A 98215 @41.0,75.7 id=270723 lvl=44
-C 98215 @44.1,66.3 mobs=4323,4331,4324,4329
-C 98205 @46.8,67.2 mobs=4323,4324
-T 98205 @41.0,75.7 id=270723
-T 98215 @41.0,75.7 id=270723
-T 623 @68.8,53.2 id=2616
+M desolace
+G "Rejoins Désolace" @66.5,7.9 r=40 upto=46
+A 261 @66.5,7.9 id=1182 lvl=39
+A 93224 @66.7,10.9 id=5396 lvl=40
+A 5501 @62.3,39.0 id=11438 lvl=39
+C 5501 @52.8,59.1
+T 5501 @62.3,39.0 id=11438
+T 93464 @38.9,27.2 id=11863
+C 93224 @68.7,78.8 mobs=254283,254284,262838,253274,255238
+C 261 @63.5,90.0 mobs=11561
+T 261 @66.5,7.9 id=1182
+T 93224 @66.7,10.9 id=5396
+A 93226 @66.7,10.9 id=5396 lvl=45
+T 93226 @66.2,79.4 id=253139
 ]],
 })
 
 ns.RegisterGuide({
     id = "alliance-dwarf-44-feralas",
-    name = "Féralas 44-45",
+    name = "Féralas 44-47",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 44, maxLevel = 45,
-    next = "alliance-dwarf-45-shendralas",
+    minLevel = 44, maxLevel = 47,
+    next = "alliance-dwarf-47-tanaris-2",
     text = [[
 M feralas
 G "Rejoins Féralas" @31.8,45.6 r=40 upto=47
@@ -1852,6 +1825,7 @@ T 2869 @30.4,46.2 id=7877
 T 4125 @45.4,65.0
 A 4127 @45.4,65.0 lvl=44
 C 2982 @60.8,56.3 mobs=5232,5240,5236
+A 2870 @30.4,46.2 id=7877 lvl=45 danger=1
 T 2982 @31.8,45.6 id=7900
 T 4127 @31.9,45.1 id=7880
 A 4129 @31.9,45.1 id=7880 lvl=44
@@ -1859,78 +1833,27 @@ T 4129 @32.5,43.8 id=7879
 A 4130 @32.5,43.8 id=7879 lvl=44
 T 4130 @31.9,45.1 id=7880
 A 4131 @31.9,45.1 id=7880 lvl=44
-T 4131 @73.3,56.3
-A 4135 @73.3,56.3 lvl=46
-T 4135 @72.1,63.7
-A 2870 @30.4,46.2 id=7877 lvl=45 danger=1
 C 2870 @28.5,70.5 mobs=8136 danger=1
 T 2870 @30.4,46.2 id=7877 danger=1
 A 2871 @30.4,46.2 id=7877 lvl=45
 T 2871 @30.1,45.1 id=7878
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-45-shendralas",
-    name = "Shen'dralas 45-46",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 45, maxLevel = 46,
-    next = "alliance-dwarf-45-desolace-4",
-    text = [[
-M shendralas
-G "Rejoins Shen'dralas" @34.1,77.9 r=40 upto=47
-A 93125 @34.1,77.9 id=254040 lvl=43
-A 92914 @43.7,34.4 lvl=43
-T 93066 @59.3,53.9 id=253851
-A 93129 @59.3,53.9 id=253851 lvl=43
-T 93129 @59.3,53.9 id=253851
-C 92914 @47.5,76.7
-T 92914 @35.2,46.6 id=253471
-T 93125 @20.9,22.7 id=253177
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-45-desolace-4",
-    name = "Désolace 45-46",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 45, maxLevel = 46,
-    next = "alliance-dwarf-46-feralas-2",
-    text = [[
-M desolace
+T 4131 @73.3,56.3
+A 4135 @73.3,56.3 lvl=46
+T 4135 @72.1,63.7
+H "Utilise ta pierre de foyer" @31.0,43.5 id=7736
 L 46 "Tue des monstres autour de toi jusqu'au niveau 46"
-G "Rejoins Désolace" @62.2,39.6 r=40 upto=48
-A 7028 @62.2,39.6 id=13656 lvl=47
-A 93224 @66.7,10.9 id=5396 lvl=40
-C 93224 @68.7,78.8 mobs=254283,254284,262838,253274,255238
-C 7028 @28.5,62.5 mobs=13718,11688
-T 7028 @62.2,39.6 id=13656
-T 93224 @66.7,10.9 id=5396
-A 93226 @66.7,10.9 id=5396 lvl=45
-T 93226 @66.2,79.4 id=253139
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-dwarf-46-feralas-2",
-    name = "Féralas 46-47",
-    faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
-    minLevel = 46, maxLevel = 47,
-    next = "alliance-dwarf-47-tanaris-2",
-    text = [[
-M feralas
+A 2821 @30.6,42.7 id=7852 lvl=46 danger=1
+C 2821 @51.8,58.9 mobs=5292,5293,5295,5346 danger=1
+T 2821 @30.6,42.7 id=7852 danger=1
 H "Utilise ta pierre de foyer" @31.0,43.5 id=7736
 L 47 "Tue des monstres autour de toi jusqu'au niveau 47"
-A 2821 @30.6,42.7 id=7852 lvl=46
+A 7733 @30.6,42.7 id=7852 lvl=48 danger=1
 A 7721 @44.8,43.4 id=14637 lvl=48 danger=1
 C 7721 @47.7,52.3 mobs=5462,5461 danger=1
-C 2821 @51.8,58.9 mobs=5292,5293,5295,5346
 T 7721 @44.8,43.4 id=14637 danger=1
+C 7733 @53.8,32.1 mobs=5299,5296,5297 danger=1
 A 2844 @42.4,22.0 id=7765 lvl=49
 T 2844 @38.2,10.3 id=7774
-T 2821 @30.6,42.7 id=7852
-A 7733 @30.6,42.7 id=7852 lvl=48 danger=1
-C 7733 @53.8,32.1 mobs=5299,5296,5297 danger=1
 T 7733 @30.6,42.7 id=7852 danger=1
 ]],
 })
@@ -1972,7 +1895,7 @@ ns.RegisterGuide({
     name = "Gorge des Vents brûlants 48-49",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 48, maxLevel = 49,
-    next = "alliance-dwarf-48-stv-7",
+    next = "alliance-dwarf-48-stv-8",
     text = [[
 M searing
 G "Rejoins Gorge des Vents brûlants" @38.6,27.8 r=40 upto=50
@@ -1995,7 +1918,7 @@ T 7728 @39.0,27.5 id=14626
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-48-stv-7",
+    id = "alliance-dwarf-48-stv-8",
     name = "Vallée de Strangleronce 48-49",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 48, maxLevel = 49,
@@ -2295,7 +2218,7 @@ ns.RegisterGuide({
     name = "Gangrebois 54-55",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 54, maxLevel = 55,
-    next = "alliance-dwarf-54-dustwallow-4",
+    next = "alliance-dwarf-54-dustwallow-3",
     text = [[
 M felwood
 G "Rejoins Gangrebois" @54.1,86.8 r=40 upto=56
@@ -2314,7 +2237,7 @@ T 4103 @54.1,86.8 id=9528
 })
 
 ns.RegisterGuide({
-    id = "alliance-dwarf-54-dustwallow-4",
+    id = "alliance-dwarf-54-dustwallow-3",
     name = "Marécage d'Âprefange 54-55",
     faction = "Alliance", race = { Dwarf = true, Gnome = true }, path = "alliance-dwarf",
     minLevel = 54, maxLevel = 55,

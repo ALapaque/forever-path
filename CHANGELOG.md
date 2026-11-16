@@ -2,6 +2,8 @@
 
 ## v1.10.1
 
+- **Quêtes que le PNJ ne propose pas.** Au Village des Magram (Désolace), la route faisait prendre « De grosses, non, de massives haches en fer » à Grolkar, qui ne la propose pas : il faut lui apporter des haches forgées (Forge), et la base de quêtes ne le dit pas. Même cas pour 5 autres quêtes des centaures (couture, travail du cuir, enchantement, alchimie, couronne à rapporter des Terres ingrates) : retirées des routes. Le générateur écarte maintenant tout seul les quêtes « apporte tel objet » au même PNJ sans objectif connu (objet fabriqué ou acheté).
+- **Garde-fou plus large.** Si le PNJ n'a que des quêtes (pas de dialogue), sa fenêtre de quêtes ou le détail direct d'une autre quête suffit maintenant à voir que la nôtre n'est pas proposée : l'étape est passée toute seule. Et quand rien ne s'ouvre du tout, « Quête pas disponible » dans le menu du drapeau passe l'étape en plus de la signaler.
 - **Marqueur 3D posé sur le PNJ.** Le marqueur visait la position du PNJ donnée par la base de quêtes, souvent décalée de quelques mètres dans Forever (par exemple Nataka Longhorn, à 7 m du faisceau). Maintenant, à moins de 40 yards, dès que la barre de nom du PNJ de l'étape est à l'écran, le marqueur se place juste au-dessus d'elle, donc exactement sur le PNJ (sans faisceau ni points au sol, inutiles de si près). Option « De près, se placer sur le PNJ » dans le module Guidage 3D ; les barres de nom des PNJ amicaux doivent être affichées (réglage par défaut du module Repérage).
 
 ## v1.10.0

@@ -40,6 +40,11 @@ function M.Add(reason, g, step, i, silent)
         map = pos[1] or 0, x = pos[2] and math.floor(pos[2] * 1000 + 0.5) / 10 or 0,
         y = pos[3] and math.floor(pos[3] * 1000 + 0.5) / 10 or 0 }
     while #list > 200 do table.remove(list, 1) end
+    -- « Quête pas disponible » sur une prise : le PNJ ne la donne pas (rien ne s'ouvre quand on lui
+    -- parle, l'addon ne peut pas le voir tout seul) : on passe l'étape, les « faire » et « rendre » suivent
+    if reason == "unavailable" and step.type == "accept" and step.quest and ns.Engine.Current and select(2, ns.Engine.Current()) == step then
+        ns.Engine.MarkNotOffered(false)
+    end
     if not silent then
         ns.Toast((ns.Tr("Étape signalée, merci ! (%d en attente, /qw signalements pour les envoyer)")):format(#list),
             "Interface\\Icons\\INV_Banner_03", 0.4, 0.9, 0.5, 4)

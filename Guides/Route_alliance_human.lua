@@ -1082,22 +1082,14 @@ T 1382 @36.2,79.2 id=5397
 A 1384 @36.2,79.2 id=5397 lvl=32
 C 1369 @39.7,93.7
 T 1369 @75.0,68.2 id=5398
-A 92818 @69.8,77.9 id=253163 lvl=35
-T 92818 @69.8,77.9 id=253163
 C 1384 @72.3,44.6 mobs=4636,4635,4634,4633,4632
+T 1384 @36.2,79.2 id=5397
+A 1370 @36.2,79.2 id=5397 lvl=35
 A 1439 @54.9,26.1 id=5644 lvl=33 danger=1
 C 1439 @53.0,29.1 mobs=5643 danger=1
 T 1439 @54.9,26.1 id=5644 danger=1
-T 1384 @36.2,79.2 id=5397
-A 1370 @36.2,79.2 id=5397 lvl=35
 C 1370 @73.0,74.7
 T 1370 @36.2,79.2 id=5397
-A 92817 @34.5,86.9 id=253166 lvl=35
-T 92817 @34.5,86.9 id=253166
-A 92814 @35.7,92.2 id=253140 lvl=35
-T 92814 @35.7,92.2 id=253140
-A 92755 @69.8,78.0 id=253096 lvl=35
-T 92755 @69.8,78.0 id=253096
 ]],
 })
 
@@ -1164,10 +1156,10 @@ ns.RegisterGuide({
     name = "Vallée de Strangleronce 35-36",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 35, maxLevel = 36,
-    next = "alliance-human-36-badlands",
+    next = "alliance-human-35-hillsbrad-2",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=38
+G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=37
 B "Lie ta pierre de foyer à l'auberge" @27.0,77.3 id=6807
 A 189 @27.0,77.1 id=737 lvl=35 danger=1
 A 213 @27.0,77.1 id=737 lvl=36
@@ -1204,11 +1196,61 @@ T 189 @27.0,77.1 id=737 danger=1
 T 213 @27.0,77.1 id=737
 T 577 @28.3,77.6 id=2495
 T 210 @26.9,77.2 id=773
-A 627 @26.9,77.2 id=773 lvl=37
-A 188 @35.6,10.6 id=717 lvl=37
-A 93443 @38.0,3.0 lvl=36
-C 188 @32.2,17.4 mobs=729
-T 188 @35.6,10.6 id=717
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-human-35-hillsbrad-2",
+    name = "Contreforts de Hautebrande 35-36",
+    faction = "Alliance", race = { Human = true }, path = "alliance-human",
+    minLevel = 35, maxLevel = 36,
+    next = "alliance-human-36-arathi",
+    text = [[
+M hillsbrad
+G "Rejoins Contreforts de Hautebrande" @51.5,58.4 r=40 upto=38
+A 559 @51.5,58.4 id=2228 lvl=32
+A 659 @50.4,59.0 id=2711 lvl=33
+A 98463 @51.6,58.6 id=2366 lvl=33
+A 92432 @48.3,60.0 id=247264 lvl=33
+T 92432 @48.3,60.1 id=269127
+C 559 @26.6,72.4 mobs=2375,2374,2376,2377,14276
+T 559 @51.5,58.4 id=2228
+A 560 @51.5,58.4 id=2228 lvl=32
+T 560 @49.5,58.7 id=2263
+A 561 @49.5,58.7 id=2263 lvl=32
+T 561 @51.5,58.4 id=2228
+A 562 @51.5,58.4 id=2228 lvl=32
+C 562 @57.7,69.4 mobs=2371,2369
+T 562 @51.5,58.4 id=2228
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-human-36-arathi",
+    name = "Hautes-terres d'Arathi 36-37",
+    faction = "Alliance", race = { Human = true }, path = "alliance-human",
+    minLevel = 36, maxLevel = 37,
+    next = "alliance-human-36-badlands",
+    text = [[
+M arathi
+G "Rejoins Hautes-terres d'Arathi" @45.8,47.6 r=40 upto=38
+A 681 @45.8,47.6 id=2700 lvl=31
+A 95315 @45.8,47.6 id=2700 lvl=38
+T 659 @60.2,53.9 id=2712
+A 658 @60.2,53.9 id=2712 lvl=36
+C 658 @52.5,61.5 mobs=2714
+T 658 @60.2,53.9 id=2712
+A 657 @60.2,53.9 id=2712 lvl=36
+T 657 @60.2,53.9 id=2713
+A 642 @62.5,33.7 lvl=37 danger=1
+C 642 @84.2,32.9 mobs=2572,2574,2573 danger=1
+T 642 @84.3,30.9 danger=1
+A 663 @31.8,82.7 id=2766 lvl=35
+T 663 @32.3,81.4 id=2610
+A 92872 @29.0,59.7 id=2782 lvl=38
+T 92872 @29.0,59.7 id=2782
+C 681 @32.2,29.1 mobs=2586,2589
+T 681 @45.8,47.6 id=2700
 ]],
 })
 
@@ -1238,78 +1280,18 @@ ns.RegisterGuide({
     name = "Rives Claires 36-37",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 36, maxLevel = 37,
-    next = "alliance-human-36-swamp",
+    next = "alliance-human-37-stv-4",
     text = [[
 M riverglades
-G "Rejoins Rives Claires" @66.7,81.0 r=40 upto=38
+G "Rejoins Rives Claires" @66.7,81.0 r=40 upto=39
+T 95315 @66.7,81.0 id=257558
 A 94613 @66.7,81.0 id=257558 lvl=38
 A 95330 @64.7,82.9 id=259863 lvl=37
 T 94613 @54.9,73.0 id=258317
 A 95983 @61.6,58.8 id=263316 lvl=38
 T 95983 @59.5,64.0 id=259352
-T 93443 @77.1,52.9 id=255897
 A 95059 @77.1,52.9 id=255897 lvl=36
 T 95059 @66.7,81.0 id=257558
-A 94999 @43.4,82.4 id=259050 lvl=36
-T 94999 @36.4,75.8 id=259051
-T 95330 @41.2,62.9 id=256438
-A 95147 @23.7,67.8 id=260026 lvl=37
-T 95147 @39.6,74.7 id=259353
-A 95148 @39.6,74.7 id=259353 lvl=37
-T 95148 @66.7,81.0 id=257558
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-human-36-swamp",
-    name = "Marais des Chagrins 36-37",
-    faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 36, maxLevel = 37,
-    next = "alliance-human-37-riverglades-2",
-    text = [[
-M swamp
-G "Rejoins Marais des Chagrins" @26.0,31.4 r=40 upto=39
-A 1389 @26.0,31.4 id=1776 lvl=35
-A 93429 @24.7,32.6 id=254775 lvl=35
-A 93430 @26.5,30.4 id=254770 lvl=35
-T 93429 @24.7,32.6 id=254775
-A 93585 @22.3,50.4 id=255597 lvl=34
-A 1396 @26.7,59.8 id=5476 lvl=37
-T 93585 @26.0,31.4 id=1776
-C 1396 @38.0,34.8 mobs=767,858,1084
-C 93430 @53.5,30.2 mobs=757
-C 1389 @62.4,22.7
-T 1389 @26.0,31.4 id=1776
-T 93430 @26.5,30.4 id=254770
-A 93464 @26.0,31.4 id=1776 lvl=38
-T 1396 @26.7,59.8 id=5476
-A 1421 @26.7,59.8 id=5476 lvl=35
-A 1392 "Tue ce monstre : son butin lance la quête" @55.7,34.4 mobs=5477 lvl=39
-C 1421 @64.5,18.3
-T 1392 @26.0,31.4 id=1776
-T 1421 @26.7,59.8 id=5476
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-human-37-riverglades-2",
-    name = "Rives Claires 37-38",
-    faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 37, maxLevel = 38,
-    next = "alliance-human-37-stv-4",
-    text = [[
-M riverglades
-G "Rejoins Rives Claires" @54.9,73.0 r=40 upto=39
-A 94614 @54.9,73.0 id=258317 lvl=38
-C 94614 @50.6,78.4 mobs=258573,258574
-T 94614 @54.9,73.0 id=258317
-A 94857 @46.1,71.0 id=258935 lvl=39
-T 94857 @41.4,64.5 id=258963
-A 94861 @41.4,64.5 id=258963 lvl=39
-T 94861 @41.2,62.9 id=256438
-A 94678 @39.6,74.7 id=259353 lvl=38
-C 94678 @30.7,59.6 mobs=255772,255769,255770
-T 94678 @39.6,74.7 id=259353
 A 95603 @61.8,83.1 id=262031 lvl=38
 C 95603 @61.2,84.8 mobs=262037
 T 95603 @61.8,83.1 id=262031
@@ -1317,6 +1299,23 @@ A 95613 @61.8,83.1 id=262031 lvl=38
 T 95613 @61.8,83.1 id=262031
 A 95615 @61.8,83.1 id=262031 lvl=38
 T 95615 @61.8,83.1 id=262031
+A 94614 @54.9,73.0 id=258317 lvl=38
+C 94614 @50.6,78.4 mobs=258573,258574
+T 94614 @54.9,73.0 id=258317
+A 94857 @46.1,71.0 id=258935 lvl=39
+T 95330 @41.2,62.9 id=256438
+T 94857 @41.4,64.5 id=258963
+A 94861 @41.4,64.5 id=258963 lvl=39
+T 94861 @41.2,62.9 id=256438
+A 94678 @39.6,74.7 id=259353 lvl=38
+A 94999 @43.4,82.4 id=259050 lvl=36
+T 94999 @36.4,75.8 id=259051
+C 94678 @30.7,59.6 mobs=255772,255769,255770
+A 95147 @23.7,67.8 id=260026 lvl=37
+T 94678 @39.6,74.7 id=259353
+T 95147 @39.6,74.7 id=259353
+A 95148 @39.6,74.7 id=259353 lvl=37
+T 95148 @66.7,81.0 id=257558
 ]],
 })
 
@@ -1325,60 +1324,42 @@ ns.RegisterGuide({
     name = "Vallée de Strangleronce 37-38",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 37, maxLevel = 38,
-    next = "alliance-human-37-arathi",
+    next = "alliance-human-38-riverglades-2",
     text = [[
 M stv
 H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
+T 98463 @27.0,77.2 id=2832
+A 627 @26.9,77.2 id=773 lvl=37
+A 188 @35.6,10.6 id=717 lvl=37
 A 192 @35.5,10.6 id=718 lvl=38
 A 207 @37.8,3.6 id=739 lvl=38
 A 574 @38.0,3.3 id=733 lvl=38
+A 93443 @38.0,3.0 lvl=36
 C 574 @46.0,7.7 mobs=938,941
 T 574 @38.0,3.0 id=469
+C 188 @32.2,17.4 mobs=729
 C 207 @29.5,19.1
+T 188 @35.6,10.6 id=717
 T 207 @37.8,3.6 id=739
 C 192 @49.2,22.7 mobs=684
+A 97047 @44.3,7.9 id=218230 lvl=38 danger=1
+C 97047 @49.0,6.2 mobs=939,978,813 danger=1
+T 97047 @44.3,7.9 id=218230 danger=1
+A 97048 @44.3,7.9 id=218230 lvl=38
 T 192 @35.5,10.6 id=718
+T 97048 @27.7,76.7 id=218229
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-37-arathi",
-    name = "Hautes-terres d'Arathi 37-38",
-    faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 37, maxLevel = 38,
-    next = "alliance-human-38-riverglades-3",
-    text = [[
-M arathi
-G "Rejoins Hautes-terres d'Arathi" @45.8,47.6 r=40 upto=40
-A 681 @45.8,47.6 id=2700 lvl=31
-A 95315 @45.8,47.6 id=2700 lvl=38
-A 92872 @29.0,59.7 id=2782 lvl=38
-T 92872 @29.0,59.7 id=2782
-A 663 @31.8,82.7 id=2766 lvl=35
-T 663 @32.3,81.4 id=2610
-C 681 @32.2,29.1 mobs=2586,2589
-T 681 @45.8,47.6 id=2700
-A 642 @62.5,33.7 lvl=37
-C 627 @84.6,31.6
-C 642 @84.2,32.9 mobs=2572,2574,2573
-T 642 @84.3,30.9
-A 651 @84.3,30.9 lvl=38
-C 651 @25.6,30.4 mobs=2760
-T 651 @36.2,57.4
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-human-38-riverglades-3",
+    id = "alliance-human-38-riverglades-2",
     name = "Rives Claires 38-39",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 38, maxLevel = 39,
     next = "alliance-human-38-badlands-2",
     text = [[
 M riverglades
-G "Rejoins Rives Claires" @66.8,81.1 r=40 upto=40
-T 95315 @66.7,81.0 id=257558
-A 94881 @66.8,81.1 id=257591 lvl=38 danger=1
+G "Rejoins Rives Claires" @59.5,64.0 r=40 upto=40
 A 94924 @59.5,64.0 id=259352 lvl=39
 A 95984 @59.5,64.0 id=259352 lvl=39
 C 94924 @56.8,58.1 mobs=259052
@@ -1391,14 +1372,16 @@ C 95064 @59.5,37.9 mobs=256749
 A 94829 @52.8,42.4 id=258697 lvl=40
 T 94829 @52.8,42.4 id=258697
 A 95642 @47.7,47.3 id=256831 lvl=40
-C 94881 @47.4,48.7 mobs=256798,254560 danger=1
 T 95642 @47.7,47.3 id=256831
 T 95984 @59.5,64.0 id=259352
 T 94925 @59.5,64.0 id=259352
 T 95064 @59.5,64.0 id=259352
 A 94928 @59.5,64.0 id=259352 lvl=39
-T 94881 @66.8,81.1 id=257591 danger=1
+A 94881 @66.8,81.1 id=257591 lvl=38 danger=1
+T 93443 @77.1,52.9 id=255897
 T 94928 @77.1,52.9 id=255897
+C 94881 @47.4,48.7 mobs=256798,254560 danger=1
+T 94881 @66.8,81.1 id=257591 danger=1
 ]],
 })
 
@@ -1407,7 +1390,7 @@ ns.RegisterGuide({
     name = "Terres ingrates 38-39",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 38, maxLevel = 39,
-    next = "alliance-human-39-riverglades-4",
+    next = "alliance-human-39-riverglades-3",
     text = [[
 M badlands
 G "Rejoins Terres ingrates" @53.8,43.3 r=40 upto=41
@@ -1430,11 +1413,11 @@ T 711 @25.9,44.9 id=2921
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-39-riverglades-4",
+    id = "alliance-human-39-riverglades-3",
     name = "Rives Claires 39-40",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 39, maxLevel = 40,
-    next = "alliance-human-39-stv-5",
+    next = "alliance-human-39-arathi-2",
     text = [[
 M riverglades
 G "Rejoins Rives Claires" @47.7,47.3 r=40 upto=41
@@ -1458,11 +1441,33 @@ T 95329 @59.5,64.0 id=259352
 })
 
 ns.RegisterGuide({
+    id = "alliance-human-39-arathi-2",
+    name = "Hautes-terres d'Arathi 39-40",
+    faction = "Alliance", race = { Human = true }, path = "alliance-human",
+    minLevel = 39, maxLevel = 40,
+    next = "alliance-human-39-stv-5",
+    text = [[
+M arathi
+G "Rejoins Hautes-terres d'Arathi" @84.3,30.9 r=40 upto=41
+A 651 @84.3,30.9 lvl=38
+C 627 @84.6,31.6
+A 662 @32.8,81.5 id=2767 lvl=40
+A 664 @34.0,80.8 id=2769 lvl=40
+C 662 @21.9,85.1
+C 664 @21.9,86.6 mobs=2595,2596
+T 662 @32.8,81.5 id=2767
+T 664 @34.0,80.8 id=2769
+C 651 @25.6,30.4 mobs=2760
+T 651 @36.2,57.4
+]],
+})
+
+ns.RegisterGuide({
     id = "alliance-human-39-stv-5",
     name = "Vallée de Strangleronce 39-40",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 39, maxLevel = 40,
-    next = "alliance-human-40-desolace-3",
+    next = "alliance-human-40-swamp",
     text = [[
 M stv
 H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
@@ -1473,120 +1478,87 @@ T 595 @27.3,69.5
 A 597 @27.3,69.5 lvl=41
 T 597 @28.1,76.2 id=2490
 A 599 @28.1,76.2 id=2490 lvl=41
+A 606 @27.8,77.1 id=2501 lvl=41
 T 599 @27.2,77.0 id=2487
+C 606 @33.2,66.0 mobs=1557
+T 606 @26.9,73.6 id=2502
+A 607 @26.9,73.6 id=2502 lvl=41
+T 607 @27.8,77.1 id=2501
+A 196 @35.7,10.8 id=715 lvl=41
 A 339 @35.7,10.5 id=716 lvl=40
 A 340 @35.7,10.5 id=716 lvl=40
 A 341 @35.7,10.5 id=716 lvl=40
 A 342 @35.7,10.5 id=716 lvl=40
 T 622 @37.7,3.3 id=770
-A 202 @38.0,3.0 group=1 id=469 lvl=40
-A 97047 @44.3,7.9 id=218230 lvl=38
-C 202 @49.0,6.2 group=1 mobs=939,978,813
-C 97047 @49.0,6.2 mobs=939,978,813
-T 97047 @44.3,7.9 id=218230
-A 97048 @44.3,7.9 id=218230 lvl=38
+A 205 @37.8,3.6 id=739 lvl=40 danger=1
 C 341 @24.3,10.8 mobs=667,696,780,1096,701
 C 342 @24.5,11.1 mobs=667,696,780,1096,701
 T 341 @35.7,10.5 id=716
 T 342 @35.7,10.5 id=716
-A 196 @35.7,10.8 id=715 lvl=41
-A 205 @37.8,3.6 id=739 lvl=40 danger=1
-T 202 @38.0,3.0 group=1 id=469
+C 196 @31.1,42.7 mobs=687
 C 339 @46.1,39.9 mobs=667,696,780,1096,701
 C 340 @46.3,40.0 mobs=667,696,780,1096,701
 C 205 @47.4,39.4 mobs=780,670 danger=1
-C 196 @31.1,42.7 mobs=687
+T 196 @35.7,10.8 id=715
 T 339 @35.7,10.5 id=716
 T 340 @35.7,10.5 id=716
-T 196 @35.7,10.8 id=715
 T 205 @37.8,3.6 id=739 danger=1
-T 97048 @27.7,76.7 id=218229
-A 606 @27.8,77.1 id=2501 lvl=41
-C 606 @33.2,66.0 mobs=1557
-T 606 @26.9,73.6 id=2502
-A 607 @26.9,73.6 id=2502 lvl=41
-T 607 @27.8,77.1 id=2501
+A 95786 @37.8,3.6 id=739 lvl=40
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-40-desolace-3",
-    name = "Désolace 40-41",
+    id = "alliance-human-40-swamp",
+    name = "Marais des Chagrins 40-41",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 40, maxLevel = 41,
-    next = "alliance-human-41-dustwallow-2",
+    next = "alliance-human-40-alterac",
     text = [[
-M desolace
-G "Rejoins Désolace" @66.5,7.9 r=40 upto=43
-B "Lie ta pierre de foyer à l'auberge" @66.3,6.5 id=11103
-A 261 @66.5,7.9 id=1182 lvl=39
-A 5501 @62.3,39.0 id=11438 lvl=39
-C 5501 @52.8,59.1
-T 5501 @62.3,39.0 id=11438
-A 92743 @75.0,68.2 id=5398 lvl=40
-T 92743 @75.0,68.2 id=5398
-A 92841 @75.0,68.2 id=5398 lvl=40
-T 92841 @65.4,84.2 id=253136
-A 92844 @65.4,84.2 id=253136 lvl=42
-A 92846 @65.4,84.2 id=253136 lvl=40
-T 92844 @65.4,84.2 id=253136
-T 92846 @65.4,84.2 id=253136
-A 92847 @65.4,84.2 id=253136 lvl=42
-T 92847 @65.4,84.2 id=253136
-A 92873 @65.4,84.2 id=253136 lvl=41
-T 92873 @65.4,84.2 id=253136
-A 92893 @65.4,84.2 id=253136 lvl=42
-A 92894 @65.4,84.2 id=253136 lvl=40
-T 92893 @65.4,84.2 id=253136
-T 92894 @65.4,84.2 id=253136
-C 261 @63.5,90.0 mobs=11561
-A 6161 @36.1,30.4 lvl=36
-T 93464 @38.9,27.2 id=11863
-C 6161 @29.0,9.3 mobs=11562,4714,11563,4711,4719
-T 6161 @30.0,8.7
-H "Utilise ta pierre de foyer" @66.3,6.5 id=11103
-T 261 @66.5,7.9 id=1182
-A 93066 @65.4,84.2 id=253136 lvl=43
+M swamp
+G "Rejoins Marais des Chagrins" @26.0,31.4 r=40 upto=42
+A 1389 @26.0,31.4 id=1776 lvl=35
+A 93429 @24.7,32.6 id=254775 lvl=35
+A 93430 @26.5,30.4 id=254770 lvl=35
+T 93429 @24.7,32.6 id=254775
+A 93585 @22.3,50.4 id=255597 lvl=34
+A 1396 @26.7,59.8 id=5476 lvl=37
+T 93585 @26.0,31.4 id=1776
+C 1396 @38.0,34.8 mobs=767,858,1084
+A 1392 "Tue ce monstre : son butin lance la quête" @55.7,34.4 mobs=5477 lvl=39
+C 93430 @53.5,30.2 mobs=757
+C 1389 @62.4,22.7
+T 1389 @26.0,31.4 id=1776
+T 93430 @26.5,30.4 id=254770
+T 1392 @26.0,31.4 id=1776
+A 93464 @26.0,31.4 id=1776 lvl=38
+T 1396 @26.7,59.8 id=5476
+A 1421 @26.7,59.8 id=5476 lvl=35
+C 1421 @64.5,18.3
+T 1421 @26.7,59.8 id=5476
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-41-dustwallow-2",
-    name = "Marécage d'Âprefange 41-42",
+    id = "alliance-human-40-alterac",
+    name = "Montagnes d'Alterac 40-41",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 41, maxLevel = 42,
-    next = "alliance-human-41-riverglades-5",
+    minLevel = 40, maxLevel = 41,
+    next = "alliance-human-41-riverglades-4",
     text = [[
-M dustwallow
-G "Rejoins Marécage d'Âprefange" @35.1,38.3 r=40 upto=43
-A 1177 @35.1,38.3 id=4503 lvl=36
-A 1252 @29.8,48.2 lvl=40
-A 1206 @55.4,26.3 id=4792 lvl=35
-C 1177 @57.5,15.8 mobs=4359,4361,4362,4363,14230
-A 98233 @65.5,45.4 id=271167 lvl=42
-T 1252 @68.2,48.6 id=4944
-A 1259 @68.2,48.6 id=4944 lvl=40
-T 1259 @68.0,48.1 id=4948
-A 1285 @68.0,48.1 id=4948 lvl=38
-T 1285 @68.2,48.6 id=4944
-A 1286 @68.2,48.6 id=4944 lvl=38
-C 98233 @54.0,55.1 mobs=4392
-T 98233 @65.5,45.4 id=271167
-T 1286 @36.1,54.3 id=5089
-A 1287 @36.1,54.3 id=5089 lvl=38
-T 1177 @35.1,38.3 id=4503
-C 1206 @32.0,21.9 mobs=4379,4376,4378,4380
-T 1206 @55.4,26.3 id=4792
-T 1287 @68.2,48.6 id=4944
+M alterac
+G "Rejoins Montagnes d'Alterac" @58.3,67.9 r=40 upto=43
+A 510 @58.3,67.9 lvl=34
+A 511 @58.3,67.9 lvl=34
+A 95534 "Tue ce monstre : son butin lance la quête" @58.7,30.5 mobs=2318 lvl=36
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-41-riverglades-5",
+    id = "alliance-human-41-riverglades-4",
     name = "Rives Claires 41-42",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 41, maxLevel = 42,
-    next = "alliance-human-41-stv-6",
+    next = "alliance-human-41-hillsbrad-3",
     text = [[
 M riverglades
 G "Rejoins Rives Claires" @79.5,52.7 r=40 upto=43
@@ -1613,15 +1585,31 @@ T 96125 @68.6,12.7 id=259057
 })
 
 ns.RegisterGuide({
+    id = "alliance-human-41-hillsbrad-3",
+    name = "Contreforts de Hautebrande 41-42",
+    faction = "Alliance", race = { Human = true }, path = "alliance-human",
+    minLevel = 41, maxLevel = 42,
+    next = "alliance-human-41-stv-6",
+    text = [[
+M hillsbrad
+G "Rejoins Contreforts de Hautebrande" @49.5,58.7 r=40 upto=43
+T 95786 @50.6,57.1 id=2277
+T 510 @48.1,59.1 id=2276
+T 511 @50.6,57.1 id=2277
+T 95534 @48.6,59.0 id=2378
+]],
+})
+
+ns.RegisterGuide({
     id = "alliance-human-41-stv-6",
     name = "Vallée de Strangleronce 41-43",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 41, maxLevel = 43,
-    next = "alliance-human-43-riverglades-6",
+    next = "alliance-human-43-riverglades-5",
     text = [[
 M stv
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 L 42 "Tue des monstres autour de toi jusqu'au niveau 42"
-G "Rejoins Vallée de Strangleronce" @27.0,77.1 r=40 upto=44
 A 209 @27.0,77.1 id=737 lvl=42 danger=1
 A 604 @27.2,77.0 id=2487 lvl=43
 A 617 @26.8,76.4 id=2494 lvl=43 danger=1
@@ -1632,14 +1620,15 @@ C 617 @23.6,27.7 mobs=262397,1907 danger=1
 T 209 @27.0,77.1 id=737 danger=1
 T 617 @26.8,76.4 id=2494 danger=1
 A 623 @26.8,76.4 id=2494 lvl=43
+H "Utilise ta pierre de foyer" @27.0,77.3 id=6807
 L 43 "Tue des monstres autour de toi jusqu'au niveau 43"
-A 576 @28.6,75.9 id=2493 lvl=42 danger=1
-A 609 @27.8,77.1 id=2501 lvl=44
-A 2872 @27.8,77.1 id=2501 lvl=45
 A 587 @26.9,77.3 id=2488 lvl=41 danger=1
+A 609 @27.8,77.1 id=2501 lvl=44
 A 2864 @26.9,77.2 id=773 lvl=45
-C 576 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
+A 2872 @27.8,77.1 id=2501 lvl=45
+A 576 @28.6,75.9 id=2493 lvl=42 danger=1
 C 587 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
+C 576 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
 T 587 @26.9,77.3 id=2488 danger=1
 T 576 @28.6,75.9 id=2493 danger=1
 C 609 @35.1,51.6 mobs=2535,2536,2537
@@ -1648,7 +1637,7 @@ T 609 @27.8,77.1 id=2501
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-43-riverglades-6",
+    id = "alliance-human-43-riverglades-5",
     name = "Rives Claires 43-44",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 43, maxLevel = 44,
@@ -1679,7 +1668,7 @@ ns.RegisterGuide({
     name = "Terres ingrates 43-44",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 43, maxLevel = 44,
-    next = "alliance-human-43-tanaris",
+    next = "alliance-human-43-dustwallow-2",
     text = [[
 M badlands
 G "Rejoins Terres ingrates" @42.4,52.9 r=40 upto=45
@@ -1699,19 +1688,55 @@ T 732 @61.9,54.3 id=2888
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-43-tanaris",
-    name = "Tanaris 43-44",
+    id = "alliance-human-43-dustwallow-2",
+    name = "Marécage d'Âprefange 43-44",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 43, maxLevel = 44,
-    next = "alliance-human-44-dustwallow-3",
+    next = "alliance-human-44-tanaris",
+    text = [[
+M dustwallow
+G "Rejoins Marécage d'Âprefange" @41.0,75.7 r=40 upto=46
+A 98205 @41.0,75.7 id=270723 lvl=44
+A 98215 @41.0,75.7 id=270723 lvl=44
+C 98215 @44.1,66.3 mobs=4323,4331,4324,4329
+C 98205 @46.8,67.2 mobs=4323,4324
+T 98205 @41.0,75.7 id=270723
+T 98215 @41.0,75.7 id=270723
+A 1252 @29.8,48.2 lvl=40
+A 98233 @65.5,45.4 id=271167 lvl=42
+T 1252 @68.2,48.6 id=4944
+A 1259 @68.2,48.6 id=4944 lvl=40
+T 1259 @68.0,48.1 id=4948
+A 1285 @68.0,48.1 id=4948 lvl=38
+T 1285 @68.2,48.6 id=4944
+A 1286 @68.2,48.6 id=4944 lvl=38
+T 623 @68.8,53.2 id=2616
+C 98233 @54.0,55.1 mobs=4392
+T 98233 @65.5,45.4 id=271167
+T 1286 @36.1,54.3 id=5089
+A 1287 @36.1,54.3 id=5089 lvl=38
+T 1287 @68.2,48.6 id=4944
+]],
+})
+
+ns.RegisterGuide({
+    id = "alliance-human-44-tanaris",
+    name = "Tanaris 44-45",
+    faction = "Alliance", race = { Human = true }, path = "alliance-human",
+    minLevel = 44, maxLevel = 45,
+    next = "alliance-human-44-desolace-3",
     text = [[
 M tanaris
 G "Rejoins Tanaris" @52.5,28.5 r=40 upto=46
+B "Lie ta pierre de foyer à l'auberge" @52.5,27.9 id=7733
 A 1690 @52.5,28.5 id=7407 lvl=43
 A 1707 @52.5,28.4 id=7408 lvl=44
 A 97536 @52.3,26.9 id=14743 lvl=45
 T 97536 @52.3,26.9 id=14743
 T 2864 @51.6,26.8 id=7876
+A 95753 @43.0,41.3 id=222856 lvl=45
+C 95753 @45.7,37.8
+T 95753 @45.7,37.7 id=222857
 C 1690 @63.5,31.3 mobs=5616,5618
 C 1707 @63.5,31.3 mobs=5616,5617,5615,5618,5623
 T 2872 @67.1,24.0 id=7881
@@ -1719,14 +1744,12 @@ A 2873 @67.1,24.0 id=7881 lvl=45
 A 2875 @66.8,22.3 lvl=45
 A 8365 @66.6,22.3 id=15165 lvl=45
 A 8366 @67.1,23.9 id=7882 lvl=45
+H "Utilise ta pierre de foyer" @52.5,27.9 id=7733
 T 1690 @52.5,28.5 id=7407
 T 1707 @52.5,28.4 id=7408
 A 1691 @52.5,28.5 id=7407 lvl=44
 C 1691 @59.8,37.8 mobs=5617,5615,5623
 T 1691 @52.5,28.5 id=7407
-A 95753 @43.0,41.3 id=222856 lvl=45
-C 95753 @45.7,37.8
-T 95753 @45.7,37.7 id=222857
 C 2873 @72.2,46.8
 C 2875 @73.4,47.1 mobs=7883
 C 8365 @73.5,47.2 mobs=7858,7857,7856,7855,7883
@@ -1740,30 +1763,35 @@ A 2874 @67.1,24.0 id=7881 lvl=45
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-44-dustwallow-3",
-    name = "Marécage d'Âprefange 44-45",
+    id = "alliance-human-44-desolace-3",
+    name = "Désolace 44-45",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 44, maxLevel = 45,
-    next = "alliance-human-44-feralas",
+    next = "alliance-human-45-feralas",
     text = [[
-M dustwallow
-G "Rejoins Marécage d'Âprefange" @41.0,75.7 r=40 upto=46
-A 98205 @41.0,75.7 id=270723 lvl=44
-A 98215 @41.0,75.7 id=270723 lvl=44
-C 98215 @44.1,66.3 mobs=4323,4331,4324,4329
-C 98205 @46.8,67.2 mobs=4323,4324
-T 98205 @41.0,75.7 id=270723
-T 98215 @41.0,75.7 id=270723
-T 623 @68.8,53.2 id=2616
+M desolace
+G "Rejoins Désolace" @66.5,7.9 r=40 upto=47
+A 261 @66.5,7.9 id=1182 lvl=39
+A 93224 @66.7,10.9 id=5396 lvl=40
+A 5501 @62.3,39.0 id=11438 lvl=39
+C 5501 @52.8,59.1
+T 5501 @62.3,39.0 id=11438
+T 93464 @38.9,27.2 id=11863
+C 93224 @68.7,78.8 mobs=254283,254284,262838,253274,255238
+C 261 @63.5,90.0 mobs=11561
+T 261 @66.5,7.9 id=1182
+T 93224 @66.7,10.9 id=5396
+A 93226 @66.7,10.9 id=5396 lvl=45
+T 93226 @66.2,79.4 id=253139
 ]],
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-44-feralas",
-    name = "Féralas 44-45",
+    id = "alliance-human-45-feralas",
+    name = "Féralas 45-47",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 44, maxLevel = 45,
-    next = "alliance-human-45-shendralas",
+    minLevel = 45, maxLevel = 47,
+    next = "alliance-human-47-tanaris-2",
     text = [[
 M feralas
 G "Rejoins Féralas" @31.8,45.6 r=40 upto=47
@@ -1783,10 +1811,14 @@ A 2869 @30.4,46.2 id=7877 lvl=43
 C 2869 @27.4,68.9 mobs=5336,5333,5335,5331,5334
 H "Utilise ta pierre de foyer" @31.0,43.5 id=7736
 T 2869 @30.4,46.2 id=7877
+A 2870 @30.4,46.2 id=7877 lvl=45 danger=1
+C 2870 @28.5,70.5 mobs=8136 danger=1
+T 2870 @30.4,46.2 id=7877 danger=1
+A 2871 @30.4,46.2 id=7877 lvl=45
+T 2871 @30.1,45.1 id=7878
 T 4125 @45.4,65.0
 A 4127 @45.4,65.0 lvl=44
 C 2982 @60.8,56.3 mobs=5232,5240,5236
-A 2870 @30.4,46.2 id=7877 lvl=45 danger=1
 T 2982 @31.8,45.6 id=7900
 T 4127 @31.9,45.1 id=7880
 A 4129 @31.9,45.1 id=7880 lvl=44
@@ -1794,77 +1826,23 @@ T 4129 @32.5,43.8 id=7879
 A 4130 @32.5,43.8 id=7879 lvl=44
 T 4130 @31.9,45.1 id=7880
 A 4131 @31.9,45.1 id=7880 lvl=44
-C 2870 @28.5,70.5 mobs=8136 danger=1
-T 2870 @30.4,46.2 id=7877 danger=1
-A 2871 @30.4,46.2 id=7877 lvl=45
-T 2871 @30.1,45.1 id=7878
 T 4131 @73.3,56.3
 A 4135 @73.3,56.3 lvl=46
 T 4135 @72.1,63.7
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-human-45-shendralas",
-    name = "Shen'dralas 45-46",
-    faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 45, maxLevel = 46,
-    next = "alliance-human-45-desolace-4",
-    text = [[
-M shendralas
-G "Rejoins Shen'dralas" @34.1,77.9 r=40 upto=47
-A 93125 @34.1,77.9 id=254040 lvl=43
-A 92914 @43.7,34.4 lvl=43
-T 93066 @59.3,53.9 id=253851
-A 93129 @59.3,53.9 id=253851 lvl=43
-T 93129 @59.3,53.9 id=253851
-C 92914 @47.5,76.7
-T 92914 @35.2,46.6 id=253471
-T 93125 @20.9,22.7 id=253177
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-human-45-desolace-4",
-    name = "Désolace 45-46",
-    faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 45, maxLevel = 46,
-    next = "alliance-human-46-feralas-2",
-    text = [[
-M desolace
+H "Utilise ta pierre de foyer" @31.0,43.5 id=7736
 L 46 "Tue des monstres autour de toi jusqu'au niveau 46"
-G "Rejoins Désolace" @62.2,39.6 r=40 upto=48
-A 7028 @62.2,39.6 id=13656 lvl=47
-A 93224 @66.7,10.9 id=5396 lvl=40
-C 93224 @68.7,78.8 mobs=254283,254284,262838,253274,255238
-C 7028 @28.5,62.5 mobs=13718,11688
-T 7028 @62.2,39.6 id=13656
-T 93224 @66.7,10.9 id=5396
-A 93226 @66.7,10.9 id=5396 lvl=45
-T 93226 @66.2,79.4 id=253139
-]],
-})
-
-ns.RegisterGuide({
-    id = "alliance-human-46-feralas-2",
-    name = "Féralas 46-47",
-    faction = "Alliance", race = { Human = true }, path = "alliance-human",
-    minLevel = 46, maxLevel = 47,
-    next = "alliance-human-47-tanaris-2",
-    text = [[
-M feralas
+A 2821 @30.6,42.7 id=7852 lvl=46 danger=1
+C 2821 @51.8,58.9 mobs=5292,5293,5295,5346 danger=1
+T 2821 @30.6,42.7 id=7852 danger=1
 H "Utilise ta pierre de foyer" @31.0,43.5 id=7736
 L 47 "Tue des monstres autour de toi jusqu'au niveau 47"
-A 2821 @30.6,42.7 id=7852 lvl=46
+A 7733 @30.6,42.7 id=7852 lvl=48 danger=1
 A 7721 @44.8,43.4 id=14637 lvl=48 danger=1
 C 7721 @47.7,52.3 mobs=5462,5461 danger=1
-C 2821 @51.8,58.9 mobs=5292,5293,5295,5346
 T 7721 @44.8,43.4 id=14637 danger=1
+C 7733 @53.8,32.1 mobs=5299,5296,5297 danger=1
 A 2844 @42.4,22.0 id=7765 lvl=49
 T 2844 @38.2,10.3 id=7774
-T 2821 @30.6,42.7 id=7852
-A 7733 @30.6,42.7 id=7852 lvl=48 danger=1
-C 7733 @53.8,32.1 mobs=5299,5296,5297 danger=1
 T 7733 @30.6,42.7 id=7852 danger=1
 ]],
 })
@@ -2229,7 +2207,7 @@ ns.RegisterGuide({
     name = "Gangrebois 54-55",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 54, maxLevel = 55,
-    next = "alliance-human-54-dustwallow-4",
+    next = "alliance-human-54-dustwallow-3",
     text = [[
 M felwood
 G "Rejoins Gangrebois" @54.1,86.8 r=40 upto=56
@@ -2248,7 +2226,7 @@ T 4103 @54.1,86.8 id=9528
 })
 
 ns.RegisterGuide({
-    id = "alliance-human-54-dustwallow-4",
+    id = "alliance-human-54-dustwallow-3",
     name = "Marécage d'Âprefange 54-55",
     faction = "Alliance", race = { Human = true }, path = "alliance-human",
     minLevel = 54, maxLevel = 55,

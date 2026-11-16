@@ -2,6 +2,19 @@ local _, ns = ...
 
 -- Traduction esES (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.ES = {
+    ["Automatique (allège si le jeu rame)"] = "Automático (más ligero si el juego va lento)",
+    ["Toujours complet"] = "Siempre completo",
+    ["Toujours en économie"] = "Siempre en ahorro",
+    ["Mesure des performances pendant %d s… joue normalement."] = "Midiendo el rendimiento durante %d s… juega con normalidad.",
+    ["Images/s : %d  •  mode économie : %s"] = "FPS: %d  •  modo ahorro: %s",
+    ["oui"] = "sí",
+    ["non"] = "no",
+    ["Mémoire : %d Ko, %.1f Ko/s alloués"] = "Memoria: %d KB, %.1f KB/s asignados",
+    ["Processeur : %.2f ms par seconde de jeu"] = "CPU: %.2f ms por segundo de juego",
+    ["Temps processeur : tape /console scriptProfile 1 puis /reload, et relance /qw perf (pense à remettre 0 après)."] = "Tiempo de CPU: escribe /console scriptProfile 1, luego /reload, y vuelve a lanzar /qw perf (después ponlo otra vez a 0).",
+    ["|cff66ccffÉconomie|r : effets allégés\nquand le jeu rame"] = "|cff66ccffAhorro|r: efectos más ligeros\nsi el juego va lento",
+    ["Performances"] = "Rendimiento",
+    ["Mode"] = "Modo",
     ["|cff66ccffQuête en %d parties|r : ta route les fait toutes"] = "|cff66ccffMisión en %d partes|r: tu ruta las hace todas",
     ["|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"] = "|cff66ccffMisión en %d partes|r: tu ruta hace las partes %d a %d, no el resto",
     ["|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"] = "|cffaaaaaaFin de esta misión en tu ruta|r: la parte %d/%d no está, no hace falta cogerla",

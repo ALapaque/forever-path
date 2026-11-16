@@ -64,9 +64,10 @@ function ns.SkillLabel(id)
 end
 
 -- Niveaux des métiers du personnage : { [ligne] = niveau }, ou nil si le jeu ne les donne pas.
-local ranks, ranksAt
+-- En cache jusqu'au prochain changement de métier : le guide et la flèche l'interrogent souvent.
+local ranks
 function ns.SkillRanks()
-    if ranks and ranksAt == GetTime() then return ranks end
+    if ranks then return ranks end
     local out, ok = {}, false
     if GetProfessions and GetProfessionInfo then
         ok = true
@@ -92,11 +93,13 @@ function ns.SkillRanks()
         end
     end
     if not ok then return end
-    ranks, ranksAt = out, GetTime()
+    ranks = out
     return out
 end
 ns.On("SKILL_LINES_CHANGED", function() ranks = nil end)
 ns.On("CHAT_MSG_SKILL", function() ranks = nil end)
+ns.On("PLAYER_LOGIN", function() ranks = nil end)
+ns.On("PLAYER_ENTERING_WORLD", function() ranks = nil end)
 
 -- Métier requis par une étape : option skill= du guide, sinon les données de la quête
 function ns.StepSkill(step)

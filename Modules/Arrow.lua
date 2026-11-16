@@ -55,9 +55,10 @@ end
 -- Coordonnées de texture pour une flèche tournée de r (sens trigo) puis aplatie au sol.
 -- Coins de l'écran (y vers le haut) -> point du sol -> point de la texture.
 local SCREEN = { { -1, 1 }, { -1, -1 }, { 1, 1 }, { 1, -1 } }    -- UL, LL, UR, LR
+local out = {}           -- réutilisée (pas de nouvelle table à chaque image)
 local function groundCoords(t, r, flat)
     local c, sn = math.cos(r), math.sin(r)
-    local out = {}
+    wipe(out)
     for _, p in ipairs(SCREEN) do
         local gx, gy = p[1], p[2] / (flat or FLAT)
         local u = gx * c + gy * sn
@@ -172,22 +173,19 @@ local function showOnly(which)
     holderP:SetShown(which == "pointe")
 end
 
-local acc = 0
-f:SetScript("OnUpdate", function(self, dt)
-    acc = acc + dt
-    if acc < 0.03 then return end
-    local elapsed = acc
-    acc = 0
-    local step = ns.Engine.NavStep()
-    if not step or not step.x then showOnly(); self.dist:SetText(""); self.label:SetText(""); self.next:SetText(""); return end
-    local d, bearing = ns.Geo.Vector(step)
-    if not d then
-        showOnly(); self.dist:SetText(""); self.label:SetText(""); self.next:SetText("")
-        return
-    end
-    local pointe = usePointe()
+-- Textes de l'étape (libellé, étape suivante) : refaits quand l'étape ou le journal change, plus
+-- 33 fois par seconde (ça recréait des chaînes de caractères et parcourait le guide à chaque fois).
+local texts = { dirty = true }
+local function markTexts() texts.dirty = true end
+for _, ev in ipairs({ "FP_STEP_CHANGED", "QUEST_LOG_UPDATE", "FP_THEME_CHANGED", "FP_OPTION_CHANGED", "SKILL_LINES_CHANGED",
+                       "QUEST_DATA_LOAD_RESULT", "FP_DETOUR" }) do
+    ns.On(ev, markTexts)
+end
+local function refreshTexts(self, step)
+    if not texts.dirty and texts.step == step then return end
+    texts.dirty, texts.step = false, step
     local label = ns.Guide and ns.Guide.StepLabel(step) or ""
-    if pointe then
+    if usePointe() then
         local caps = M:Opt("caps")
         local function fmt(x) x = plain(x); return caps and ns.Upper(x) or x end
         self.label:SetText(fmt(label))
@@ -197,6 +195,28 @@ f:SetScript("OnUpdate", function(self, dt)
         self.label:SetText(label)
         self.next:SetText("")
     end
+end
+
+local acc, lastDistText = 0, nil
+f:SetScript("OnUpdate", function(self, dt)
+    acc = acc + dt
+    -- 33 images/s, 15 en économie
+    if acc < ((ns.Eco and ns.Eco()) and 0.066 or 0.03) then return end
+    local elapsed = acc
+    acc = 0
+    local step = ns.Engine.NavStep()
+    if not step or not step.x then
+        if texts.step then showOnly(); self.dist:SetText(""); self.label:SetText(""); self.next:SetText(""); texts.step = nil; lastDistText = nil end
+        return
+    end
+    local d, bearing = ns.Geo.Vector(step)
+    if not d then
+        showOnly(); self.dist:SetText(""); self.label:SetText(""); self.next:SetText("")
+        texts.step, lastDistText = nil, nil
+        return
+    end
+    local pointe = usePointe()
+    refreshTexts(self, step)
     local radius = step.radius or 15
     if d <= radius and M:Opt("hideClose") then
         if pointe then
@@ -211,7 +231,8 @@ f:SetScript("OnUpdate", function(self, dt)
             self.tex:SetVertexColor(0.3, 1, 0.3)
         end
         local arrived = L.ARRIVED or ns.Tr("Arrivé")
-        self.dist:SetText(pointe and M:Opt("caps") and ns.Upper(arrived) or arrived)
+        local txt = pointe and M:Opt("caps") and ns.Upper(arrived) or arrived
+        if txt ~= lastDistText then lastDistText = txt; self.dist:SetText(txt) end
         return
     end
     local rel = ns.Geo.RelativeAngle(bearing)
@@ -228,14 +249,16 @@ f:SetScript("OnUpdate", function(self, dt)
         self.tex:SetRotation(rel)
         self.tex:SetVertexColor(color(rel))
     end
+    local txt
     if pointe then
-        local txt = ns.FormatDistance(d)
+        txt = ns.FormatDistance(d)
         local t = eta(d)
         if t ~= "" then txt = txt .. "   " .. t end
-        self.dist:SetText(M:Opt("caps") and ns.Upper(txt) or txt)
+        if M:Opt("caps") then txt = ns.Upper(txt) end
     else
-        self.dist:SetText(ns.FormatDistance(d))
+        txt = ns.FormatDistance(d)
     end
+    if txt ~= lastDistText then lastDistText = txt; self.dist:SetText(txt) end
 end)
 
 local function applyTextFont()
@@ -271,7 +294,7 @@ function M:Apply()
 end
 function M:OnEnable() self:Apply(); f:Show() end
 function M:OnDisable() f:Hide() end
-function M:OnOptionChanged() self:Apply() end
+function M:OnOptionChanged() self:Apply(); markTexts(); lastDistText = nil end
 
 function M.preview(p)
     local sh = p:CreateTexture(nil, "BACKGROUND")

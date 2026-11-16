@@ -3,6 +3,20 @@ local _, ns = ...
 -- Traduction anglaise (clients non francophones). Clés : textes français exacts du code ;
 -- les textes avec %d / %s servent aussi de modèles pour les textes déjà formatés (voir ns.Tr).
 ns.EN = {
+    ["Automatique (allège si le jeu rame)"] = "Automatic (lighter when the game lags)",
+    ["Toujours complet"] = "Always full",
+    ["Toujours en économie"] = "Always economy",
+    ["Mesure des performances pendant %d s… joue normalement."] = "Measuring performance for %d s… play normally.",
+    ["Images/s : %d  •  mode économie : %s"] = "FPS: %d  •  economy mode: %s",
+    ["oui"] = "yes",
+    ["non"] = "no",
+    ["Mémoire : %d Ko, %.1f Ko/s alloués"] = "Memory: %d KB, %.1f KB/s allocated",
+    ["Processeur : %.2f ms par seconde de jeu"] = "CPU: %.2f ms per second of play",
+    ["Temps processeur : tape /console scriptProfile 1 puis /reload, et relance /qw perf (pense à remettre 0 après)."] = "CPU time: type /console scriptProfile 1 then /reload, and run /qw perf again (set it back to 0 afterwards).",
+    ["|cff66ccffÉconomie|r : effets allégés\nquand le jeu rame"] = "|cff66ccffEconomy|r: lighter effects\nwhen the game lags",
+    ["Performances"] = "Performance",
+    ["Le mode Économie allège les effets qui se redessinent à chaque image : points au sol et pulsation du guidage 3D, flèche, tracé sur la minimap, rebond sur les barres de nom, rotation du modèle du PNJ. En automatique, il s'active quand le jeu passe sous 40 images/s et se coupe quand ça va mieux. /qw perf mesure ce que coûte Questweaver."] = "Economy mode lightens effects redrawn every frame: ground dots and pulse of the 3D guidance, arrow, minimap path, nameplate bounce, NPC model rotation. In automatic mode it turns on when the game drops below 40 FPS and off when things improve. /qw perf measures what Questweaver costs.",
+    ["Mode"] = "Mode",
     ["|cff66ccffQuête en %d parties|r : ta route les fait toutes"] = "|cff66ccff%d-part quest|r: your route does all of them",
     ["|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"] = "|cff66ccff%d-part quest|r: your route does parts %d to %d, not the rest",
     ["|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"] = "|cffaaaaaaEnd of this quest in your route|r: part %d/%d isn't in it, no need to take it",

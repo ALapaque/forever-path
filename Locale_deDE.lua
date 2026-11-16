@@ -2,6 +2,19 @@ local _, ns = ...
 
 -- Traduction deDE (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.DE = {
+    ["Automatique (allège si le jeu rame)"] = "Automatisch (leichter, wenn das Spiel ruckelt)",
+    ["Toujours complet"] = "Immer vollständig",
+    ["Toujours en économie"] = "Immer sparsam",
+    ["Mesure des performances pendant %d s… joue normalement."] = "Leistung wird %d s lang gemessen… spiel ganz normal.",
+    ["Images/s : %d  •  mode économie : %s"] = "FPS: %d  •  Sparmodus: %s",
+    ["oui"] = "ja",
+    ["non"] = "nein",
+    ["Mémoire : %d Ko, %.1f Ko/s alloués"] = "Speicher: %d KB, %.1f KB/s belegt",
+    ["Processeur : %.2f ms par seconde de jeu"] = "CPU: %.2f ms pro Sekunde Spielzeit",
+    ["Temps processeur : tape /console scriptProfile 1 puis /reload, et relance /qw perf (pense à remettre 0 après)."] = "CPU-Zeit: /console scriptProfile 1 eingeben, dann /reload, und /qw perf erneut starten (danach wieder auf 0 setzen).",
+    ["|cff66ccffÉconomie|r : effets allégés\nquand le jeu rame"] = "|cff66ccffSparmodus|r: leichtere Effekte\nwenn das Spiel ruckelt",
+    ["Performances"] = "Leistung",
+    ["Mode"] = "Modus",
     ["|cff66ccffQuête en %d parties|r : ta route les fait toutes"] = "|cff66ccffQuest in %d Teilen|r: deine Route macht alle",
     ["|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"] = "|cff66ccffQuest in %d Teilen|r: deine Route macht Teil %d bis %d, nicht den Rest",
     ["|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"] = "|cffaaaaaaEnde dieser Quest in deiner Route|r: Teil %d/%d ist nicht dabei, nicht nötig",

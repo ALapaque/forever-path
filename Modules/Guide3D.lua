@@ -78,17 +78,24 @@ end
 -- Le marqueur de Blizzard (SuperTrackedFrame) recalcule sa propre transparence à chaque image :
 -- un SetAlpha(0) unique ne tenait pas, et sa distance (« 65 mètres ») venait se superposer à la nôtre.
 -- On masque donc ses éléments (icône, distance, flèche), qu'il ne retouche pas, et on le revérifie.
+-- Performances : la liste de ses éléments est construite une fois (et refaite si le jeu recrée le
+-- cadre), plus à chaque image : ça créait plusieurs tables par image, que le ramasse-miettes de Lua
+-- devait ensuite nettoyer — coûteux quand beaucoup d'addons sont chargés.
 local blizzHidden = false
+local partsCache, partsOf
 local function blizzParts()
     local s = SuperTrackedFrame
     if type(s) ~= "table" then return {} end
+    if partsCache and partsOf == s then return partsCache end
     local parts = { s.Icon, s.DistanceText, s.Arrow, s.Glow }
     if s.GetRegions then for _, r in ipairs({ s:GetRegions() }) do parts[#parts + 1] = r end end
     if s.GetChildren then for _, c in ipairs({ s:GetChildren() }) do parts[#parts + 1] = c end end
+    partsCache, partsOf = parts, s
     return parts
 end
 local function setBlizzardHidden(hide)
     blizzHidden = hide and true or false
+    partsCache = nil
     for _, part in ipairs(blizzParts()) do
         if type(part) == "table" and part.SetAlpha then part:SetAlpha(hide and 0 or 1) end
     end
@@ -144,7 +151,7 @@ local function drawTrail(tx, ty, dist, accent, phase)
     if len < 70 then hideTrail() return end
     -- léger arc : le chemin part droit devant le personnage puis tourne vers l'objectif
     local cx, cy = px + dx * 0.2, py + dy * 0.65
-    local n = math.max(6, math.min(36, math.floor(len / 30)))
+    local n = math.max(6, math.min(24, math.floor(len / 40)))
     trail:Show()
     local used = 0
     for i = 1, n do
@@ -180,14 +187,27 @@ local function daylightMarkerShown()
     return ok2 and type(a) == "number" and not ns.IsSecret(a) and a > 0.05
 end
 
-local function off(self) self:SetAlpha(0); hideTrail() end
+local function off(self)
+    if self.visible ~= false then self:SetAlpha(0); hideTrail(); self.visible = false end
+end
 
-local t = 0
+-- Ce qui suit l'objectif (position du marqueur) est fait à chaque image ; le reste est limité :
+-- points au sol 30 fois/s (10 en économie, ou coupés), vérifications lentes 4 fois/s.
+local t, slowAcc, trailAcc = 0, 1, 1
+local daylightOn, lastDist, lastX, lastY, eco = false, nil, nil, nil, false
+ns.On("FP_PERF_CHANGED", function(v) eco = v and true or false; hideTrail() end)
 f:SetScript("OnUpdate", function(self, dt)
     t = t + dt
+    slowAcc, trailAcc = slowAcc + dt, trailAcc + dt
     local nav = getNav()
-    if not (nav and ourWaypoint() and M.enabled) then off(self) return end
-    if M:Opt("yieldDaylight") and daylightMarkerShown() then off(self) return end
+    if not (nav and M.enabled and ourWaypoint()) then off(self) return end
+    if slowAcc >= 0.25 then
+        slowAcc = 0
+        daylightOn = M:Opt("yieldDaylight") and daylightMarkerShown()
+        eco = ns.Eco and ns.Eco() or false
+        keepBlizzardHidden()
+    end
+    if daylightOn then off(self) return end
     if C_Navigation.HasValidScreenPosition and not C_Navigation.HasValidScreenPosition() then off(self) return end
     local state = C_Navigation.GetTargetState and C_Navigation.GetTargetState()
     if state == (Enum.NavigationState and Enum.NavigationState.Disabled or 3) then off(self) return end
@@ -197,18 +217,21 @@ f:SetScript("OnUpdate", function(self, dt)
     if not cx or ns.IsSecret(cx) then off(self) return end
     local ns_ = nav:GetEffectiveScale() / UIParent:GetEffectiveScale()
     cx, cy = cx * ns_, cy * ns_
-    self:ClearAllPoints()
-    self:SetPoint("CENTER", UIParent, "BOTTOMLEFT", cx, cy)
-    self:SetAlpha(1)
-    keepBlizzardHidden()
+    if not lastX or math.abs(cx - lastX) > 0.5 or math.abs(cy - lastY) > 0.5 or self.visible == false then
+        lastX, lastY = cx, cy
+        self:ClearAllPoints()
+        self:SetPoint("CENTER", UIParent, "BOTTOMLEFT", cx, cy)
+    end
+    if self.visible == false then self:SetAlpha(1) end
+    self.visible = true
 
     local a = ns.Theme().accent
     local clamped = C_Navigation.WasClampedToScreen and C_Navigation.WasClampedToScreen()
     local dist = C_Navigation.GetDistance and C_Navigation.GetDistance()
-    if dist and not ns.IsSecret(dist) and blizzHidden then
-        self.dist:SetText(ns.FormatDistance(dist))
-    else
-        self.dist:SetText("")
+    local shownDist = dist and not ns.IsSecret(dist) and blizzHidden and math.floor(dist + 0.5) or nil
+    if shownDist ~= lastDist then
+        lastDist = shownDist
+        self.dist:SetText(shownDist and ns.FormatDistance(shownDist) or "")
     end
 
     if clamped then
@@ -216,35 +239,44 @@ f:SetScript("OnUpdate", function(self, dt)
         local sx, sy = UIParent:GetWidth() / 2, UIParent:GetHeight() / 2
         local ang = math.atan2(cy - sy, cx - sx) - math.pi / 2
         self.edge:SetRotation(ang)
-        self.edge:SetVertexColor(a[1], a[2], a[3])
-        self.edge:Show()
-        self.beam:Hide(); self.beamGlow:Hide(); self.disc:Hide(); self.icon:Hide(); self.label:Hide()
-        hideTrail()
+        if not self.edge:IsShown() then
+            self.edge:SetVertexColor(a[1], a[2], a[3])
+            self.edge:Show()
+            self.beam:Hide(); self.beamGlow:Hide(); self.disc:Hide(); self.icon:Hide(); self.label:Hide()
+            hideTrail()
+        end
         return
     end
 
-    self.edge:Hide()
-    drawTrail(cx, cy, dist, a, (t * 0.6) % 1)
-    local occluded = state == (Enum.NavigationState and Enum.NavigationState.Occluded or 1)
-    local pulse = 0.75 + math.sin(t * 2.4) * 0.25
-    local showBeam = M:Opt("beam")
-    self.beam:SetShown(showBeam)
-    self.beamGlow:SetShown(showBeam)
-    self.beam:SetVertexColor(a[1], a[2], a[3], (occluded and 0.35 or 0.7) * pulse)
-    self.beamGlow:SetVertexColor(a[1], a[2], a[3], 0.8 * pulse)
-    self.disc:Show()
-    self.disc:SetVertexColor(0.05, 0.05, 0.07, 0.85)
-    self.icon:Show()
-    self.label:SetShown(M:Opt("label"))
-    self.label:ClearAllPoints()
-    if blizzHidden then
-        self.label:SetPoint("TOP", self.dist, "BOTTOM", 0, -1)
-    else
-        self.label:SetPoint("TOP", self.disc, "BOTTOM", 0, -22)  -- sous la distance affichée par le jeu
+    if self.edge:IsShown() or not self.disc:IsShown() then
+        self.edge:Hide()
+        local showBeam = M:Opt("beam")
+        self.beam:SetShown(showBeam)
+        self.beamGlow:SetShown(showBeam)
+        self.disc:Show()
+        self.disc:SetVertexColor(0.05, 0.05, 0.07, 0.85)
+        self.icon:Show()
+        self.label:SetShown(M:Opt("label"))
     end
-    -- à portée : petit rebond de l'icône
-    local inRange = state == (Enum.NavigationState and Enum.NavigationState.InRange or 2)
-    self.disc:SetPoint("CENTER", 0, 14 + (inRange and math.abs(math.sin(t * 5)) * 8 or 0))
+    -- points au sol : coupés en économie, sinon 30 fois/s
+    if eco then
+        if M.trailDots and M.trailDots > 0 then hideTrail() end
+    elseif trailAcc >= 1 / 30 then
+        trailAcc = 0
+        drawTrail(cx, cy, dist, a, (t * 0.6) % 1)
+    end
+    local occluded = state == (Enum.NavigationState and Enum.NavigationState.Occluded or 1)
+    local pulse = eco and 1 or (0.75 + math.sin(t * 2.4) * 0.25)
+    if self.beam:IsShown() then
+        self.beam:SetVertexColor(a[1], a[2], a[3], (occluded and 0.35 or 0.7) * pulse)
+        self.beamGlow:SetVertexColor(a[1], a[2], a[3], 0.8 * pulse)
+    end
+    -- à portée : petit rebond de l'icône (pas en économie)
+    local inRange = not eco and state == (Enum.NavigationState and Enum.NavigationState.InRange or 2)
+    if inRange or self.bounced then
+        self.bounced = inRange
+        self.disc:SetPoint("CENTER", 0, 14 + (inRange and math.abs(math.sin(t * 5)) * 8 or 0))
+    end
 end)
 
 function M:Refresh()
@@ -259,6 +291,14 @@ function M:Refresh()
     f.label:SetText(step and ns.Guide and ns.Guide.StepLabel(step) or "")
     f:SetScale(self:Opt("scale") or 1)
     setBlizzardHidden(self.enabled and self:Opt("hideBlizzard"))
+    f.label:ClearAllPoints()
+    if blizzHidden then
+        f.label:SetPoint("TOP", f.dist, "BOTTOM", 0, -1)
+    else
+        f.label:SetPoint("TOP", f.disc, "BOTTOM", 0, -22)  -- sous la distance affichée par le jeu
+    end
+    -- options (faisceau, nom) et textes : réappliqués à la prochaine image
+    f.disc:Hide(); lastDist = -1
 end
 
 function M:OnEnable() f:Show(); self:Refresh() end

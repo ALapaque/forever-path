@@ -21,6 +21,7 @@ f.name:SetPoint("BOTTOM", 0, 3)
 f.name:SetWidth(114)
 f.name:SetWordWrap(false)
 f.model:SetScript("OnUpdate", function(self, dt)
+    if ns.Eco and ns.Eco() then return end          -- économie : le modèle ne tourne plus
     self.r = (self.r or 0) + dt * 0.6
     self:SetFacing(self.r)
 end)

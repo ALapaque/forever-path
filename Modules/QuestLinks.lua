@@ -133,15 +133,16 @@ function ns.PathQuests()
     if not cur then return {} end
     local key = cur.path or cur.id
     if pathCache[key] then return pathCache[key] end
-    local set = {}
+    local quests = {}
+    for _, s in ipairs(cur.steps) do if s.quest then quests[s.quest] = true end end   -- (guide « zone » compris)
     for _, id in ipairs(ns.GuideOrder) do
         local g = ns.Guides[id]
-        if (cur.path and g.path == cur.path) or g == cur then
-            for _, s in ipairs(g.steps) do if s.quest then set[s.quest] = true end end
+        if cur.path and g.path == cur.path then
+            for _, s in ipairs(g.steps) do if s.quest then quests[s.quest] = true end end
         end
     end
-    pathCache[key] = set
-    return set
+    pathCache[key] = quests
+    return quests
 end
 
 -- Ce que la route fait d'une chaîne, vu depuis la quête q :

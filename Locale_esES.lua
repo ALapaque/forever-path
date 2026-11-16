@@ -2,6 +2,7 @@ local _, ns = ...
 
 -- Traduction esES (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.ES = {
+    ["Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."] = "No queda nada que hacer en esta zona a tu nivel: vuelta a la ruta recomendada.",
     ["son PNJ"] = "su PNJ",
     ["Rendre « %s »"] = "Entregar «%s»",
     ["Clic : lancer la quête"] = "Clic: empezar la misión",

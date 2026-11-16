@@ -1,7 +1,8 @@
 # Questweaver
 
-## v1.9.1
+## v1.10.0
 
+- **Correctif : zone choisie à la main.** En choisissant une zone dans le panneau Zones (par exemple Bois de la Pénombre), Questweaver ne chargeait qu'un seul passage de la route dans cette zone ; une fois ce passage fini, ou tout de suite si ses quêtes étaient déjà faites, il repartait vers la suite de la route conseillée (par exemple Orneval). Maintenant, choisir une zone enchaîne tous les passages de ta route dans cette zone à ton niveau, la zone reste choisie après un /reload et au passage de niveau, et ce n'est qu'une fois qu'il n'y a plus rien à y faire que tu reviens à la route conseillée (avec un message). Le nombre de quêtes affiché pour chaque zone est aussi corrigé.
 - **Guidage 3D beaucoup plus léger** (des joueurs avaient des ralentissements, surtout avec une grosse suite d'addons comme celle de Naowh). En cause : du travail refait à chaque image. Le guidage 3D relisait les éléments du marqueur de Blizzard et créait plusieurs tables à chaque image, que le ramasse-miettes de Lua devait ensuite nettoyer ; plus il y a d'addons chargés, plus ce nettoyage coûte cher. La flèche recalculait le texte de l'étape 33 fois par seconde, et le tracé de la minimap replaçait jusqu'à 250 points 10 fois par seconde même à l'arrêt. Maintenant :
   - le marqueur 3D ne refait que suivre l'objectif à chaque image ; les points au sol sont dessinés 30 fois par seconde au plus (24 points au lieu de 36), les vérifications lentes 4 fois par seconde, les textes seulement quand ils changent ;
   - la flèche ne recalcule le texte de l'étape que quand l'étape ou le journal change ;

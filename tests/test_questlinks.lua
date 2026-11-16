@@ -101,27 +101,46 @@ print("questlinks OK")
 -- 4) changer de zone à la main (panneau Zones / /qw zone)
 ns.SetModuleEnabled("questlinks", true)
 QLOG = {}; DONE = {}
-PLAYER.level = 22
+PLAYER.level = 26
+ns.cdb.notOffered = {}
 E.Load(E.PickDefault())
 local start = ns.cdb.guideId
 local R = ns.Recommend
 local segs = R.Segments()
-check(#segs >= 2, "plusieurs zones proposées au niveau 22 (" .. #segs .. ")")
-local curKey = R.SegmentZone(ns.Guides[start])
-local other
-for _, sg in ipairs(segs) do if sg.key ~= curKey then other = sg break end end
-check(other, "une autre zone que " .. tostring(curKey))
-R.Choose(other.guide)
-check(ns.cdb.guideId == other.guide and ns.cdb.pinned == other.guide, "zone choisie chargée : " .. other.guide)
+check(#segs >= 2, "plusieurs zones proposées au niveau 26 (" .. #segs .. ")")
+local zsegs = R.ZoneSegments("duskwood")
+check(#zsegs >= 2, "Bois de la Pénombre : " .. #zsegs .. " passages de la route à ce niveau")
+local zg = R.Choose("duskwood")
+check(zg and ns.cdb.guideId == zg.id and ns.cdb.pinned == zg.id, "zone choisie : guide « zone » chargé (" .. tostring(zg and zg.name) .. ")")
+local total = 0
+for _, sg in ipairs(zsegs) do total = total + #sg.steps end
+check(#zg.steps == total, "il enchaîne tous les passages de la zone (" .. total .. " étapes)")
+-- le premier passage terminé : on reste dans la zone (avant : on partait vers la suite de la route, ex. Orneval)
+local firstLen = #zsegs[1].steps
+ns.cdb.stepIndex = firstLen
+for k = 1, firstLen do ns.cdb.skipped[zg.id][k] = true end
+E.Refresh()
+check(ns.cdb.guideId == zg.id and select(3, E.Current()) > firstLen, "premier passage fini : toujours dans Bois de la Pénombre (étape " .. select(3, E.Current()) .. ")")
+-- niveau qui monte : la zone choisie reste
 PLAYER.level = 40
 E.CheckLevel()
-check(ns.cdb.guideId == other.guide, "zone choisie gardée malgré le niveau")
+check(ns.cdb.guideId == zg.id, "zone choisie gardée malgré le niveau")
+PLAYER.level = 26
+-- /reload : le guide « zone » est reconstruit à l'identique
+local savedId, savedIdx = zg.id, select(3, E.Current())
+ns.Guides[savedId] = nil
+FireEvent("PLAYER_LOGIN")
+ns.Fire("FP_READY")
+check(ns.Guides[savedId] and ns.cdb.guideId == savedId and select(3, E.Current()) == savedIdx, "après /reload : même zone, même étape")
+-- tout fait dans la zone : retour à la route conseillée
+for k = 1, #ns.Guides[savedId].steps do ns.cdb.skipped[savedId][k] = true end
+E.Refresh()
+check(ns.cdb.guideId ~= savedId and not ns.cdb.pinned and not ns.cdb.zoneChoice, "zone finie : retour à la route conseillée (" .. tostring(ns.cdb.guideId) .. ")")
 ns.ZonePanel:Refresh()
-PLAYER.level = 22
-SlashCmdList.QUESTWEAVER("zone " .. curKey)
-check(R.SegmentZone(ns.Guides[ns.cdb.guideId]) == curKey, "/qw zone " .. curKey .. " : retour dans cette zone")
-E.Load(other.guide, true)
-check(not ns.cdb.pinned, "chargement automatique : plus de zone épinglée")
+SlashCmdList.QUESTWEAVER("zone duskwood")
+check(ns.Guides[ns.cdb.guideId].zoneKey == "duskwood", "/qw zone duskwood")
+E.Load(start, true)
+check(not ns.cdb.pinned and not ns.cdb.zoneChoice, "chargement d'un segment : plus de zone choisie")
 print("zones OK")
 
 -- 5) quête en plusieurs parties (La légende de Stalvan) : la route ne fait que la partie 1

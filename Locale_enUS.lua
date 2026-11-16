@@ -3,6 +3,7 @@ local _, ns = ...
 -- Traduction anglaise (clients non francophones). Clés : textes français exacts du code ;
 -- les textes avec %d / %s servent aussi de modèles pour les textes déjà formatés (voir ns.Tr).
 ns.EN = {
+    ["Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."] = "Nothing left to do in this zone at your level: back to the suggested route.",
     ["son PNJ"] = "its NPC",
     ["Rendre « %s »"] = "Turn in '%s'",
     ["Clic : lancer la quête"] = "Click: start the quest",

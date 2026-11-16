@@ -34,6 +34,8 @@ OVERRIDES = json.load(open(OVERRIDES_PATH, encoding="utf-8")).get("quests", {}) 
 SAN = Counter()
 FOREVER_MIN = 90000         # premiers IDs de quêtes propres à Forever
 MAX_DROPPERS = 2            # quête lancée par un objet : seulement s'il ne tombe que sur 1-2 monstres
+import re as _re_bring
+BRING = _re_bring.compile(r"\b(bring|return)\s+(an?\s+|\d+\s+|the\s+)?[A-Z]")    # « bring 2 Massive Iron Axes »
 ERA_MAX = 9665              # dernier ID de quête Classic Era
 
 def sanitize():
@@ -311,6 +313,15 @@ def analyse(qid, faction, maps_order):
         DROP["métier, réputation, événement ou classe"] += 1
         return None                       # quêtes de classe : hors route générique
     start, finish = g(q, 2, {}), g(q, 3, {})
+    # objets à apporter, mais aucun objectif dans la base, au même PNJ : souvent un objet fabriqué
+    # (métier) ou acheté, introuvable sur le chemin. La route dirait « prendre » puis « rendre » tout de
+    # suite, ou enverrait vers un PNJ qui ne la propose pas sans le métier : écartée.
+    if not g(q, 10) and not g(q, 9):
+        txt = " ".join(str(v) for v in (g(q, 8) or {}).values()) if isinstance(g(q, 8), dict) else ""
+        same = set(lst(g(start, 1))) & set(lst(g(finish, 1)))
+        if same and BRING.search(txt):
+            DROP["objets à apporter inconnus (même PNJ)"] += 1
+            return None
     gc = [(("npc", n), all_pts(g(N.get(n), 7))) for n in lst(g(start, 1))] + \
          [(("obj", o), all_pts(g(O.get(o), 4))) for o in lst(g(start, 2))]
     ec = [(("npc", n), all_pts(g(N.get(n), 7))) for n in lst(g(finish, 1))] + \

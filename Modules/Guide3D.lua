@@ -14,6 +14,7 @@ local M = ns.RegisterModule({
         { key = "label", label = ns.Tr("Nom de l'étape sous le marqueur"), type = "check", default = true },
         { key = "trail", label = ns.Tr("Points au sol jusqu'à l'objectif"), type = "check", default = true },
         { key = "hideBlizzard", label = ns.Tr("Masquer le marqueur de Blizzard"), type = "check", default = true },
+        { key = "snap", label = ns.Tr("De près, se placer sur le PNJ (barre de nom)"), type = "check", default = true },
         { key = "yieldDaylight", label = ns.Tr("Laisser la place au marqueur de Daylight UI"), type = "check", default = true },
         { key = "scale", label = ns.Tr("Taille"), type = "slider", min = 0.6, max = 1.6, step = 0.05, default = 1 },
     },
@@ -206,6 +207,10 @@ f:SetScript("OnUpdate", function(self, dt)
         daylightOn = M:Opt("yieldDaylight") and daylightMarkerShown()
         eco = ns.Eco and ns.Eco() or false
         keepBlizzardHidden()
+        M.snapPlate = nil
+        local np = ns.Modules.nameplates
+        local d = C_Navigation.GetDistance and C_Navigation.GetDistance()
+        if np and np.NpcPlate and M.navNpc and d and not ns.IsSecret(d) and d < 40 then M.snapPlate = np.NpcPlate() end
     end
     if daylightOn then off(self) return end
     if C_Navigation.HasValidScreenPosition and not C_Navigation.HasValidScreenPosition() then off(self) return end
@@ -217,6 +222,17 @@ f:SetScript("OnUpdate", function(self, dt)
     if not cx or ns.IsSecret(cx) then off(self) return end
     local ns_ = nav:GetEffectiveScale() / UIParent:GetEffectiveScale()
     cx, cy = cx * ns_, cy * ns_
+    -- de près, le PNJ de l'étape a sa barre de nom à l'écran : on s'accroche à lui plutôt qu'au point
+    -- de la base de données (souvent décalé de quelques mètres dans Forever)
+    local snapped = false
+    if M:Opt("snap") and M.snapPlate then
+        local ok, px, py = pcall(M.snapPlate.GetCenter, M.snapPlate)
+        local ok2, sc = pcall(M.snapPlate.GetEffectiveScale, M.snapPlate)
+        if ok and ok2 and px and not ns.IsSecret(px) and not ns.IsSecret(sc) then
+            local k = sc / UIParent:GetEffectiveScale()
+            cx, cy, snapped = px * k, py * k + 20, true      -- juste au-dessus de la barre de nom
+        end
+    end
     if not lastX or math.abs(cx - lastX) > 0.5 or math.abs(cy - lastY) > 0.5 or self.visible == false then
         lastX, lastY = cx, cy
         self:ClearAllPoints()
@@ -250,7 +266,7 @@ f:SetScript("OnUpdate", function(self, dt)
 
     if self.edge:IsShown() or not self.disc:IsShown() then
         self.edge:Hide()
-        local showBeam = M:Opt("beam")
+        local showBeam = M:Opt("beam") and not M.snapped
         self.beam:SetShown(showBeam)
         self.beamGlow:SetShown(showBeam)
         self.disc:Show()
@@ -258,8 +274,13 @@ f:SetScript("OnUpdate", function(self, dt)
         self.icon:Show()
         self.label:SetShown(M:Opt("label"))
     end
-    -- points au sol : coupés en économie, sinon 30 fois/s
-    if eco then
+    if snapped ~= M.snapped then
+        M.snapped = snapped
+        local showBeam = not snapped and M:Opt("beam")
+        self.beam:SetShown(showBeam); self.beamGlow:SetShown(showBeam)
+    end
+    -- points au sol : coupés en économie ou accroché au PNJ, sinon 30 fois/s
+    if eco or snapped then
         if M.trailDots and M.trailDots > 0 then hideTrail() end
     elseif trailAcc >= 1 / 30 then
         trailAcc = 0
@@ -281,6 +302,7 @@ end)
 
 function M:Refresh()
     local step = ns.Engine.NavStep()
+    M.navNpc = step and (step.npcID or step.npc) and (step.type == "accept" or step.type == "turnin" or step.detour) or nil
     ns.SetStepIcon(f.icon, step, step and ICONS[step.type] or (ns.MEDIA .. "pin"))
     if step and not ICONS[step.type] then
         local a = ns.Theme().accent

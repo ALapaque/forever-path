@@ -21,6 +21,30 @@
     50
    ],
    "note": "Seasoned Wolf Kabobs (Bois de la Pénombre) : il faut Cuisine 50 pour que Chef Grual la propose (retour de joueur, 16/11/2026)"
+  },
+  "92818": {
+   "exclude": true,
+   "note": "2 Haches massives en fer (Forge) — Désolace (Magram / Gelkis) : rendre des objets fabriqués par un métier, quête non proposée sans le métier ou la réputation (retour de joueur, 16/11/2026)"
+  },
+  "92814": {
+   "exclude": true,
+   "note": "Masque de bandit blanc (Couture) — Désolace (Magram / Gelkis) : rendre des objets fabriqués par un métier, quête non proposée sans le métier ou la réputation (retour de joueur, 16/11/2026)"
+  },
+  "92817": {
+   "exclude": true,
+   "note": "Harnais barbare (Travail du cuir) — Désolace (Magram / Gelkis) : rendre des objets fabriqués par un métier, quête non proposée sans le métier ou la réputation (retour de joueur, 16/11/2026)"
+  },
+  "92755": {
+   "exclude": true,
+   "note": "3 Essences mystiques supérieures (Enchantement) — Désolace (Magram / Gelkis) : rendre des objets fabriqués par un métier, quête non proposée sans le métier ou la réputation (retour de joueur, 16/11/2026)"
+  },
+  "92754": {
+   "exclude": true,
+   "note": "3 Potions de protection contre l'Ombre supérieures (Alchimie) — Désolace (Magram / Gelkis) : rendre des objets fabriqués par un métier, quête non proposée sans le métier ou la réputation (retour de joueur, 16/11/2026)"
+  },
+  "92743": {
+   "exclude": true,
+   "note": "Couronne du conquérant, à rapporter des Terres ingrates — Désolace (Magram / Gelkis) : rendre des objets fabriqués par un métier, quête non proposée sans le métier ou la réputation (retour de joueur, 16/11/2026)"
   }
  }
 }

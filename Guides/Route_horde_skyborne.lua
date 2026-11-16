@@ -654,8 +654,6 @@ T 1434 @52.6,54.4 id=5641
 T 97265 @25.3,67.0 id=268705
 C 1369 @39.7,93.7
 T 1369 @75.0,68.2 id=5398
-A 92818 @69.8,77.9 id=253163 lvl=35
-T 92818 @69.8,77.9 id=253163
 ]],
 })
 
@@ -766,12 +764,6 @@ C 6142 @34.8,25.1 mobs=11562,4714,11563,4711,12347
 T 6142 @22.6,72.0 id=12031
 C 1370 @73.0,74.7
 T 1370 @36.2,79.2 id=5397
-A 92817 @34.5,86.9 id=253166 lvl=35
-T 92817 @34.5,86.9 id=253166
-A 92814 @35.7,92.2 id=253140 lvl=35
-T 92814 @35.7,92.2 id=253140
-A 92755 @69.8,78.0 id=253096 lvl=35
-T 92755 @69.8,78.0 id=253096
 ]],
 })
 
@@ -818,12 +810,9 @@ A 672 @74.7,36.3 id=2706 lvl=34
 C 672 @66.6,39.2 mobs=2559,2560
 T 672 @74.7,36.3 id=2706
 A 674 @74.7,36.3 id=2706 lvl=34
-A 97539 @73.4,36.9 id=12920 lvl=36
 T 674 @72.6,33.9 id=2792
 A 675 @72.6,33.9 id=2792 lvl=34
 T 675 @74.7,36.3 id=2706
-C 97539 @69.6,50.0 mobs=2563,2565
-T 97539 @73.4,36.9 id=12920
 C 676 @33.6,44.7 mobs=2562,2564
 C 671 @32.2,28.6 mobs=267065,2586,2589,2587
 A 663 @31.8,82.7 id=2766 lvl=35
@@ -831,6 +820,9 @@ T 663 @32.3,81.4 id=2610
 T 676 @74.2,33.9 id=2771
 T 671 @74.7,36.3 id=2706
 A 677 @74.2,33.9 id=2771 lvl=32
+A 97539 @73.4,36.9 id=12920 lvl=36
+C 97539 @69.6,50.0 mobs=2563,2565
+T 97539 @73.4,36.9 id=12920
 C 677 @68.5,79.5 mobs=2556,2554,2555
 T 677 @74.2,33.9 id=2771
 ]],
@@ -860,10 +852,10 @@ C 195 @31.7,23.5 mobs=686
 T 195 @35.7,10.8 id=715
 C 189 @24.8,10.9 mobs=701,588,671,597,595 danger=1
 C 581 @24.8,10.9 mobs=701,588,671,597,595 danger=1
-A 188 @35.6,10.6 id=717 lvl=37
-C 188 @32.2,17.4 mobs=729
-T 188 @35.6,10.6 id=717
 T 581 @32.2,27.7 id=2497 danger=1
+T 189 @27.0,77.1 id=737 danger=1
+T 213 @27.0,77.1 id=737
+T 577 @28.3,77.6 id=2495
 A 569 @32.2,28.9 id=2464 lvl=37
 A 582 @32.2,27.7 id=2497 lvl=37
 A 596 @32.3,27.7 id=2519 lvl=37
@@ -873,13 +865,13 @@ C 569 @37.1,30.8 mobs=1142,1144
 T 569 @32.2,28.9 id=2464
 C 629 @24.8,23.0
 T 629 @32.3,27.7 id=2519
+A 188 @35.6,10.6 id=717 lvl=37
+C 188 @32.2,17.4 mobs=729
+T 188 @35.6,10.6 id=717
 C 596 @24.8,10.9 mobs=701,588,671,597,595
 C 582 @23.3,9.9 mobs=671
 T 582 @32.2,27.7 id=2497
 T 596 @32.3,27.7 id=2519
-T 189 @27.0,77.1 id=737 danger=1
-T 213 @27.0,77.1 id=737
-T 577 @28.3,77.6 id=2495
 ]],
 })
 
@@ -907,10 +899,10 @@ ns.RegisterGuide({
     name = "Rives Claires 36-37",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 36, maxLevel = 37,
-    next = "horde-skyborne-37-arathi-2",
+    next = "horde-skyborne-36-arathi-2",
     text = [[
 M riverglades
-G "Rejoins Rives Claires" @59.4,45.6 r=40 upto=39
+G "Rejoins Rives Claires" @59.4,45.6 r=40 upto=38
 T 95141 @59.4,45.6 id=256418
 A 93786 @59.4,45.6 id=256418 lvl=36
 A 96103 @61.6,58.8 id=263316 lvl=38
@@ -919,35 +911,30 @@ A 95062 @77.1,52.9 id=255897 lvl=36
 T 95062 @59.4,45.6 id=256418
 C 93786 @45.9,80.8 mobs=256383
 T 93786 @59.4,45.6 id=256418
-A 93788 @59.9,46.0 id=256657 lvl=38
-C 93788 @40.4,62.7 mobs=256434
-T 93788 @59.9,46.0 id=256657
-A 93976 @59.9,46.0 id=256657 lvl=36
-T 93976 @77.1,52.9 id=255897
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-37-arathi-2",
-    name = "Hautes-terres d'Arathi 37-38",
+    id = "horde-skyborne-36-arathi-2",
+    name = "Hautes-terres d'Arathi 36-37",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 37, maxLevel = 38,
+    minLevel = 36, maxLevel = 37,
     next = "horde-skyborne-37-swamp",
     text = [[
 M arathi
-G "Rejoins Hautes-terres d'Arathi" @74.2,33.9 r=40 upto=39
+G "Rejoins Hautes-terres d'Arathi" @74.7,36.3 r=40 upto=39
 T 638 @73.8,34.0 id=2703
-A 678 @74.2,33.9 id=2771 lvl=38
 A 701 @74.7,36.3 id=2706 lvl=37
 A 95143 @74.7,36.3 id=2706 lvl=38
-A 642 @62.5,33.7 lvl=37
-C 642 @84.2,32.9 mobs=2572,2574,2573
-T 642 @84.3,30.9
+A 642 @62.5,33.7 lvl=37 danger=1
+C 642 @84.2,32.9 mobs=2572,2574,2573 danger=1
+T 642 @84.3,30.9 danger=1
 A 651 @84.3,30.9 lvl=38 danger=1
+A 678 @74.2,33.9 id=2771 lvl=38
 C 701 @52.0,67.4 mobs=2561
 C 678 @53.1,76.6 mobs=2566,2567
-T 678 @74.2,33.9 id=2771
 T 701 @74.7,36.3 id=2706
+T 678 @74.2,33.9 id=2771
 A 702 @74.7,36.3 id=2706 lvl=37
 T 702 @72.6,33.9 id=2792
 A 847 @72.6,33.9 id=2792 lvl=37
@@ -962,7 +949,7 @@ ns.RegisterGuide({
     name = "Marais des Chagrins 37-38",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 37, maxLevel = 38,
-    next = "horde-skyborne-37-badlands-2",
+    next = "horde-skyborne-37-riverglades-2",
     text = [[
 M swamp
 G "Rejoins Marais des Chagrins" @26.0,31.4 r=40 upto=39
@@ -982,14 +969,35 @@ A 93464 @26.0,31.4 id=1776 lvl=38
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-37-badlands-2",
-    name = "Terres ingrates 37-38",
+    id = "horde-skyborne-37-riverglades-2",
+    name = "Rives Claires 37-38",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 37, maxLevel = 38,
-    next = "horde-skyborne-38-riverglades-2",
+    next = "horde-skyborne-38-badlands-2",
+    text = [[
+M riverglades
+L 38 "Tue des monstres autour de toi jusqu'au niveau 38"
+G "Rejoins Rives Claires" @59.9,46.0 r=40 upto=40
+T 95143 @58.1,45.3 id=263190
+A 93788 @59.9,46.0 id=256657 lvl=38
+A 96104 @60.5,47.9 id=258031 lvl=39
+C 96104 @65.0,48.4 mobs=263348
+T 96104 @60.5,47.9 id=258031
+C 93788 @40.4,62.7 mobs=256434
+T 93788 @59.9,46.0 id=256657
+A 93976 @59.9,46.0 id=256657 lvl=36
+T 93976 @77.1,52.9 id=255897
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-38-badlands-2",
+    name = "Terres ingrates 38-39",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 38, maxLevel = 39,
+    next = "horde-skyborne-38-riverglades-3",
     text = [[
 M badlands
-L 38 "Tue des monstres autour de toi jusqu'au niveau 38"
 G "Rejoins Terres ingrates" @6.5,47.2 r=40 upto=40
 T 1418 @6.5,47.2 id=5394
 A 1420 @6.5,47.2 id=5394 lvl=40
@@ -1005,7 +1013,7 @@ T 711 @25.9,44.9 id=2921 danger=1
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-38-riverglades-2",
+    id = "horde-skyborne-38-riverglades-3",
     name = "Rives Claires 38-39",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 38, maxLevel = 39,
@@ -1013,11 +1021,10 @@ ns.RegisterGuide({
     text = [[
 M riverglades
 L 39 "Tue des monstres autour de toi jusqu'au niveau 39"
-G "Rejoins Rives Claires" @60.5,47.9 r=40 upto=41
-T 95143 @58.1,45.3 id=263190
-A 96104 @60.5,47.9 id=258031 lvl=39
-C 96104 @65.0,48.4 mobs=263348
-T 96104 @60.5,47.9 id=258031
+G "Rejoins Rives Claires" @79.0,54.2 r=40 upto=41
+A 95121 @79.0,54.2 id=259962 lvl=40 danger=1
+C 95121 @73.0,68.4 mobs=255901,256807,256801,255898,255899 danger=1
+T 95121 @79.0,54.2 id=259962 danger=1
 A 96107 @60.5,47.9 id=258031 lvl=40
 C 96107 @65.6,60.7 mobs=263343
 T 96107 @60.5,47.9 id=258031
@@ -1042,9 +1049,6 @@ T 94535 @59.9,46.0 id=256657
 A 95163 @70.7,28.1 id=256728 lvl=40
 C 95163 @70.3,36.2 mobs=258331
 T 95163 @70.7,28.1 id=256728
-A 95121 @79.0,54.2 id=259962 lvl=40 danger=1
-C 95121 @73.0,68.4 mobs=255901,256807,256801,255898,255899 danger=1
-T 95121 @79.0,54.2 id=259962 danger=1
 ]],
 })
 
@@ -1053,7 +1057,7 @@ ns.RegisterGuide({
     name = "Vallée de Strangleronce 39-40",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 39, maxLevel = 40,
-    next = "horde-skyborne-40-riverglades-3",
+    next = "horde-skyborne-40-riverglades-4",
     text = [[
 M stv
 G "Rejoins Vallée de Strangleronce" @35.5,10.6 r=40 upto=42
@@ -1067,18 +1071,15 @@ A 95748 @32.3,27.7 id=2519 lvl=40
 A 97453 @32.8,28.4 id=269166 lvl=38
 C 97453 @34.8,29.1 mobs=269175
 T 97453 @32.7,29.2 id=1148
-A 584 @32.2,27.7 id=2497 lvl=41
-A 196 @35.7,10.8 id=715 lvl=41
 C 341 @24.3,10.8 mobs=667,696,780,1096,701
 C 342 @24.5,11.1 mobs=667,696,780,1096,701
 C 95748 @22.9,12.0
-C 584 @23.5,8.8 mobs=1061,1062
 T 341 @35.7,10.5 id=716
 T 342 @35.7,10.5 id=716
+A 196 @35.7,10.8 id=715 lvl=41
 H "Utilise ta pierre de foyer" @31.5,29.8 id=5814
+A 584 @32.2,27.7 id=2497 lvl=41
 T 95748 @32.3,27.7 id=2519
-T 584 @32.2,27.6
-A 585 @32.2,27.6 lvl=40
 A 95770 @32.3,27.7 id=2519 lvl=40
 A 95773 @32.2,28.9 id=2464 lvl=37
 C 95770 @22.4,27.2
@@ -1088,12 +1089,15 @@ T 95773 @32.2,28.9 id=2464
 C 196 @31.1,42.7 mobs=687
 C 339 @46.1,39.9 mobs=667,696,780,1096,701
 C 340 @46.3,40.0 mobs=667,696,780,1096,701
-C 585 @46.1,32.3
 C 192 @49.2,22.7 mobs=684
 T 192 @35.5,10.6 id=718
 T 339 @35.7,10.5 id=716
 T 340 @35.7,10.5 id=716
 T 196 @35.7,10.8 id=715
+C 584 @23.5,8.8 mobs=1061,1062
+T 584 @32.2,27.6
+A 585 @32.2,27.6 lvl=40
+C 585 @46.1,32.3
 T 585 @32.2,27.6
 A 595 @28.1,76.2 id=2490 lvl=41
 A 606 @27.8,77.1 id=2501 lvl=41
@@ -1111,11 +1115,11 @@ T 607 @27.8,77.1 id=2501
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-40-riverglades-3",
+    id = "horde-skyborne-40-riverglades-4",
     name = "Rives Claires 40-41",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 40, maxLevel = 41,
-    next = "horde-skyborne-41-desolace-3",
+    next = "horde-skyborne-41-dustwallow-2",
     text = [[
 M riverglades
 G "Rejoins Rives Claires" @73.4,24.7 r=40 upto=43
@@ -1130,14 +1134,14 @@ C 96105 @59.8,52.8 group=1 mobs=263315
 A 95260 @72.3,61.9 lvl=42
 T 95260 @80.0,52.5 id=260231
 A 95118 @79.5,52.7 id=259961 lvl=41
-A 95254 @78.5,53.9 lvl=42
-A 95120 @78.5,53.9 group=1 lvl=42
-C 95120 @76.8,72.8 group=1 mobs=257001
-C 95254 @82.9,51.7 mobs=260235
-T 95254 @79.0,54.2 id=259962
-T 95120 @79.5,52.7 group=1 id=259961
 C 95118 @73.7,67.0 mobs=256801,255898
 T 95118 @79.5,52.7 id=259961
+A 95254 @78.5,53.9 lvl=42
+A 95120 @78.5,53.9 group=1 lvl=42
+C 95254 @82.9,51.7 mobs=260235
+T 95254 @79.0,54.2 id=259962
+C 95120 @76.8,72.8 group=1 mobs=257001
+T 95120 @79.5,52.7 group=1 id=259961
 A 95792 @30.2,69.1 id=262399 lvl=42
 C 95792 @30.1,72.2 mobs=262473,262477
 C 94533 @17.6,70.4 group=1 mobs=255906
@@ -1146,43 +1150,14 @@ T 95792 @30.2,69.1 id=262399
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-41-desolace-3",
-    name = "Désolace 41-42",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 41, maxLevel = 42,
-    next = "horde-skyborne-41-dustwallow-2",
-    text = [[
-M desolace
-G "Rejoins Désolace" @23.3,72.9 r=40 upto=43
-A 6143 @23.3,72.9 id=12340 lvl=36
-A 94895 @23.4,72.6 lvl=38
-A 6161 @36.1,30.4 lvl=36
-T 93464 @38.9,27.2 id=11863
-A 93465 @38.9,27.2 id=11863 lvl=40
-C 6143 @36.3,23.4 mobs=4714,4711,4712
-C 6161 @29.0,9.3 mobs=11562,4714,11563,4711,4719
-T 6161 @30.0,8.7
-A 5501 @62.3,39.0 id=11438 lvl=39
-C 5501 @52.8,59.1
-T 5501 @62.3,39.0 id=11438
-A 92743 @75.0,68.2 id=5398 lvl=40
-T 92743 @75.0,68.2 id=5398
-C 93465 @81.0,76.8 mobs=255003
-T 93465 @38.9,27.2 id=11863
-A 93678 @38.9,27.2 id=11863 lvl=40
-T 6143 @23.3,72.9 id=12340
-]],
-})
-
-ns.RegisterGuide({
     id = "horde-skyborne-41-dustwallow-2",
     name = "Marécage d'Âprefange 41-42",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 41, maxLevel = 42,
-    next = "horde-skyborne-42-feralas",
+    next = "horde-skyborne-41-desolace-3",
     text = [[
 M dustwallow
-G "Rejoins Marécage d'Âprefange" @35.2,30.7 r=40 upto=44
+G "Rejoins Marécage d'Âprefange" @35.2,30.7 r=40 upto=43
 A 1201 @35.2,30.7 id=4791 lvl=35
 A 1322 @36.5,30.8 id=5087 lvl=37
 A 1177 @35.1,38.3 id=4503 lvl=36
@@ -1200,51 +1175,60 @@ C 1177 @57.5,15.8 mobs=4359,4361,4362,4363,14230
 T 1177 @35.1,38.3 id=4503
 C 1206 @32.0,21.9 mobs=4379,4376,4378,4380
 T 1206 @55.4,26.3 id=4792
-A 1166 @36.3,31.4 id=4500 lvl=43
-A 1168 @37.4,31.4 id=4502 lvl=43 danger=1
-A 1169 @37.1,33.1 id=4501 lvl=43
-A 98192 @36.4,30.9 id=4883 lvl=43
-C 98192 @32.6,65.3 mobs=4357,4356
-C 1166 @44.5,66.0
-C 1168 @44.0,66.2 mobs=4331,4329,4328 danger=1
-C 1169 @46.8,67.2 mobs=4323,4324
-T 1166 @36.3,31.4 id=4500
-T 1168 @37.4,31.4 id=4502 danger=1
-T 1169 @37.1,33.1 id=4501
-T 98192 @36.4,30.9 id=4883
-A 1170 @37.1,33.1 id=4501 lvl=43
-T 1170 @36.3,31.4 id=4500
-A 1171 @36.3,31.4 id=4500 lvl=43
-T 1171 @37.1,33.1 id=4501
 C 1202 @71.5,51.2
 T 1202 @35.2,30.7 id=4791
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-42-feralas",
-    name = "Féralas 42-43",
+    id = "horde-skyborne-41-desolace-3",
+    name = "Désolace 41-42",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 42, maxLevel = 43,
+    minLevel = 41, maxLevel = 42,
+    next = "horde-skyborne-41-swamp-2",
+    text = [[
+M desolace
+G "Rejoins Désolace" @23.3,72.9 r=40 upto=43
+A 6143 @23.3,72.9 id=12340 lvl=36
+A 94895 @23.4,72.6 lvl=38
+A 1373 @36.2,79.2 id=5397 lvl=37
+A 6161 @36.1,30.4 lvl=36
+T 93464 @38.9,27.2 id=11863
+A 93465 @38.9,27.2 id=11863 lvl=40
+C 6143 @36.3,23.4 mobs=4714,4711,4712
+C 6161 @29.0,9.3 mobs=11562,4714,11563,4711,4719
+T 6161 @30.0,8.7
+A 5501 @62.3,39.0 id=11438 lvl=39
+C 5501 @52.8,59.1
+T 5501 @62.3,39.0 id=11438
+C 93465 @81.0,76.8 mobs=255003
+T 93465 @38.9,27.2 id=11863
+A 93678 @38.9,27.2 id=11863 lvl=40
+T 6143 @23.3,72.9 id=12340
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-41-swamp-2",
+    name = "Marais des Chagrins 41-42",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 41, maxLevel = 42,
     next = "horde-skyborne-42-stv-5",
     text = [[
-M feralas
-G "Rejoins Féralas" @74.9,42.5 r=40 upto=44
-T 95033 @74.4,43.4 id=8115
-A 2862 @74.9,42.5 id=7875 lvl=42
-A 2975 @75.8,43.6 id=7777 lvl=43
-A 92878 @74.9,44.0 group=1 id=11752 lvl=43
-C 2862 @70.4,54.6 mobs=5254,5255,5251,5249,5253
-T 2862 @74.9,42.5 id=7875
-A 2863 @74.9,42.5 id=7875 lvl=43 danger=1
-C 2975 @75.0,27.4 mobs=5232,5229,5237
-T 2975 @75.8,43.6 id=7777
-C 2863 @65.6,52.5 mobs=5258 danger=1
-T 2863 @74.9,42.5 id=7875 danger=1
-A 2902 @74.9,42.5 id=7875 lvl=43
-T 2902 @71.6,55.9
-A 2903 @71.6,55.9 lvl=43
-T 2903 @74.9,42.5 id=7875
+M swamp
+G "Rejoins Marais des Chagrins" @44.7,57.2 r=40 upto=44
+T 1420 @47.7,55.2 id=1442
+A 698 @44.7,57.2 id=5591 lvl=40
+C 698 @55.2,51.1 mobs=1087,1082
+C 1373 @65.1,22.0 mobs=5622
+A 1424 @47.9,54.8 id=1443 lvl=43
+C 1424 @70.5,50.4
+T 1424 @47.9,54.8 id=1443
+T 93678 @26.0,31.4 id=1776
+T 698 @81.3,81.0 id=5592
+A 699 @81.3,81.0 id=5592 lvl=42
+C 699 @81.9,30.3 mobs=1087
+T 699 @81.3,81.0 id=5592
 ]],
 })
 
@@ -1253,7 +1237,7 @@ ns.RegisterGuide({
     name = "Vallée de Strangleronce 42-43",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 42, maxLevel = 43,
-    next = "horde-skyborne-43-swamp-2",
+    next = "horde-skyborne-42-badlands-3",
     text = [[
 M stv
 H "Utilise ta pierre de foyer" @31.5,29.8 id=5814
@@ -1270,115 +1254,62 @@ C 572 @31.1,42.7 mobs=687
 T 572 @32.1,29.2 id=2465
 A 571 @32.1,29.2 id=2465 lvl=41
 C 571 @33.2,66.0 mobs=1557
-A 576 @28.6,75.9 id=2493 lvl=42 danger=1
-A 609 @27.8,77.1 id=2501 lvl=44
-A 2872 @27.8,77.1 id=2501 lvl=45
-T 628 @28.3,77.6 group=1 id=2495
-A 209 @27.0,77.1 id=737 lvl=42
-A 587 @26.9,77.3 id=2488 lvl=41 danger=1
+A 209 @27.0,77.1 id=737 lvl=42 danger=1
 A 604 @27.2,77.0 id=2487 lvl=43
-A 617 @26.8,76.4 id=2494 lvl=43
-A 2864 @26.9,77.2 id=773 lvl=45
+A 617 @26.8,76.4 id=2494 lvl=43 danger=1
 C 604 @27.4,82.8 mobs=1563
 T 604 @27.2,77.0 id=2487
-C 576 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
-C 587 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
-T 587 @26.9,77.3 id=2488 danger=1
-T 576 @28.6,75.9 id=2493 danger=1
-C 609 @35.1,51.6 mobs=2535,2536,2537
-C 209 @46.4,40.1 mobs=667,696,780,783,669
+T 628 @28.3,77.6 group=1 id=2495
 T 571 @32.1,29.2 id=2465
-A 573 @32.1,29.2 id=2465 lvl=44
-C 617 @23.6,27.7 mobs=262397,1907
-C 573 @27.1,62.2 mobs=1907
-T 609 @27.8,77.1 id=2501
-T 209 @27.0,77.1 id=737
-T 617 @26.8,76.4 id=2494
-T 573 @32.1,29.2 id=2465
+C 617 @23.6,27.7 mobs=262397,1907 danger=1
+C 209 @46.4,40.1 mobs=667,696,780,783,669 danger=1
+T 209 @27.0,77.1 id=737 danger=1
+T 617 @26.8,76.4 id=2494 danger=1
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-43-swamp-2",
-    name = "Marais des Chagrins 43-44",
+    id = "horde-skyborne-42-badlands-3",
+    name = "Terres ingrates 42-43",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 43, maxLevel = 44,
-    next = "horde-skyborne-44-badlands-3",
-    text = [[
-M swamp
-G "Rejoins Marais des Chagrins" @44.7,57.2 r=40 upto=46
-B "Lie ta pierre de foyer à l'auberge" @45.2,56.7 id=6930
-T 1420 @47.7,55.2 id=1442
-A 698 @44.7,57.2 id=5591 lvl=40
-A 1424 @47.9,54.8 id=1443 lvl=43
-A 1430 @44.7,57.2 id=5591 lvl=44
-C 698 @55.2,51.1 mobs=1087,1082
-C 1424 @70.5,50.4
-T 1424 @47.9,54.8 id=1443
-A 1429 @47.9,54.8 id=1443 lvl=44
-T 93678 @26.0,31.4 id=1776
-T 698 @81.3,81.0 id=5592
-A 699 @81.3,81.0 id=5592 lvl=42
-C 1430 @93.9,62.8 mobs=1088
-C 699 @81.9,30.3 mobs=1087
-T 699 @81.3,81.0 id=5592
-A 1422 @81.3,81.0 id=5592 lvl=45
-T 1422 @83.8,80.4 id=5593
-A 1426 @83.8,80.4 id=5593 lvl=43
-C 1426 @84.3,88.6 mobs=750,751,747
-T 1426 @83.8,80.4 id=5593
-A 1427 @83.8,80.4 id=5593 lvl=43
-T 1427 @81.3,81.0 id=5592
-A 1428 @83.8,80.4 id=5593 lvl=45
-C 1428 @63.2,84.8 mobs=750,751,752
-T 1428 @83.8,80.4 id=5593
-H "Utilise ta pierre de foyer" @45.2,56.7 id=6930
-T 1430 @44.7,57.2 id=5591
-]],
-})
-
-ns.RegisterGuide({
-    id = "horde-skyborne-44-badlands-3",
-    name = "Terres ingrates 44-45",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 44, maxLevel = 45,
-    next = "horde-skyborne-44-riverglades-4",
+    minLevel = 42, maxLevel = 43,
+    next = "horde-skyborne-43-riverglades-5",
     text = [[
 M badlands
-G "Rejoins Terres ingrates" @2.9,45.6 r=40 upto=46
+G "Rejoins Terres ingrates" @2.9,45.6 r=40 upto=45
 A 782 @2.9,45.6 id=1068 lvl=43
 A 1419 @6.5,47.2 id=5394 lvl=40
-A 2258 @2.4,46.1 id=6868 lvl=39
+A 2258 @2.4,46.1 id=6868 lvl=39 danger=1
 A 712 @25.9,44.9 id=2921 lvl=42
-A 703 @42.4,52.9 id=2817 lvl=40
 A 1108 @42.2,52.7 id=4618 lvl=39
 C 1108 @50.2,68.3 mobs=4856,4851,2893,2894,2892
 C 1419 @55.8,56.7 mobs=2729,2728,2727,2730
-C 2258 @58.8,54.5 mobs=2729,2728,92,2727,2736
+C 2258 @58.8,54.5 mobs=2729,2728,92,2727,2736 danger=1
 T 1108 @42.2,52.7 id=4618
-C 703 @16.2,60.1 mobs=4692,4693,5429,5428,2578
+A 703 @42.4,52.9 id=2817 lvl=40 danger=1
+C 703 @16.2,60.1 mobs=4692,4693,5429,5428,2578 danger=1
 C 782 @12.6,75.5 mobs=2944
 C 712 @4.0,79.9 mobs=2736
 T 782 @2.9,45.6 id=1068
 T 1419 @6.5,47.2 id=5394
-T 2258 @2.4,46.1 id=6868
+T 2258 @2.4,46.1 id=6868 danger=1
 A 2202 @2.4,46.1 id=6868 lvl=42
 T 712 @25.9,44.9 id=2921
 C 2202 @34.0,24.4
-T 703 @42.4,52.9 id=2817
+T 703 @42.4,52.9 id=2817 danger=1
 T 2202 @2.4,46.1 id=6868
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-44-riverglades-4",
-    name = "Rives Claires 44-45",
+    id = "horde-skyborne-43-riverglades-5",
+    name = "Rives Claires 43-44",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 44, maxLevel = 45,
-    next = "horde-skyborne-45-stv-6",
+    minLevel = 43, maxLevel = 44,
+    next = "horde-skyborne-43-stv-6",
     text = [[
 M riverglades
-G "Rejoins Rives Claires" @79.5,52.7 r=40 upto=47
+G "Rejoins Rives Claires" @79.5,52.7 r=40 upto=45
 T 94895 @77.1,52.9 id=255897
 A 95119 @79.5,52.7 id=259961 lvl=43
 A 95288 @77.1,52.9 id=255897 lvl=43
@@ -1386,10 +1317,10 @@ C 95119 @87.5,34.3 mobs=257901,257910
 C 95288 @87.5,34.3 mobs=257901,257910
 T 95119 @79.5,52.7 id=259961
 T 95288 @77.1,52.9 id=255897
-A 95122 @79.5,52.7 id=259961 lvl=44
+A 95122 @79.5,52.7 id=259961 lvl=44 danger=1
 A 95293 @77.1,52.9 id=255897 lvl=42
-C 95122 @78.5,34.3 mobs=257915,257916
-T 95122 @79.5,52.7 id=259961
+C 95122 @78.5,34.3 mobs=257915,257916 danger=1
+T 95122 @79.5,52.7 id=259961 danger=1
 T 95293 @91.3,39.7 id=260390
 A 95294 @91.2,39.8 id=260391 lvl=42
 T 95294 @77.1,52.9 id=255897
@@ -1404,47 +1335,78 @@ T 95882 @60.5,47.9 id=258031
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-45-stv-6",
-    name = "Vallée de Strangleronce 45-46",
+    id = "horde-skyborne-43-stv-6",
+    name = "Vallée de Strangleronce 43-44",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 45, maxLevel = 46,
-    next = "horde-skyborne-45-tanaris",
+    minLevel = 43, maxLevel = 44,
+    next = "horde-skyborne-44-swamp-3",
     text = [[
 M stv
-G "Rejoins Vallée de Strangleronce" @27.1,77.2 r=40 upto=47
-A 621 @27.1,77.2 id=2498 lvl=44
+H "Utilise ta pierre de foyer" @31.5,29.8 id=5814
+A 573 @32.1,29.2 id=2465 lvl=44
+C 573 @27.1,62.2 mobs=1907
 T 95295 @27.4,74.1 id=3945
 A 95322 @27.4,74.1 id=3945 lvl=40
 T 95322 @27.4,74.1 id=3945
 A 95325 @27.4,74.1 id=3945 lvl=40
-C 621 @39.7,58.3 mobs=1491,1488,1490,1489,2534
-T 621 @27.1,77.2 id=2498
-A 586 @32.2,27.6 lvl=46
+A 576 @28.6,75.9 id=2493 lvl=42 danger=1
+A 609 @27.8,77.1 id=2501 lvl=44
+A 2872 @27.8,77.1 id=2501 lvl=45
+A 587 @26.9,77.3 id=2488 lvl=41 danger=1
+A 2864 @26.9,77.2 id=773 lvl=45
+C 576 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
+C 587 @30.0,89.3 mobs=1565,1653,1564,1563,4505 danger=1
+T 587 @26.9,77.3 id=2488 danger=1
+A 621 @27.1,77.2 id=2498 lvl=44 danger=1
+T 576 @28.6,75.9 id=2493 danger=1
+C 621 @39.7,58.3 mobs=1491,1488,1490,1489,2534 danger=1
+C 609 @35.1,51.6 mobs=2535,2536,2537
+T 573 @32.1,29.2 id=2465
 T 95325 @42.8,18.5
 A 95326 @42.8,18.5 lvl=39
 C 95326 @43.5,20.2 mobs=260429
-C 586 @46.8,43.5 mobs=783,669,781,1059
-T 586 @32.2,27.6
-A 588 @32.2,27.6 lvl=45
-T 588 @32.3,27.7 id=2519
-A 589 @32.3,27.7 id=2519 lvl=45
-C 589 @43.1,47.8 mobs=1551
-T 589 @32.3,27.7 id=2519
 T 95326 @27.4,74.1 id=3945
+T 609 @27.8,77.1 id=2501
+T 621 @27.1,77.2 id=2498 danger=1
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-45-tanaris",
-    name = "Tanaris 45-46",
+    id = "horde-skyborne-44-swamp-3",
+    name = "Marais des Chagrins 44-45",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 45, maxLevel = 46,
-    next = "horde-skyborne-46-feralas-2",
+    minLevel = 44, maxLevel = 45,
+    next = "horde-skyborne-44-tanaris",
+    text = [[
+M swamp
+G "Rejoins Marais des Chagrins" @81.3,81.0 r=40 upto=46
+A 1422 @81.3,81.0 id=5592 lvl=45
+T 1422 @83.8,80.4 id=5593
+A 1426 @83.8,80.4 id=5593 lvl=43
+C 1426 @84.3,88.6 mobs=750,751,747
+T 1426 @83.8,80.4 id=5593
+A 1427 @83.8,80.4 id=5593 lvl=43
+T 1427 @81.3,81.0 id=5592
+A 1428 @83.8,80.4 id=5593 lvl=45
+C 1428 @63.2,84.8 mobs=750,751,752
+T 1428 @83.8,80.4 id=5593
+A 1430 @44.7,57.2 id=5591 lvl=44
+C 1430 @93.9,62.8 mobs=1088
+T 1430 @44.7,57.2 id=5591
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-44-tanaris",
+    name = "Tanaris 44-45",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 44, maxLevel = 45,
+    next = "horde-skyborne-45-dustwallow-3",
     text = [[
 M tanaris
-G "Rejoins Tanaris" @66.8,22.3 r=40 upto=48
-T 2872 @67.1,24.0 id=7881
+G "Rejoins Tanaris" @66.8,22.3 r=40 upto=47
 T 95296 @67.6,23.1 id=260405
+T 2872 @67.1,24.0 id=7881
 A 2873 @67.1,24.0 id=7881 lvl=45
 A 2875 @66.8,22.3 lvl=45
 A 8365 @66.6,22.3 id=15165 lvl=45
@@ -1453,16 +1415,11 @@ A 95383 @67.6,23.1 id=260405 lvl=40
 T 95383 @67.3,24.0 id=260857
 A 95312 @67.3,24.0 id=260857 lvl=40
 B "Lie ta pierre de foyer à l'auberge" @52.5,27.9 id=7733
+T 2864 @51.6,26.8 id=7876
 T 95312 @51.7,27.8 id=220984
 A 1690 @52.5,28.5 id=7407 lvl=43
 A 1707 @52.5,28.4 id=7408 lvl=44
-A 2781 @51.8,27.0 lvl=46
 A 95321 @51.7,27.8 id=220984 lvl=40
-T 2864 @51.6,26.8 id=7876
-A 95753 @43.0,41.3 id=222856 lvl=45
-C 95753 @45.7,37.8
-T 95753 @45.7,37.7 id=222857
-C 2781 @61.8,38.2 mobs=7847
 C 1690 @63.5,31.3 mobs=5616,5618
 C 1707 @63.5,31.3 mobs=5616,5617,5615,5618,5623
 C 95321 @67.3,24.0 mobs=260857
@@ -1470,11 +1427,15 @@ T 95321 @67.3,24.0 id=260857
 H "Utilise ta pierre de foyer" @52.5,27.9 id=7733
 T 1690 @52.5,28.5 id=7407
 T 1707 @52.5,28.4 id=7408
-T 2781 @52.5,28.5 id=7407
 A 1691 @52.5,28.5 id=7407 lvl=44
+A 2781 @51.8,27.0 lvl=46
 C 1691 @59.8,37.8 mobs=5617,5615,5623
+C 2781 @61.8,38.2 mobs=7847
 T 1691 @52.5,28.5 id=7407
-A 97530 @67.1,23.9 id=7882 lvl=47 danger=1
+T 2781 @52.5,28.5 id=7407
+A 95753 @43.0,41.3 id=222856 lvl=45
+C 95753 @45.7,37.8
+T 95753 @45.7,37.7 id=222857
 C 2873 @72.2,46.8
 C 2875 @73.4,47.1 mobs=7883
 C 8365 @73.5,47.2 mobs=7858,7857,7856,7855,7883
@@ -1483,66 +1444,120 @@ T 2873 @67.1,24.0 id=7881
 T 2875 @67.1,23.9 id=7882
 T 8365 @66.6,22.3 id=15165
 T 8366 @67.1,23.9 id=7882
-C 97530 @40.3,52.5 mobs=5474,5472,5475,5471,5473 danger=1
-T 97530 @67.1,23.9 id=7882 danger=1
+A 2874 @67.1,24.0 id=7881 lvl=45
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-46-feralas-2",
-    name = "Féralas 46-47",
+    id = "horde-skyborne-45-dustwallow-3",
+    name = "Marécage d'Âprefange 45-46",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 46, maxLevel = 47,
-    next = "horde-skyborne-46-dustwallow-3",
-    text = [[
-M feralas
-G "Rejoins Féralas" @74.4,42.9 r=40 upto=48
-A 2822 @74.4,42.9 id=7854 lvl=46 danger=1
-A 3121 @74.4,43.4 id=8115 lvl=45
-A 7730 @74.9,42.5 id=7875 lvl=45
-A 7731 @74.9,42.5 id=7875 lvl=47
-A 2973 @75.9,42.7 id=4544 lvl=45
-A 2980 @75.8,43.6 id=7777 lvl=44
-C 2973 @67.4,47.5 mobs=5278,7997
-C 92878 @67.5,39.0 group=1 mobs=222286
-T 2973 @75.9,42.7 id=4544
-A 2974 @75.9,42.7 id=4544 lvl=45
-T 92878 @74.9,44.0 group=1 id=11752
-C 2974 @67.0,46.9 mobs=7725,7726,7727
-C 2980 @60.9,56.2 mobs=5236,5240,5234
-C 2822 @51.8,58.9 mobs=5292,5293,5295,5346 danger=1
-C 7730 @73.7,63.1 mobs=5247,5244,5245,5246,14661
-C 7731 @77.0,61.6 mobs=14661
-T 7730 @74.9,42.5 id=7875
-T 7731 @74.9,42.5 id=7875
-T 2980 @75.8,43.6 id=7777
-T 2974 @75.9,42.7 id=4544
-A 2976 @75.9,42.7 id=4544 lvl=45
-A 7732 @74.9,42.5 id=7875 lvl=48
-T 2822 @74.4,42.9 id=7854 danger=1
-]],
-})
-
-ns.RegisterGuide({
-    id = "horde-skyborne-46-dustwallow-3",
-    name = "Marécage d'Âprefange 46-47",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 46, maxLevel = 47,
-    next = "horde-skyborne-47-orgrimmar",
+    minLevel = 45, maxLevel = 46,
+    next = "horde-skyborne-46-feralas",
     text = [[
 M dustwallow
-G "Rejoins Marécage d'Âprefange" @41.0,75.7 r=40 upto=49
+G "Rejoins Marécage d'Âprefange" @36.3,31.4 r=40 upto=48
+A 1166 @36.3,31.4 id=4500 lvl=43
+A 1168 @37.4,31.4 id=4502 lvl=43
+A 1169 @37.1,33.1 id=4501 lvl=43
+A 98192 @36.4,30.9 id=4883 lvl=43
+C 98192 @32.6,65.3 mobs=4357,4356
 A 98205 @41.0,75.7 id=270723 lvl=44
 A 98215 @41.0,75.7 id=270723 lvl=44
+C 1166 @44.5,66.0
+C 1168 @44.0,66.2 mobs=4331,4329,4328
 C 98215 @44.1,66.3 mobs=4323,4331,4324,4329
+C 1169 @46.8,67.2 mobs=4323,4324
 C 98205 @46.8,67.2 mobs=4323,4324
 T 98205 @41.0,75.7 id=270723
 T 98215 @41.0,75.7 id=270723
 C 1261 @55.9,62.8 mobs=4404,4403,4402,4401,14236
+T 1166 @36.3,31.4 id=4500
+T 1168 @37.4,31.4 id=4502
+T 1169 @37.1,33.1 id=4501
+T 98192 @36.4,30.9 id=4883
+A 1170 @37.1,33.1 id=4501 lvl=43
+T 1170 @36.3,31.4 id=4500
+A 1171 @36.3,31.4 id=4500 lvl=43
+T 1171 @37.1,33.1 id=4501
 A 1172 @37.1,33.1 id=4501 lvl=45
 T 1261 @35.2,30.7 id=4791
+A 1262 @35.2,30.7 id=4791 lvl=40
 C 1172 @48.4,74.8
 T 1172 @37.1,33.1 id=4501
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-46-feralas",
+    name = "Féralas 46-47",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 46, maxLevel = 47,
+    next = "horde-skyborne-46-desolace-4",
+    text = [[
+M feralas
+G "Rejoins Féralas" @74.4,42.9 r=40 upto=48
+B "Lie ta pierre de foyer à l'auberge" @74.8,45.2 id=7737
+T 95033 @74.4,43.4 id=8115
+A 2822 @74.4,42.9 id=7854 lvl=46 danger=1
+A 2862 @74.9,42.5 id=7875 lvl=42
+A 3121 @74.4,43.4 id=8115 lvl=45
+A 92878 @74.9,44.0 group=1 id=11752 lvl=43
+A 2973 @75.9,42.7 id=4544 lvl=45
+A 2975 @75.8,43.6 id=7777 lvl=43
+C 2973 @67.4,47.5 mobs=5278,7997
+C 92878 @67.5,39.0 group=1 mobs=222286
+C 2862 @70.4,54.6 mobs=5254,5255,5251,5249,5253
+T 2862 @74.9,42.5 id=7875
+T 2973 @75.9,42.7 id=4544
+A 2863 @74.9,42.5 id=7875 lvl=43
+A 2974 @75.9,42.7 id=4544 lvl=45
+T 92878 @74.9,44.0 group=1 id=11752
+C 2974 @67.0,46.9 mobs=7725,7726,7727
+C 2863 @65.6,52.5 mobs=5258
+H "Utilise ta pierre de foyer" @74.8,45.2 id=7737
+T 2863 @74.9,42.5 id=7875
+T 2974 @75.9,42.7 id=4544
+A 2902 @74.9,42.5 id=7875 lvl=43
+A 2976 @75.9,42.7 id=4544 lvl=45
+T 2902 @71.6,55.9
+A 2903 @71.6,55.9 lvl=43
+T 2903 @74.9,42.5 id=7875
+A 7730 @74.9,42.5 id=7875 lvl=45
+A 7731 @74.9,42.5 id=7875 lvl=47
+C 2975 @75.0,27.4 mobs=5232,5229,5237
+T 2975 @75.8,43.6 id=7777
+A 2980 @75.8,43.6 id=7777 lvl=44
+C 7731 @77.0,61.6 mobs=14661
+C 7730 @73.7,63.1 mobs=5247,5244,5245,5246,14661
+T 7730 @74.9,42.5 id=7875
+T 7731 @74.9,42.5 id=7875
+A 7732 @74.9,42.5 id=7875 lvl=48
+C 2980 @60.9,56.2 mobs=5236,5240,5234
+C 2822 @51.8,58.9 mobs=5292,5293,5295,5346 danger=1
+T 2822 @74.4,42.9 id=7854 danger=1
+T 2980 @75.8,43.6 id=7777
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-46-desolace-4",
+    name = "Désolace 46-47",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 46, maxLevel = 47,
+    next = "horde-skyborne-47-orgrimmar",
+    text = [[
+M desolace
+G "Rejoins Désolace" @62.2,39.6 r=40 upto=49
+A 7028 @62.2,39.6 id=13656 lvl=47
+A 93225 @56.3,59.7 id=5412 lvl=40
+C 93225 @68.7,78.8 mobs=254283,254284,262838,253274,255238
+T 93225 @56.3,59.7 id=5412
+A 94872 @56.3,59.7 id=5412 lvl=45
+T 94872 @66.2,79.4 id=253139
+T 1373 @36.2,79.2 id=5397
+C 7028 @28.5,62.5 mobs=13718,11688
+T 7028 @62.2,39.6 id=13656
 ]],
 })
 
@@ -1551,7 +1566,7 @@ ns.RegisterGuide({
     name = "Orgrimmar 47-48",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 47, maxLevel = 48,
-    next = "horde-skyborne-47-feralas-3",
+    next = "horde-skyborne-47-feralas-2",
     text = [[
 M orgrimmar
 G "Rejoins Orgrimmar" @56.3,46.7 r=40 upto=49
@@ -1561,23 +1576,26 @@ T 649 @59.6,36.9 id=6987
 A 650 @59.6,36.9 id=6987 lvl=48
 T 3121 @49.5,50.6 id=3216
 A 3122 @49.5,50.6 id=3216 lvl=45
+T 1262 @38.9,38.4 id=4047
+A 7541 @38.9,38.4 id=4047 lvl=45
+T 7541 @38.9,38.4 id=4047
 T 2976 @75.2,34.2 id=4485
 A 2981 @75.2,34.2 id=4485 lvl=43
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-47-feralas-3",
+    id = "horde-skyborne-47-feralas-2",
     name = "Féralas 47-48",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 47, maxLevel = 48,
     next = "horde-skyborne-47-hinterlands",
     text = [[
 M feralas
-G "Rejoins Féralas" @74.4,42.9 r=40 upto=49
+H "Utilise ta pierre de foyer" @74.8,45.2 id=7737
 T 3122 @74.4,43.4 id=8115
-A 7734 @74.4,42.9 id=7854 lvl=48 danger=1
 T 2981 @75.8,43.6 id=7777
+A 7734 @74.4,42.9 id=7854 lvl=48 danger=1
 C 7734 @53.8,32.1 mobs=5299,5296,5297 danger=1
 A 7721 @44.8,43.4 id=14637 lvl=48 danger=1
 C 7721 @47.7,52.3 mobs=5462,5461 danger=1
@@ -1591,10 +1609,10 @@ ns.RegisterGuide({
     name = "Les Hinterlands 47-48",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 47, maxLevel = 48,
-    next = "horde-skyborne-48-searing",
+    next = "horde-skyborne-47-stv-7",
     text = [[
 M hinterlands
-G "Rejoins Les Hinterlands" @79.2,79.5 r=40 upto=50
+G "Rejoins Les Hinterlands" @79.2,79.5 r=40 upto=49
 B "Lie ta pierre de foyer à l'auberge" @78.1,81.4 id=14731
 A 7828 @79.2,79.5 id=14741 lvl=48
 A 7829 @79.2,79.5 id=14741 lvl=48
@@ -1607,13 +1625,11 @@ C 7839 @71.0,48.7
 C 7830 @63.8,52.0 mobs=2659
 C 7829 @54.2,48.6 mobs=2929
 C 7844 @47.2,66.3 mobs=4466,4467
-T 1429 @33.8,75.2 id=5598
+C 7841 @31.1,47.8 mobs=2692,2693,2691,2694
 T 650 @26.7,48.6 id=7801
 A 77 @26.7,48.6 id=7801 lvl=48
-C 7841 @31.1,47.8 mobs=2692,2693,2691,2694
 C 77 @58.2,41.8
 T 77 @26.7,48.6 id=7801
-A 81 @26.7,48.6 id=7801 lvl=48
 H "Utilise ta pierre de foyer" @78.1,81.4 id=14731
 T 7828 @79.2,79.5 id=14741
 T 7829 @79.2,79.5 id=14741
@@ -1622,11 +1638,32 @@ T 7839 @77.2,80.1 id=14737
 T 7841 @79.4,79.1 id=14738
 T 7844 @78.8,78.2 id=14739
 A 7842 @79.4,79.1 id=14738 lvl=48
-A 98203 @78.0,77.8 id=270780 lvl=49
 C 7842 @30.8,58.4 mobs=6375,2651,5300,2657,2347
-C 98203 @25.6,65.8 mobs=270772
 T 7842 @79.4,79.1 id=14738
-T 98203 @78.0,77.8 id=270780
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-47-stv-7",
+    name = "Vallée de Strangleronce 47-48",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 47, maxLevel = 48,
+    next = "horde-skyborne-48-searing",
+    text = [[
+M stv
+G "Rejoins Vallée de Strangleronce" @27.2,77.0 r=40 upto=50
+T 2874 @27.8,77.1 id=2501
+A 608 @27.2,77.0 id=2487 lvl=45
+C 608 @32.9,88.2 mobs=2550,2548,2546
+T 608 @27.2,77.0 id=2487
+A 586 @32.2,27.6 lvl=46
+C 586 @46.8,43.5 mobs=783,669,781,1059
+T 586 @32.2,27.6
+A 588 @32.2,27.6 lvl=45
+T 588 @32.3,27.7 id=2519
+A 589 @32.3,27.7 id=2519 lvl=45
+C 589 @43.1,47.8 mobs=1551
+T 589 @32.3,27.7 id=2519
 ]],
 })
 
@@ -1673,13 +1710,16 @@ C 5863 @40.8,52.5 mobs=5474,5472,12046
 C 3161 @47.1,65.2
 T 3161 @52.7,45.9 id=7771
 T 5863 @52.8,27.4 id=11758
+A 97530 @67.1,23.9 id=7882 lvl=47
+C 97530 @40.3,52.5 mobs=5474,5472,5475,5471,5473
+C 2605 @29.7,66.0 mobs=5481
 A 97540 @31.8,74.2 id=5955 lvl=50
 T 97540 @31.8,74.2 id=5955
-C 2605 @29.7,66.0 mobs=5481
 T 2605 @51.8,28.7 id=7564
 A 2606 @51.8,28.7 id=7564 lvl=49
 T 2606 @51.1,26.9 id=7583
 A 2641 @51.1,26.9 id=7583 lvl=49
+T 97530 @67.1,23.9 id=7882
 L 49 "Tue des monstres autour de toi jusqu'au niveau 49"
 A 3362 @51.6,26.8 id=7876 lvl=50
 C 3362 @29.6,66.0 mobs=5485,5490
@@ -1700,12 +1740,15 @@ A 7815 @80.3,81.5 id=14740 lvl=50
 A 7845 @78.2,81.2 id=14736 lvl=51
 A 7849 @79.2,79.5 id=14741 lvl=50
 A 7850 @78.2,81.2 id=14736 lvl=50
+A 98203 @78.0,77.8 id=270780 lvl=49
 C 7850 @66.3,70.9
 T 7845 @59.7,77.8 id=14757
 C 7849 @58.6,64.8
 C 2641 @40.6,59.7
+C 98203 @25.6,65.8 mobs=270772
 T 7849 @79.2,79.5 id=14741
 T 7850 @78.2,81.2 id=14736
+T 98203 @78.0,77.8 id=270780
 C 7815 @83.0,55.2 mobs=2505
 T 7815 @80.3,81.5 id=14740
 ]],
@@ -1738,7 +1781,7 @@ ns.RegisterGuide({
     name = "Azshara 50-51",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 50, maxLevel = 51,
-    next = "horde-skyborne-51-feralas-4",
+    next = "horde-skyborne-51-feralas-3",
     text = [[
 M azshara
 G "Rejoins Azshara" @11.4,78.2 r=40 upto=52
@@ -1756,6 +1799,7 @@ A 3517 @22.6,51.4 id=8587 lvl=52
 A 91488 @21.8,52.1 id=3621 lvl=48 danger=1
 C 3517 @36.2,53.9
 T 3517 @22.6,51.4 id=8587
+A 3518 @22.6,51.4 id=8587 lvl=52
 A 3541 @22.6,51.4 id=8587 lvl=52
 A 3542 @22.6,51.4 id=8587 lvl=52
 A 3561 @22.6,51.4 id=8587 lvl=52
@@ -1771,7 +1815,7 @@ T 91608 @21.8,52.1 id=3621
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-51-feralas-4",
+    id = "horde-skyborne-51-feralas-3",
     name = "Féralas 51-52",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 51, maxLevel = 52,
@@ -1813,7 +1857,7 @@ ns.RegisterGuide({
     name = "Tanaris 51-52",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 51, maxLevel = 52,
-    next = "horde-skyborne-51-orgrimmar-2",
+    next = "horde-skyborne-51-blasted",
     text = [[
 M tanaris
 G "Rejoins Tanaris" @67.0,24.0 r=40 upto=53
@@ -1827,47 +1871,14 @@ T 3380 @52.7,45.9 id=7771
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-51-orgrimmar-2",
-    name = "Orgrimmar 51-52",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 51, maxLevel = 52,
-    next = "horde-skyborne-51-azshara-3",
-    text = [[
-M orgrimmar
-G "Rejoins Orgrimmar" @55.5,34.1 r=40 upto=53
-T 81 @59.5,36.6 id=6986
-T 3541 @55.5,34.1 id=8659
-A 3563 @55.5,34.1 id=8659 lvl=52
-A 91735 @55.5,34.1 id=8659 lvl=52
-A 936 @54.1,68.4 id=6929 lvl=50
-A 3504 @75.2,34.2 id=4485 lvl=53
-]],
-})
-
-ns.RegisterGuide({
-    id = "horde-skyborne-51-azshara-3",
-    name = "Azshara 51-52",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 51, maxLevel = 52,
-    next = "horde-skyborne-51-blasted",
-    text = [[
-M azshara
-G "Rejoins Azshara" @22.6,51.4 r=40 upto=53
-T 3563 @22.6,51.4 id=8587
-T 91735 @22.6,51.4 id=8587
-T 3504 @22.3,51.5 id=8576
-]],
-})
-
-ns.RegisterGuide({
     id = "horde-skyborne-51-blasted",
     name = "Terres foudroyées 51-52",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 51, maxLevel = 52,
-    next = "horde-skyborne-52-wpl",
+    next = "horde-skyborne-51-undercity",
     text = [[
 M blasted
-G "Rejoins Terres foudroyées" @50.5,14.2 r=40 upto=54
+G "Rejoins Terres foudroyées" @50.5,14.2 r=40 upto=53
 A 2581 @50.5,14.2 id=7505 lvl=50 danger=1
 A 2583 @50.5,14.2 id=7505 lvl=50 danger=1
 A 2585 @50.5,14.2 id=7505 lvl=50 danger=1
@@ -1887,43 +1898,42 @@ T 2603 @50.6,14.3 id=7506
 })
 
 ns.RegisterGuide({
+    id = "horde-skyborne-51-undercity",
+    name = "Fossoyeuse 51-52",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 51, maxLevel = 52,
+    next = "horde-skyborne-52-wpl",
+    text = [[
+M undercity
+G "Rejoins Fossoyeuse" @50.1,68.0 r=40 upto=53
+T 3542 @54.8,76.3 id=6522
+A 232 @50.1,68.0 id=5204 lvl=45
+A 3564 @54.8,76.3 id=6522 lvl=52
+A 91734 @54.8,76.3 id=6522 lvl=52
+T 232 @58.6,54.7 id=7683
+A 238 @58.6,54.7 id=7683 lvl=45
+T 238 @50.1,68.0 id=5204
+A 3784 @67.7,37.9 id=6741 lvl=50
+]],
+})
+
+ns.RegisterGuide({
     id = "horde-skyborne-52-wpl",
     name = "Maleterres de l'Ouest 52-53",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 52, maxLevel = 53,
-    next = "horde-skyborne-53-undercity",
+    next = "horde-skyborne-53-ungoro-2",
     text = [[
 M wpl
 L 53 "Tue des monstres autour de toi jusqu'au niveau 53"
 G "Rejoins Maleterres de l'Ouest" @53.7,64.7 r=40 upto=55
 A 4984 @53.7,64.7 id=10739 lvl=54
-A 5142 @49.2,78.6 id=10927 lvl=55
 A 5058 @47.8,50.7 lvl=55
 T 5058 @47.8,50.7
 C 4984 @45.8,45.9 mobs=1817
 A 5021 @38.4,54.0 id=10778 lvl=52
 T 5021 @38.7,55.2
-A 5023 @38.7,55.2 lvl=52
 T 4984 @53.7,64.7 id=10739
-]],
-})
-
-ns.RegisterGuide({
-    id = "horde-skyborne-53-undercity",
-    name = "Fossoyeuse 53-54",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 53, maxLevel = 54,
-    next = "horde-skyborne-53-ungoro-2",
-    text = [[
-M undercity
-G "Rejoins Fossoyeuse" @50.1,68.0 r=40 upto=55
-T 3542 @54.8,76.3 id=6522
-A 3564 @54.8,76.3 id=6522 lvl=52
-A 91734 @54.8,76.3 id=6522 lvl=52
-T 5023 @69.8,43.2 id=10781
-A 5049 @69.8,43.2 id=10781 lvl=52
-T 5049 @67.6,44.2 id=8403
-A 5050 @67.6,44.2 id=8403 lvl=52
 ]],
 })
 
@@ -1932,7 +1942,7 @@ ns.RegisterGuide({
     name = "Cratère d'Un'Goro 53-54",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 53, maxLevel = 54,
-    next = "horde-skyborne-53-azshara-4",
+    next = "horde-skyborne-53-azshara-3",
     text = [[
 M ungoro
 G "Rejoins Cratère d'Un'Goro" @44.0,7.1 r=40 upto=55
@@ -1941,24 +1951,24 @@ A 3882 @43.5,7.4 id=9272 lvl=51 danger=1
 A 4492 @43.6,8.5 id=9997 lvl=55
 A 92020 @43.9,7.2 id=9271 lvl=55
 A 4503 @44.2,11.6 id=9998 lvl=51 danger=1
+A 4284 @41.9,2.7 id=9117 lvl=53 danger=1
+C 4284 @67.3,16.0 mobs=6510,9167,9164,6512,9163 danger=1
+C 3881 @68.5,36.5
 T 4492 @51.9,49.9 id=9999
 C 4503 @53.1,62.6 mobs=9167,9164,9163,9166,9165 danger=1
 A 4290 @71.6,76.0 id=9619 lvl=53
 C 4290 @68.7,56.7
 T 4290 @71.6,76.0 id=9619
-C 3881 @68.5,36.5
+C 3882 @32.2,75.2 mobs=9164,9163,6501,9162,6502 danger=1
 T 4503 @44.2,11.6 id=9998 danger=1
 T 3881 @44.0,7.1 id=9270
-A 4284 @41.9,2.7 id=9117 lvl=53 danger=1
-C 4284 @67.3,16.0 mobs=6510,9167,9164,6512,9163 danger=1
-T 4284 @41.9,2.7 id=9117 danger=1
-C 3882 @32.2,75.2 mobs=9164,9163,6501,9162,6502 danger=1
 T 3882 @43.5,7.4 id=9272 danger=1
+T 4284 @41.9,2.7 id=9117 danger=1
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-53-azshara-4",
+    id = "horde-skyborne-53-azshara-3",
     name = "Azshara 53-54",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 53, maxLevel = 54,
@@ -2004,12 +2014,49 @@ ns.RegisterGuide({
     name = "Les Pitons-du-Tonnerre 53-54",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 53, maxLevel = 54,
-    next = "horde-skyborne-53-ungoro-3",
+    next = "horde-skyborne-53-orgrimmar-2",
     text = [[
 M thunderbluff
 G "Rejoins Les Pitons-du-Tonnerre" @78.6,28.6 r=40 upto=55
-T 936 @78.6,28.6 id=5769
+T 3518 @69.8,30.9 id=4046
+T 3784 @78.6,28.6 id=5769
 T 92346 @75.7,31.6 id=5770
+A 3562 @69.8,30.9 id=4046 lvl=52
+A 91737 @69.8,30.9 id=4046 lvl=52
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-53-orgrimmar-2",
+    name = "Orgrimmar 53-54",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 53, maxLevel = 54,
+    next = "horde-skyborne-53-azshara-4",
+    text = [[
+M orgrimmar
+G "Rejoins Orgrimmar" @55.5,34.1 r=40 upto=55
+T 3541 @55.5,34.1 id=8659
+A 3563 @55.5,34.1 id=8659 lvl=52
+A 4300 @55.5,34.1 id=8659 lvl=52
+A 91735 @55.5,34.1 id=8659 lvl=52
+A 3504 @75.2,34.2 id=4485 lvl=53
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-53-azshara-4",
+    name = "Azshara 53-54",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 53, maxLevel = 54,
+    next = "horde-skyborne-53-ungoro-3",
+    text = [[
+M azshara
+G "Rejoins Azshara" @22.6,51.4 r=40 upto=55
+T 3562 @22.6,51.4 id=8587
+T 91737 @22.6,51.4 id=8587
+T 3563 @22.6,51.4 id=8587
+T 91735 @22.6,51.4 id=8587
+T 3504 @22.3,51.5 id=8576
 ]],
 })
 
@@ -2025,6 +2072,7 @@ L 54 "Tue des monstres autour de toi jusqu'au niveau 54"
 G "Rejoins Cratère d'Un'Goro" @30.9,50.4 r=40 upto=56
 A 974 @30.9,50.4 id=10302 lvl=55
 C 974 @54.0,55.2 mobs=10541
+C 4300 @60.5,77.9 mobs=6505,6508,6506,6507,6581
 A 4289 @71.6,76.0 id=9619 lvl=55
 C 4289 @66.8,15.7 mobs=6514,6513,6516
 A 4501 @43.5,8.4 lvl=55
@@ -2103,7 +2151,7 @@ ns.RegisterGuide({
     name = "Mont Hyjal 54-55",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 54, maxLevel = 55,
-    next = "horde-skyborne-55-epl",
+    next = "horde-skyborne-55-orgrimmar-3",
     text = [[
 M hyjal
 L 55 "Tue des monstres autour de toi jusqu'au niveau 55"
@@ -2133,11 +2181,25 @@ T 96830 @12.9,52.9 id=244512
 })
 
 ns.RegisterGuide({
+    id = "horde-skyborne-55-orgrimmar-3",
+    name = "Orgrimmar 55-56",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 55, maxLevel = 56,
+    next = "horde-skyborne-55-epl",
+    text = [[
+M orgrimmar
+G "Rejoins Orgrimmar" @37.6,75.4 r=40 upto=57
+A 8276 @47.6,65.8 id=15188 lvl=55
+T 4300 @55.5,34.1 id=8659
+]],
+})
+
+ns.RegisterGuide({
     id = "horde-skyborne-55-epl",
     name = "Maleterres de l'Est 55-56",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 55, maxLevel = 56,
-    next = "horde-skyborne-55-wpl-2",
+    next = "horde-skyborne-55-blasted-2",
     text = [[
 M epl
 G "Rejoins Maleterres de l'Est" @71.6,50.1 r=40 upto=57
@@ -2145,7 +2207,6 @@ T 6030 @71.6,50.1 id=11039
 A 5503 @71.6,50.1 id=11039 lvl=55
 T 5503 @71.6,50.1 id=11039
 A 6021 @69.9,53.7 id=11038 lvl=55
-T 5142 @31.1,78.0 id=10926
 C 6021 @23.1,72.6 mobs=12250
 A 5543 @5.2,35.6 id=1855 lvl=56
 A 5544 @5.2,35.6 id=1855 lvl=56 danger=1
@@ -2161,30 +2222,11 @@ T 5544 @5.2,35.6 id=1855 danger=1
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-55-wpl-2",
-    name = "Maleterres de l'Ouest 55-56",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 55, maxLevel = 56,
-    next = "horde-skyborne-55-blasted-2",
-    text = [[
-M wpl
-G "Rejoins Maleterres de l'Ouest" @53.7,64.7 r=40 upto=57
-A 4985 @53.7,64.7 id=10739 lvl=56
-C 4985 @64.5,48.1 mobs=1816
-T 4985 @53.7,64.7 id=10739
-T 5050 @38.4,54.0 id=10778
-A 6004 @51.9,28.1 id=11610 lvl=56
-C 6004 @51.2,42.7 mobs=1833,1831,10605,1826
-T 6004 @51.9,28.1 id=11610
-]],
-})
-
-ns.RegisterGuide({
     id = "horde-skyborne-55-blasted-2",
     name = "Terres foudroyées 55-56",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 55, maxLevel = 56,
-    next = "horde-skyborne-55-hyjal-3",
+    next = "horde-skyborne-55-wpl-2",
     text = [[
 M blasted
 G "Rejoins Terres foudroyées" @52.0,35.6 r=40 upto=57
@@ -2198,15 +2240,36 @@ T 3501 @52.0,35.6 id=7363
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-55-hyjal-3",
-    name = "Mont Hyjal 55-56",
+    id = "horde-skyborne-55-wpl-2",
+    name = "Maleterres de l'Ouest 55-56",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 55, maxLevel = 56,
+    next = "horde-skyborne-56-hyjal-3",
+    text = [[
+M wpl
+L 56 "Tue des monstres autour de toi jusqu'au niveau 56"
+G "Rejoins Maleterres de l'Ouest" @53.7,64.7 r=40 upto=58
+A 4985 @53.7,64.7 id=10739 lvl=56
+C 4985 @64.5,48.1 mobs=1816
+T 4985 @53.7,64.7 id=10739
+A 6004 @51.9,28.1 id=11610 lvl=56
+C 6004 @51.2,42.7 mobs=1833,1831,10605,1826
+T 6004 @51.9,28.1 id=11610
+A 6023 @51.9,28.1 id=11610 lvl=57
+C 6023 @57.8,36.1 mobs=11613,11611
+T 6023 @51.9,28.1 id=11610
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-56-hyjal-3",
+    name = "Mont Hyjal 56-57",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 56, maxLevel = 57,
     next = "horde-skyborne-56-winterspring-2",
     text = [[
 M hyjal
 H "Utilise ta pierre de foyer" @12.9,52.9 id=244512
-L 56 "Tue des monstres autour de toi jusqu'au niveau 56"
 A 92609 @13.8,54.8 id=244511 lvl=57
 A 92100 @20.4,59.4 id=255009 lvl=58
 A 93952 @20.6,71.7 id=256978 lvl=57
@@ -2269,36 +2332,50 @@ ns.RegisterGuide({
     name = "Mont Hyjal 56-57",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 56, maxLevel = 57,
-    next = "horde-skyborne-56-silithus",
+    next = "horde-skyborne-57-silithus",
     text = [[
 M hyjal
-G "Rejoins Mont Hyjal" @60.4,62.0 r=40 upto=58
+G "Rejoins Mont Hyjal" @60.4,62.0 r=40 upto=59
 C 92009 @60.4,62.0
 T 92009 @60.1,61.2 id=249235
 T 93269 @70.9,51.5 id=243815
+A 92147 @54.5,63.9 id=260825 lvl=58 danger=1
+C 92147 @52.3,58.5 mobs=249220,249221,249222,260826,249223 danger=1
+A 96296 @48.5,56.4 lvl=58
+C 96296 @48.5,56.4
+T 92147 @54.5,63.9 id=260825 danger=1
+T 96296 @54.5,63.9 id=260825
+A 96959 @49.3,32.6 id=267121 lvl=59
+T 96959 @49.3,32.6 id=267121
+A 91698 @31.5,58.6 id=244425 lvl=58
+A 96991 @32.9,54.4 id=267109 lvl=59
+C 91698 @30.6,57.5 mobs=259874
+T 91698 @31.5,58.6 id=244425
+A 90865 @18.8,62.0 id=264089 lvl=58
+A 95026 @13.8,54.8 id=244511 lvl=58
+C 90865 @24.5,53.4 mobs=249237
+C 95026 @24.5,53.9 mobs=249228,249247
+T 90865 @18.8,62.0 id=264089
+T 95026 @13.8,54.8 id=244511
+T 96991 @68.3,46.7 id=264795
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-56-silithus",
-    name = "Silithus 56-57",
+    id = "horde-skyborne-57-silithus",
+    name = "Silithus 57-58",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 56, maxLevel = 57,
-    next = "horde-skyborne-57-hyjal-5",
+    minLevel = 57, maxLevel = 58,
+    next = "horde-skyborne-58-hyjal-5",
     text = [[
 M silithus
 G "Rejoins Silithus" @51.6,38.6 r=40 upto=59
+T 8276 @51.1,38.3 id=15191
 A 8277 @51.6,38.6 id=15189 lvl=55
-A 8280 @51.1,38.3 id=15191 lvl=55
-C 8280 @53.4,17.3 mobs=11740
+A 8284 @49.7,37.5 id=15183 lvl=58
 C 8277 @60.7,21.9 mobs=11735,11738
 T 8277 @51.6,38.6 id=15189
-T 8280 @51.1,38.3 id=15191
-A 8281 @51.1,38.3 id=15191 lvl=57 danger=1
-C 8281 @30.2,42.8 mobs=11741 danger=1
-T 8281 @51.1,38.3 id=15191 danger=1
 A 8278 @51.6,38.6 id=15189 lvl=57 danger=1
-A 8284 @49.7,37.5 id=15183 lvl=58
 C 8278 @33.6,75.5 mobs=11736,11737,11739 danger=1
 T 8278 @51.6,38.6 id=15189 danger=1
 A 8282 @51.6,38.5 id=15190 lvl=58
@@ -2308,39 +2385,23 @@ A 8285 @49.7,37.5 id=15183 lvl=59
 T 8285 @67.2,69.8 id=15194
 C 8282 @44.6,91.4
 T 8282 @51.6,38.5 id=15190
+L 58 "Tue des monstres autour de toi jusqu'au niveau 58"
+A 8857 @49.5,37.3 id=15798 lvl=60
+A 8859 @49.5,37.4 id=15797 lvl=60
+A 9416 @49.0,36.7 id=17081 lvl=60
+T 9416 @50.8,69.5 id=17079
 ]],
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-57-hyjal-5",
-    name = "Mont Hyjal 57-58",
+    id = "horde-skyborne-58-hyjal-5",
+    name = "Mont Hyjal 58-59",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 57, maxLevel = 58,
-    next = "horde-skyborne-58-silithus-2",
+    minLevel = 58, maxLevel = 59,
+    next = "horde-skyborne-58-winterspring-3",
     text = [[
 M hyjal
 H "Utilise ta pierre de foyer" @12.9,52.9 id=244512
-A 95026 @13.8,54.8 id=244511 lvl=58
-A 90865 @18.8,62.0 id=264089 lvl=58
-C 95026 @24.5,53.9 mobs=249228,249247
-C 90865 @24.5,53.4 mobs=249237
-A 91698 @31.5,58.6 id=244425 lvl=58
-A 96991 @32.9,54.4 id=267109 lvl=59
-C 91698 @30.6,57.5 mobs=259874
-T 91698 @31.5,58.6 id=244425
-T 90865 @18.8,62.0 id=264089
-T 95026 @13.8,54.8 id=244511
-A 96296 @48.5,56.4 lvl=58
-C 96296 @48.5,56.4
-T 96296 @54.5,63.9 id=260825
-A 92147 @54.5,63.9 id=260825 lvl=58 danger=1
-C 92147 @52.3,58.5 mobs=249220,249221,249222,260826,249223 danger=1
-T 92147 @54.5,63.9 id=260825 danger=1
-T 96991 @68.3,46.7 id=264795
-A 96959 @49.3,32.6 id=267121 lvl=59
-T 96959 @49.3,32.6 id=267121
-H "Utilise ta pierre de foyer" @12.9,52.9 id=244512
-L 58 "Tue des monstres autour de toi jusqu'au niveau 58"
 A 92592 @13.8,54.8 id=244511 lvl=59 danger=1
 A 96558 @27.5,50.9 id=265375 lvl=60
 T 96558 @29.0,52.8
@@ -2379,22 +2440,6 @@ T 92960 @43.8,32.2 id=263406
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-58-silithus-2",
-    name = "Silithus 58-59",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 58, maxLevel = 59,
-    next = "horde-skyborne-58-winterspring-3",
-    text = [[
-M silithus
-G "Rejoins Silithus" @49.5,37.3 r=40 upto=60
-A 8857 @49.5,37.3 id=15798 lvl=60
-A 8859 @49.5,37.4 id=15797 lvl=60
-A 9416 @49.0,36.7 id=17081 lvl=60
-T 9416 @50.8,69.5 id=17079
-]],
-})
-
-ns.RegisterGuide({
     id = "horde-skyborne-58-winterspring-3",
     name = "Berceau-de-l'Hiver 58-59",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
@@ -2419,7 +2464,7 @@ ns.RegisterGuide({
     name = "Maleterres de l'Est 58-59",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 58, maxLevel = 59,
-    next = "horde-skyborne-59-stv-7",
+    next = "horde-skyborne-59-stv-8",
     text = [[
 M epl
 G "Rejoins Maleterres de l'Est" @22.2,63.5 r=40 upto=61
@@ -2454,7 +2499,7 @@ T 9665 @70.4,47.9 id=17072
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-59-stv-7",
+    id = "horde-skyborne-59-stv-8",
     name = "Vallée de Strangleronce 59-60",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 59, maxLevel = 60,
@@ -2476,7 +2521,7 @@ ns.RegisterGuide({
     name = "Silithus 59-60",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 59, maxLevel = 60,
-    next = "horde-skyborne-59-hyjal-7",
+    next = "horde-skyborne-59-hyjal-6",
     text = [[
 M silithus
 G "Rejoins Silithus" @67.2,69.8 r=40 upto=61
@@ -2498,7 +2543,7 @@ T 8323 @67.2,69.8 id=15194 danger=1
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-59-hyjal-7",
+    id = "horde-skyborne-59-hyjal-6",
     name = "Mont Hyjal 59-60",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 59, maxLevel = 60,

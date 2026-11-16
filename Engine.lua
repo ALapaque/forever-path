@@ -104,22 +104,64 @@ end
 -- nôtre n'y est pas. La base de quêtes de Forever a encore des prérequis manquants : plutôt que de
 -- bloquer le joueur, on passe la prise (les étapes « faire » et « rendre » suivent d'elles-mêmes)
 -- et on le note pour les signalements.
-function E.CheckOffered()
+-- Prise de l'étape en cours marquée « pas proposée » (le PNJ ne la donne pas) : étape passée.
+function E.MarkNotOffered(silentReport)
     local g, step, i = E.Current()
+    if not (g and step and step.type == "accept" and step.quest) then return end
+    ns.cdb.notOffered = ns.cdb.notOffered or {}
+    ns.cdb.notOffered[step.quest] = ns.PlayerLevel()
+    if ns.StepReport and silentReport ~= false then ns.StepReport.Add("notoffered", g, step, i, true) end
+    ns.Toast(ns.Tr("Ce PNJ ne propose pas cette quête pour l'instant : étape passée."), "Interface\\Icons\\INV_Misc_QuestionMark", 1, 0.8, 0.3, 4)
+    E.Refresh()
+    return true
+end
+
+-- l'étape en cours est une prise chez ce PNJ (celui avec qui on parle) ?
+local function offerStep()
+    local g, step = E.Current()
     if not (g and step and step.type == "accept" and step.quest and step.npcID) then return end
     if ns.NpcIDFromUnit("npc") ~= step.npcID then return end
+    return step
+end
+
+function E.CheckOffered()
+    local step = offerStep()
+    if not step then return end
     if not (C_GossipInfo and C_GossipInfo.GetAvailableQuests) then return end
     for _, list in ipairs({ C_GossipInfo.GetAvailableQuests() or {}, C_GossipInfo.GetActiveQuests and C_GossipInfo.GetActiveQuests() or {} }) do
         for _, info in ipairs(list) do
             if info.questID == step.quest then return end
         end
     end
-    ns.cdb.notOffered = ns.cdb.notOffered or {}
-    ns.cdb.notOffered[step.quest] = ns.PlayerLevel()
-    if ns.StepReport then ns.StepReport.Add("notoffered", g, step, i, true) end
-    ns.Toast(ns.Tr("Ce PNJ ne propose pas cette quête pour l'instant : étape passée."), "Interface\\Icons\\INV_Misc_QuestionMark", 1, 0.8, 0.3, 4)
-    E.Refresh()
-    return true
+    return E.MarkNotOffered()
+end
+
+-- PNJ sans dialogue, avec seulement des quêtes : fenêtre « quêtes » (plusieurs) ou directement le
+-- détail d'une autre quête (une seule proposée). Dans les deux cas, on sait si la nôtre y est.
+function E.CheckGreeting()
+    local step = offerStep()
+    if not (step and GetNumAvailableQuests and GetAvailableQuestInfo) then return end
+    for k = 1, GetNumAvailableQuests() or 0 do
+        local id = select(5, GetAvailableQuestInfo(k))
+        if id == nil then return end                 -- client sans identifiant : on ne conclut rien
+        if id == step.quest then return end
+    end
+    for k = 1, (GetNumActiveQuests and GetNumActiveQuests() or 0) do
+        if GetActiveQuestID and GetActiveQuestID(k) == step.quest then return end
+    end
+    return E.MarkNotOffered()
+end
+local listedAt = -1000          -- dernière liste de quêtes (dialogue ou fenêtre « quêtes ») vue
+ns.On("GOSSIP_SHOW", function() listedAt = GetTime() end)
+ns.On("QUEST_GREETING", function() listedAt = GetTime() end)
+function E.CheckDetail()
+    local step = offerStep()
+    -- détail ouvert depuis une liste : c'est le joueur qui a choisi une autre quête, on ne conclut rien
+    if not (step and GetQuestID) or GetTime() - listedAt < 60 then return end
+    local id = GetQuestID()
+    if id and id ~= 0 and not ns.IsSecret(id) and id ~= step.quest and not (QuestGetAutoAccept and QuestGetAutoAccept()) then
+        return E.MarkNotOffered()
+    end
 end
 
 -- Étapes validées par un événement du jeu : on les marque comme faites
@@ -134,6 +176,8 @@ end
 E.MarkCurrent = markCurrent
 ns.On("HEARTHSTONE_BOUND", function() markCurrent("bind") end)
 ns.On("GOSSIP_SHOW", function() E.CheckOffered() end)
+ns.On("QUEST_GREETING", function() E.CheckGreeting() end)
+ns.On("QUEST_DETAIL", function() E.CheckDetail() end)
 ns.On("PLAYER_CONTROL_LOST", function()
     C_Timer.After(1, function() if UnitOnTaxi and UnitOnTaxi("player") then markCurrent("fly") end end)
 end)

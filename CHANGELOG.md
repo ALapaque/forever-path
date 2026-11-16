@@ -1,5 +1,13 @@
 # Questweaver
 
+## v1.9.1
+
+- **Quêtes en plusieurs parties plus claires.** Certaines quêtes gardent le même nom à chaque partie (« La légende de Stalvan » en a 13) : le guide affichait « Prendre » puis « Rendre » la même quête sans dire laquelle, et la route s'arrête parfois après une partie. Maintenant :
+  - le numéro de la partie suit le nom, par exemple « La légende de Stalvan (1/13) » ;
+  - à la prise, le guide dit quelles parties ta route fait (« ta route fait les parties 1 à 1, pas la suite ») ;
+  - au rendu de la dernière partie prévue, il dit que la suite n'est pas dans ta route et qu'il n'y a pas besoin de la prendre.
+  Option « Quêtes en plusieurs parties » dans le module Quêtes aux mêmes monstres. Données : 2 683 quêtes en chaîne dans `Data/QuestLinks.lua`.
+
 ## v1.9.0
 
 Retours de joueurs : quêtes hors route, quêtes de métier, et changement de zone.

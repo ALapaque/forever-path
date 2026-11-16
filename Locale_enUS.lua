@@ -3,6 +3,10 @@ local _, ns = ...
 -- Traduction anglaise (clients non francophones). Clés : textes français exacts du code ;
 -- les textes avec %d / %s servent aussi de modèles pour les textes déjà formatés (voir ns.Tr).
 ns.EN = {
+    ["|cff66ccffQuête en %d parties|r : ta route les fait toutes"] = "|cff66ccff%d-part quest|r: your route does all of them",
+    ["|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"] = "|cff66ccff%d-part quest|r: your route does parts %d to %d, not the rest",
+    ["|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"] = "|cffaaaaaaEnd of this quest in your route|r: part %d/%d isn't in it, no need to take it",
+    ["Quêtes en plusieurs parties : dire où la route s'arrête"] = "Multi-part quests: say where the route stops",
     ["Changer de zone"] = "Change zone",
     ["%d quête(s)"] = "%d quest(s)",
     ["en cours"] = "current",

@@ -58,6 +58,8 @@ function M.StepLabel(step)
         if body then s = s .. " : " .. body end
     end
     if step.danger then s = "|TInterface\\TargetingFrame\\UI-TargetingFrame-Skull:14|t " .. s end
+    local ct = step.quest and ns.ChainTag and ns.ChainTag(step.quest)
+    if ct then s = s .. " " .. ct end
     local pq = ns.Modules.profquests
     local tag = pq and pq.Tag and pq.Tag(step)
     if tag then s = s .. " " .. tag end

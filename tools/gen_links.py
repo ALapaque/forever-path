@@ -65,9 +65,29 @@ def skill_of(qid, q):
     return None
 
 
+# chaînes de quêtes (nextQuestInChain) : position et longueur, pour « La légende de Stalvan (2/13) »
+NEXT = {}
+for qid, q in Q.items():
+    nx = g(q, 22)
+    if isinstance(nx, int) and nx in Q and nx != qid:
+        NEXT[qid] = nx
+HAS_PREV = set(NEXT.values())
+CHAIN = {}
+for root in Q:
+    if root in HAS_PREV or root not in NEXT:
+        continue
+    chain, seen, q = [], set(), root
+    while q is not None and q not in seen:
+        seen.add(q)
+        chain.append(q)
+        q = NEXT.get(q)
+    if len(chain) >= 2:
+        for i, c in enumerate(chain):
+            CHAIN[c] = (i + 1, len(chain))
+
 lines = ["local _, ns = ...", "",
          "-- Généré par tools/gen_links.py depuis QuestieDB (GPLv3). Ne pas modifier à la main.",
-         "-- ns.QuestLinks[quête] = \"m=monstres de l'objectif;e=PNJ qui la reçoivent;s=métier:niveau\"",
+         "-- ns.QuestLinks[quête] = \"m=monstres;e=PNJ qui la reçoivent;s=métier:niveau;c=partie/parties de la chaîne;n=quête suivante\"",
          "ns.QuestLinks = {"]
 n_mobs = n_skill = 0
 for qid in sorted(Q):
@@ -88,8 +108,12 @@ for qid in sorted(Q):
     if sk:
         parts.append("s=%d:%d" % (sk[0], sk[1]))
         n_skill += 1
+    if qid in CHAIN:
+        parts.append("c=%d/%d" % CHAIN[qid])
+        if qid in NEXT:
+            parts.append("n=%d" % NEXT[qid])
     if parts:
         lines.append('[%d]="%s",' % (qid, ";".join(parts)))
 lines.append("}")
 open(sys.argv[1], "w", encoding="utf-8").write("\n".join(lines) + "\n")
-print("quêtes avec monstres : %d, avec métier : %d" % (n_mobs, n_skill))
+print("quêtes avec monstres : %d, avec métier : %d, dans une chaîne : %d" % (n_mobs, n_skill, len(CHAIN)))

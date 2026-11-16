@@ -2,6 +2,10 @@ local _, ns = ...
 
 -- Traduction deDE (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.DE = {
+    ["|cff66ccffQuête en %d parties|r : ta route les fait toutes"] = "|cff66ccffQuest in %d Teilen|r: deine Route macht alle",
+    ["|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"] = "|cff66ccffQuest in %d Teilen|r: deine Route macht Teil %d bis %d, nicht den Rest",
+    ["|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"] = "|cffaaaaaaEnde dieser Quest in deiner Route|r: Teil %d/%d ist nicht dabei, nicht nötig",
+    ["Quêtes en plusieurs parties : dire où la route s'arrête"] = "Mehrteilige Quests: zeigen, wo die Route aufhört",
     ["Changer de zone"] = "Zone wechseln",
     ["%d quête(s)"] = "%d Quest(s)",
     ["en cours"] = "aktuell",

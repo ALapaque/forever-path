@@ -123,3 +123,32 @@ check(R.SegmentZone(ns.Guides[ns.cdb.guideId]) == curKey, "/qw zone " .. curKey 
 E.Load(other.guide, true)
 check(not ns.cdb.pinned, "chargement automatique : plus de zone épinglée")
 print("zones OK")
+
+-- 5) quête en plusieurs parties (La légende de Stalvan) : la route ne fait que la partie 1
+QLOG = {}; DONE = {}
+PLAYER.level = 26
+ns.QuestLinks[801] = "e=267;c=1/3;n=802"
+ns.QuestLinks[802] = "c=2/3;n=803"
+ns.QuestLinks[803] = "c=3/3"
+ns.QuestLinks[811] = "c=1/2;n=812"
+ns.QuestLinks[812] = "c=2/2"
+ns.RegisterGuide({ id = "test-chain", name = "Chaîne", faction = "Alliance", minLevel = 1, maxLevel = 60, text = [[
+M elwynn
+A 801 @40.0,60.0 id=265 lvl=28
+T 801 @41.0,61.0 id=267
+A 811 @41.0,61.0 id=267
+T 811 @41.0,61.0 id=267
+A 812 @41.0,61.0 id=267
+T 812 @41.0,61.0 id=267
+]] })
+E.Load("test-chain")
+local gc = ns.Guides["test-chain"]
+check(ns.Guide.StepLabel(gc.steps[1]):find("(1/3)", 1, true), "partie de la chaîne dans le libellé : " .. ns.Guide.StepLabel(gc.steps[1]))
+local QL = ns.Modules.questlinks
+check((QL.ChainLine(gc.steps[1]) or ""):find("parties 1 à 1", 1, true), "à la prise : la route ne fait que la partie 1 sur 3")
+check((QL.ChainLine(gc.steps[2]) or ""):find("2/3", 1, true), "au rendu : la partie 2/3 n'est pas dans la route")
+check((QL.ChainLine(gc.steps[3]) or ""):find("toutes", 1, true), "chaîne complète dans la route : dit")
+check(QL.ChainLine(gc.steps[4]) == nil, "rendu d'une partie suivie de la suivante : rien à dire")
+DONE[802] = true
+check(QL.ChainLine(gc.steps[2]) == nil, "suite déjà faite : rien à dire")
+print("chaînes OK")

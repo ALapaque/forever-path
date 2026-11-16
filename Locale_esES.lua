@@ -2,6 +2,10 @@ local _, ns = ...
 
 -- Traduction esES (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.ES = {
+    ["|cff66ccffQuête en %d parties|r : ta route les fait toutes"] = "|cff66ccffMisión en %d partes|r: tu ruta las hace todas",
+    ["|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"] = "|cff66ccffMisión en %d partes|r: tu ruta hace las partes %d a %d, no el resto",
+    ["|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"] = "|cffaaaaaaFin de esta misión en tu ruta|r: la parte %d/%d no está, no hace falta cogerla",
+    ["Quêtes en plusieurs parties : dire où la route s'arrête"] = "Misiones en varias partes: decir dónde para la ruta",
     ["Changer de zone"] = "Cambiar de zona",
     ["%d quête(s)"] = "%d misión(es)",
     ["en cours"] = "actual",

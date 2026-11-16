@@ -17,7 +17,7 @@ local function set(s)
     return t
 end
 
--- { mobs = {id=true}, enders = {id=true}, skill = id, rank = n } ou nil
+-- { mobs = {id=true}, enders = {id=true}, skill = id, rank = n, part = i, parts = n, nextQuest = id } ou nil
 function ns.QuestLink(q)
     if not q then return end
     local c = cache[q]
@@ -27,6 +27,9 @@ function ns.QuestLink(q)
     c = { mobs = set(raw:match("m=([%d,]+)")), enders = set(raw:match("e=([%d,]+)")) }
     local sk, rk = raw:match("s=(%d+):(%d+)")
     if sk then c.skill, c.rank = tonumber(sk), tonumber(rk) end
+    local pa, pn = raw:match("c=(%d+)/(%d+)")
+    if pa then c.part, c.parts = tonumber(pa), tonumber(pn) end
+    c.nextQuest = tonumber(raw:match("n=(%d+)"))
     cache[q] = c
     return c
 end
@@ -112,6 +115,51 @@ function ns.LacksSkill(step)
     return (r[id] or 0) < rank
 end
 
+-- Partie d'une chaîne de quêtes, à afficher après le nom : « (2/13) »
+function ns.ChainTag(q)
+    local l = ns.QuestLink(q)
+    if l and l.parts and l.parts > 1 then return ("|cffaaaaaa(%d/%d)|r"):format(l.part, l.parts) end
+end
+
+-- Quêtes de toute la route du parcours en cours (tous les segments), mises en cache par parcours
+local pathCache = {}
+function ns.PathQuests()
+    local cur = ns.Guides[ns.cdb.guideId or ""]
+    if not cur then return {} end
+    local key = cur.path or cur.id
+    if pathCache[key] then return pathCache[key] end
+    local set = {}
+    for _, id in ipairs(ns.GuideOrder) do
+        local g = ns.Guides[id]
+        if (cur.path and g.path == cur.path) or g == cur then
+            for _, s in ipairs(g.steps) do if s.quest then set[s.quest] = true end end
+        end
+    end
+    pathCache[key] = set
+    return set
+end
+
+-- Ce que la route fait d'une chaîne, vu depuis la quête q :
+--   first, last = parties faites par la route à partir de q ; parts = longueur ; nextQuest = suite hors route
+function ns.ChainCoverage(q)
+    local l = ns.QuestLink(q)
+    if not (l and l.parts and l.parts > 1) then return end
+    local route = ns.PathQuests()
+    local last, cur, guard = l.part, l, 0
+    local nextOut
+    while cur and cur.nextQuest and guard < 50 do
+        guard = guard + 1
+        if route[cur.nextQuest] then
+            last = last + 1
+            cur = ns.QuestLink(cur.nextQuest)
+        else
+            nextOut = cur.nextQuest
+            break
+        end
+    end
+    return l.part, last, l.parts, nextOut
+end
+
 local P = ns.RegisterModule({
     id = "profquests", category = "guide", default = true,
     name = "Quêtes de métier",
@@ -156,6 +204,7 @@ local M = ns.RegisterModule({
     options = {
         { key = "mobs", label = "Regrouper les quêtes aux mêmes monstres", type = "check", default = true },
         { key = "turnin", label = "Signaler les quêtes à rendre au même PNJ", type = "check", default = true },
+        { key = "chain", label = "Quêtes en plusieurs parties : dire où la route s'arrête", type = "check", default = true },
     },
 })
 ns.QuestLinksModule = M
@@ -235,6 +284,25 @@ local function names(list, n)
     return table.concat(out, ", ")
 end
 
+-- Quête en plusieurs parties (même nom à chaque partie) : à la prise, quelles parties la route fait ;
+-- au rendu de la dernière partie de la route, dire que la suite n'en fait pas partie.
+function M.ChainLine(step)
+    if not (step and step.quest and (step.type == "accept" or step.type == "turnin")) then return end
+    local first, last, parts, nextOut = ns.ChainCoverage(step.quest)
+    if not first then return end
+    if step.type == "accept" then
+        if last >= parts then
+            if first == 1 then return ns.Tr("|cff66ccffQuête en %d parties|r : ta route les fait toutes"):format(parts) end
+            return
+        end
+        return ns.Tr("|cff66ccffQuête en %d parties|r : ta route fait les parties %d à %d, pas la suite"):format(parts, first, last)
+    end
+    -- rendu : la suite est-elle dans la route ?
+    if nextOut and first == last and not C_QuestLog.IsQuestFlaggedCompleted(nextOut) then
+        return ns.Tr("|cffaaaaaaFin de cette quête dans ta route|r : la partie %d/%d n'y est pas, pas besoin de la prendre"):format(first + 1, parts)
+    end
+end
+
 local extra = {}       -- monstres des quêtes regroupées, ajoutés aux cibles
 function M:Update()
     wipe(extra)
@@ -252,6 +320,8 @@ function M:Update()
         if self:Opt("turnin") and #r.turnin > 0 then
             lines[#lines + 1] = ns.Tr("|cff3fd46aÀ rendre ici aussi|r : %s"):format(names(r.turnin, 3))
         end
+        local chain = self:Opt("chain") and M.ChainLine(step)
+        if chain then lines[#lines + 1] = chain end
     end
     ns.Guide:SetSection("questlinks", 11, #lines > 0 and table.concat(lines, "\n") or nil)
 end

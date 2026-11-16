@@ -3,6 +3,16 @@ local _, ns = ...
 -- Traduction anglaise (clients non francophones). Clés : textes français exacts du code ;
 -- les textes avec %d / %s servent aussi de modèles pour les textes déjà formatés (voir ns.Tr).
 ns.EN = {
+    ["son PNJ"] = "its NPC",
+    ["Rendre « %s »"] = "Turn in '%s'",
+    ["Clic : lancer la quête"] = "Click: start the quest",
+    ["|cffffd100Objet de quête|r : lance « %s » (+%d XP) — bouton ou clic droit dans ton sac"] = "|cffffd100Quest item|r: starts '%s' (+%d XP) — button or right-click it in your bag",
+    ["Cet objet lance une quête : « %s » (+%d XP)"] = "This item starts a quest: '%s' (+%d XP)",
+    ["|cff3fd46aÀ rendre|r : « %s » à %s, ta route y passe dans %d étapes"] = "|cff3fd46aTo turn in|r: '%s' to %s, your route gets there in %d steps",
+    ["|cff3fd46aÀ rendre|r : « %s » à %s (%s)"] = "|cff3fd46aTo turn in|r: '%s' to %s (%s)",
+    ["Détour : aller rendre la quête lancée par un objet"] = "Detour: go turn in the quest started by an item",
+    ["Objets qui lancent une quête : bouton pour la lancer, et où la rendre"] = "Items that start a quest: button to start it, and where to turn it in",
+    ["Proposer le détour pour la rendre jusqu'à (yards)"] = "Offer the detour to turn it in up to (yards)",
     ["Automatique (allège si le jeu rame)"] = "Automatic (lighter when the game lags)",
     ["Toujours complet"] = "Always full",
     ["Toujours en économie"] = "Always economy",

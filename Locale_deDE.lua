@@ -2,6 +2,16 @@ local _, ns = ...
 
 -- Traduction deDE (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.DE = {
+    ["son PNJ"] = "seinem NSC",
+    ["Rendre « %s »"] = "'%s' abgeben",
+    ["Clic : lancer la quête"] = "Klick: Quest starten",
+    ["|cffffd100Objet de quête|r : lance « %s » (+%d XP) — bouton ou clic droit dans ton sac"] = "|cffffd100Questgegenstand|r: startet '%s' (+%d EP) — Knopf oder Rechtsklick in der Tasche",
+    ["Cet objet lance une quête : « %s » (+%d XP)"] = "Dieser Gegenstand startet eine Quest: '%s' (+%d EP)",
+    ["|cff3fd46aÀ rendre|r : « %s » à %s, ta route y passe dans %d étapes"] = "|cff3fd46aAbzugeben|r: '%s' bei %s, deine Route kommt in %d Schritten vorbei",
+    ["|cff3fd46aÀ rendre|r : « %s » à %s (%s)"] = "|cff3fd46aAbzugeben|r: '%s' bei %s (%s)",
+    ["Détour : aller rendre la quête lancée par un objet"] = "Umweg: die von einem Gegenstand gestartete Quest abgeben",
+    ["Objets qui lancent une quête : bouton pour la lancer, et où la rendre"] = "Gegenstände, die eine Quest starten: Knopf zum Starten und wo abgeben",
+    ["Proposer le détour pour la rendre jusqu'à (yards)"] = "Umweg zur Abgabe anbieten bis (Yards)",
     ["Automatique (allège si le jeu rame)"] = "Automatisch (leichter, wenn das Spiel ruckelt)",
     ["Toujours complet"] = "Immer vollständig",
     ["Toujours en économie"] = "Immer sparsam",

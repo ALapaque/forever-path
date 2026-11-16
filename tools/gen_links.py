@@ -13,6 +13,7 @@ import json, os, pickle, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 db = pickle.load(open(os.environ.get("FP_DB") or os.path.join(HERE, "db.pkl"), "rb"))
 Q, N, I = db["Quest"], db["Npc"], db["Item"]
+A2M = db.get("area2map", {})            # zone (areaID) -> carte (uiMapID) ; absent d'un db_full partiel
 OVERRIDES = json.load(open(os.path.join(HERE, "overrides.json"), encoding="utf-8")).get("quests", {})
 
 ERA_MAX, FOREVER_MIN = 9665, 90000     # mêmes bornes que gen_routes.py (IDs d'autres versions écartés)
@@ -85,9 +86,23 @@ for root in Q:
         for i, c in enumerate(chain):
             CHAIN[c] = (i + 1, len(chain))
 
+def ender_pos(enders):
+    for e in enders:
+        for area, coords in sorted((g(N.get(e), 7) or {}).items()):
+            m = A2M.get(area)
+            pts = [c for c in lst(coords) if isinstance(c, dict) or isinstance(c, (list, tuple))]
+            if isinstance(m, int) and m > 0 and pts:
+                c = pts[0]
+                x, y = (g(c, 1), g(c, 2)) if isinstance(c, dict) else (c[0], c[1])
+                if isinstance(x, (int, float)) and x >= 0:
+                    return (m, x, y)
+    return None
+
+
+n_item = 0
 lines = ["local _, ns = ...", "",
          "-- Généré par tools/gen_links.py depuis QuestieDB (GPLv3). Ne pas modifier à la main.",
-         "-- ns.QuestLinks[quête] = \"m=monstres;e=PNJ qui la reçoivent;s=métier:niveau;c=partie/parties de la chaîne;n=quête suivante\"",
+         "-- ns.QuestLinks[quête] = \"m=monstres;e=PNJ qui la reçoivent;s=métier:niveau;c=partie/parties de la chaîne;n=quête suivante;p=carte:x:y (où la rendre, quêtes lancées par un objet)\"",
          "ns.QuestLinks = {"]
 n_mobs = n_skill = 0
 for qid in sorted(Q):
@@ -108,6 +123,12 @@ for qid in sorted(Q):
     if sk:
         parts.append("s=%d:%d" % (sk[0], sk[1]))
         n_skill += 1
+    # quête lancée par un objet (lâché par un monstre) : où la rendre, pour guider en jeu
+    if ints(g(g(q, 2, {}), 3)) and enders:
+        pos = ender_pos(enders)
+        if pos:
+            parts.append("p=%d:%.1f:%.1f" % pos)
+            n_item += 1
     if qid in CHAIN:
         parts.append("c=%d/%d" % CHAIN[qid])
         if qid in NEXT:
@@ -116,4 +137,5 @@ for qid in sorted(Q):
         lines.append('[%d]="%s",' % (qid, ";".join(parts)))
 lines.append("}")
 open(sys.argv[1], "w", encoding="utf-8").write("\n".join(lines) + "\n")
-print("quêtes avec monstres : %d, avec métier : %d, dans une chaîne : %d" % (n_mobs, n_skill, len(CHAIN)))
+print("quêtes avec monstres : %d, avec métier : %d, dans une chaîne : %d, lancées par un objet (avec lieu de rendu) : %d"
+      % (n_mobs, n_skill, len(CHAIN), n_item))

@@ -30,6 +30,8 @@ function ns.QuestLink(q)
     local pa, pn = raw:match("c=(%d+)/(%d+)")
     if pa then c.part, c.parts = tonumber(pa), tonumber(pn) end
     c.nextQuest = tonumber(raw:match("n=(%d+)"))
+    local pm, px, py = raw:match("p=(%d+):([%d.]+):([%d.]+)")
+    if pm then c.turnMap, c.turnX, c.turnY = tonumber(pm), tonumber(px), tonumber(py) end
     cache[q] = c
     return c
 end
@@ -208,6 +210,8 @@ local M = ns.RegisterModule({
         { key = "mobs", label = "Regrouper les quêtes aux mêmes monstres", type = "check", default = true },
         { key = "turnin", label = "Signaler les quêtes à rendre au même PNJ", type = "check", default = true },
         { key = "chain", label = "Quêtes en plusieurs parties : dire où la route s'arrête", type = "check", default = true },
+        { key = "starters", label = "Objets qui lancent une quête : bouton pour la lancer, et où la rendre", type = "check", default = true },
+        { key = "detour", label = "Proposer le détour pour la rendre jusqu'à (yards)", type = "slider", min = 0, max = 2000, step = 100, default = 600 },
     },
 })
 ns.QuestLinksModule = M
@@ -306,6 +310,161 @@ function M.ChainLine(step)
     end
 end
 
+---------------------------------------------------------------------------
+-- Objets lâchés par des monstres qui lancent une quête (souvent : juste aller la rendre, de l'XP
+-- pour quelques pas). On ne peut pas prévoir le butin dans la route, alors on les prend quand ils
+-- tombent : bouton pour lancer la quête, puis où la rendre — chez un PNJ où la route passe de toute
+-- façon, sinon un détour proposé s'il est court.
+---------------------------------------------------------------------------
+local QI = function() return ns.Modules.questitems end
+
+-- objets du sac qui lancent une quête pas encore prise : { { item, bag, slot, quest, xp } }
+function M.Starters()
+    local out = {}
+    if not (C_Container and C_Container.GetContainerNumSlots) then return out end
+    local qi, seen = QI(), {}
+    for bag = 0, 4 do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) or 0 do
+            local id = C_Container.GetContainerItemID(bag, slot)
+            if id and not seen[id] and ns.QuestItems and ns.QuestItems[id] and ns.QuestItems[id]:find("s=", 1, true) then
+                seen[id] = true
+                local a = qi and qi.Analyze and qi.Analyze(id)
+                for _, r in ipairs(a and a.quests or {}) do
+                    if r.role == "s" and not r.done and not r.inLog and (r.req or 1) <= ns.PlayerLevel() and r.factor > 0.2 then
+                        out[#out + 1] = { item = id, bag = bag, slot = slot, quest = r.quest, xp = r.xp }
+                        break
+                    end
+                end
+            end
+        end
+    end
+    table.sort(out, function(a, b) return (a.xp or 0) > (b.xp or 0) end)
+    return out
+end
+
+-- quêtes du journal, terminées, hors de la route, dont on sait où les rendre
+function M.TurnIns()
+    local out = {}
+    local route = ns.PathQuests()
+    local g, _, cur = ns.Engine.Current()
+    for i = 1, C_QuestLog.GetNumQuestLogEntries() do
+        local info = C_QuestLog.GetInfo(i)
+        local q = info and not info.isHeader and info.questID
+        if q and not ns.IsSecret(q) and not route[q] and C_QuestLog.IsComplete(q) then
+            local l = ns.QuestLink(q)
+            if l and (l.turnMap or next(l.enders)) then
+                local it = { quest = q, title = title(q, info), link = l }
+                -- la route passe-t-elle chez ce PNJ plus loin ?
+                if g then
+                    for j = cur or 1, #g.steps do
+                        local s = g.steps[j]
+                        if s.npcID and l.enders[s.npcID] and ns.Engine.Applies(s) then it.ahead = j - (cur or 1) break end
+                    end
+                end
+                if l.turnMap then
+                    it.dist = ns.Geo.Vector({ map = l.turnMap, x = l.turnX, y = l.turnY })
+                end
+                out[#out + 1] = it
+            end
+        end
+    end
+    return out
+end
+
+local function npcLabel(l)
+    for id in pairs(l.enders) do
+        local n = ns.NpcName(id)
+        if n then return n end
+    end
+    return ns.Tr("son PNJ")
+end
+
+function M.Detour(it)
+    local l = it and it.link
+    if not (l and l.turnMap) then return end
+    ns.Engine.SetDetour({ map = l.turnMap, x = l.turnX, y = l.turnY, radius = 10, kind = "questlinks",
+        text = ns.Tr("Rendre « %s »"):format(it.title), icon = "Interface\\GossipFrame\\ActiveQuestIcon",
+        npcID = next(l.enders) })
+end
+
+-- bouton sécurisé : lancer la quête de l'objet (clic = utiliser l'objet du sac)
+local sb = CreateFrame("Button", "QuestweaverStarterButton", UIParent, "SecureActionButtonTemplate")
+sb:SetSize(36, 36)
+sb:RegisterForClicks("AnyUp", "AnyDown")
+sb:SetAttribute("type", "item")
+sb:Hide()
+if ns.ActionBar and ns.ActionBar.Register then ns.ActionBar:Register(sb, 21) end
+sb.icon = sb:CreateTexture(nil, "ARTWORK")
+sb.icon:SetAllPoints()
+sb:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+sb.mark = sb:CreateTexture(nil, "OVERLAY")
+sb.mark:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+sb.mark:SetSize(16, 16)
+sb.mark:SetPoint("TOPRIGHT", 4, 4)
+sb:SetScript("OnEnter", function(self)
+    if not self.itemID then return end
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetItemByID(self.itemID)
+    GameTooltip:AddLine(ns.Tr("Clic : lancer la quête"), 0.4, 0.8, 1)
+    GameTooltip:Show()
+end)
+sb:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
+local starterDirty, announced = false, {}
+local function setStarter(st)
+    if InCombatLockdown() then starterDirty = true return end
+    starterDirty = false
+    if st then
+        sb.itemID = st.item
+        sb:SetAttribute("item", ("item:%d"):format(st.item))
+        sb.icon:SetTexture(C_Item and C_Item.GetItemIconByID and C_Item.GetItemIconByID(st.item) or "Interface\\Icons\\INV_Misc_Note_01")
+        sb:Show()
+    else
+        sb.itemID = nil
+        sb:SetAttribute("item", nil)
+        sb:Hide()
+    end
+    if ns.ActionBar and ns.ActionBar.Layout then ns.ActionBar:Layout() end
+end
+
+local detourBtn
+function M:ItemLines(lines)
+    local starters = (self.enabled and self:Opt("starters")) and M.Starters() or {}
+    setStarter(starters[1])
+    for k = 1, math.min(2, #starters) do
+        local st = starters[k]
+        local qi = QI()
+        local name = qi and qi.QuestName and qi.QuestName(st.quest) or ("#" .. st.quest)
+        lines[#lines + 1] = ns.Tr("|cffffd100Objet de quête|r : lance « %s » (+%d XP) — bouton ou clic droit dans ton sac"):format(name, st.xp or 0)
+        if not announced[st.quest] then
+            announced[st.quest] = true
+            ns.Toast(ns.Tr("Cet objet lance une quête : « %s » (+%d XP)"):format(name, st.xp or 0), "Interface\\GossipFrame\\AvailableQuestIcon", 1, 0.82, 0, 5)
+        end
+    end
+    local best
+    if self.enabled and self:Opt("starters") then
+        for _, it in ipairs(M.TurnIns()) do
+            local l = it.link
+            if it.ahead then
+                lines[#lines + 1] = ns.Tr("|cff3fd46aÀ rendre|r : « %s » à %s, ta route y passe dans %d étapes"):format(it.title, npcLabel(l), it.ahead)
+            elseif it.dist then
+                lines[#lines + 1] = ns.Tr("|cff3fd46aÀ rendre|r : « %s » à %s (%s)"):format(it.title, npcLabel(l), ns.FormatDistance(it.dist))
+                local max = self:Opt("detour") or 600
+                if it.dist <= max and (not best or it.dist < best.dist) then best = it end
+            end
+        end
+    end
+    M.detourTarget = best
+    if not detourBtn and ns.Guide and ns.Guide.AddButton then
+        detourBtn = ns.Guide:AddButton("itemquest", nil, 22, function() M.Detour(M.detourTarget) end,
+            ns.Tr("Détour : aller rendre la quête lancée par un objet"), "Interface\\GossipFrame\\ActiveQuestIcon")
+    end
+    if detourBtn then
+        local show = best ~= nil and not (ns.Engine.Detour() and ns.Engine.Detour().kind == "questlinks")
+        if detourBtn:IsShown() ~= show then detourBtn:SetShown(show); ns.Guide:Layout() end
+    end
+end
+
 local extra = {}       -- monstres des quêtes regroupées, ajoutés aux cibles
 function M:Update()
     wipe(extra)
@@ -326,6 +485,7 @@ function M:Update()
         local chain = self:Opt("chain") and M.ChainLine(step)
         if chain then lines[#lines + 1] = chain end
     end
+    self:ItemLines(lines)
     ns.Guide:SetSection("questlinks", 11, #lines > 0 and table.concat(lines, "\n") or nil)
 end
 function M.ExtraMobs() return M.enabled and M:Opt("mobs") and extra or nil end
@@ -357,8 +517,10 @@ M:On("FP_STEP_CHANGED", queue)
 M:On("QUEST_ACCEPTED", queue)
 M:On("QUEST_REMOVED", queue)
 M:On("QUEST_LOG_UPDATE", queue)
+M:On("BAG_UPDATE_DELAYED", queue)
+M:On("PLAYER_REGEN_ENABLED", function() if starterDirty then queue() end end)
 function M:OnEnable() self:Update() end
-function M:OnDisable() self:Update() end
+function M:OnDisable() self:Update(); setStarter(nil) end
 function M:OnOptionChanged() self:Update() end
 
 function M.preview(p)

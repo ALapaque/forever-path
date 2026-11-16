@@ -2,6 +2,16 @@ local _, ns = ...
 
 -- Traduction esES (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.ES = {
+    ["son PNJ"] = "su PNJ",
+    ["Rendre « %s »"] = "Entregar «%s»",
+    ["Clic : lancer la quête"] = "Clic: empezar la misión",
+    ["|cffffd100Objet de quête|r : lance « %s » (+%d XP) — bouton ou clic droit dans ton sac"] = "|cffffd100Objeto de misión|r: empieza «%s» (+%d PX) — botón o clic derecho en tu bolsa",
+    ["Cet objet lance une quête : « %s » (+%d XP)"] = "Este objeto empieza una misión: «%s» (+%d PX)",
+    ["|cff3fd46aÀ rendre|r : « %s » à %s, ta route y passe dans %d étapes"] = "|cff3fd46aPor entregar|r: «%s» a %s, tu ruta pasa por allí en %d pasos",
+    ["|cff3fd46aÀ rendre|r : « %s » à %s (%s)"] = "|cff3fd46aPor entregar|r: «%s» a %s (%s)",
+    ["Détour : aller rendre la quête lancée par un objet"] = "Desvío: ir a entregar la misión empezada por un objeto",
+    ["Objets qui lancent une quête : bouton pour la lancer, et où la rendre"] = "Objetos que empiezan una misión: botón para empezarla y dónde entregarla",
+    ["Proposer le détour pour la rendre jusqu'à (yards)"] = "Ofrecer el desvío para entregarla hasta (yardas)",
     ["Automatique (allège si le jeu rame)"] = "Automático (más ligero si el juego va lento)",
     ["Toujours complet"] = "Siempre completo",
     ["Toujours en économie"] = "Siempre en ahorro",

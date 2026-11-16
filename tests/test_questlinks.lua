@@ -152,3 +152,32 @@ check(QL.ChainLine(gc.steps[4]) == nil, "rendu d'une partie suivie de la suivant
 DONE[802] = true
 check(QL.ChainLine(gc.steps[2]) == nil, "suite déjà faite : rien à dire")
 print("chaînes OK")
+
+-- 6) objet lâché qui lance une quête (Goldtooth -> « Le collectionneur ») : bouton, puis où la rendre
+QLOG = {}; DONE = {}
+PLAYER.level = 10; PLAYER.map = 1429; PLAYER.x = 0.45; PLAYER.y = 0.60
+local QLM = ns.Modules.questlinks
+local BAG = { [0] = { [1] = 1307 } }
+C_Container = { GetContainerNumSlots = function(b) return b == 0 and 4 or 0 end,
+    GetContainerItemID = function(b, s) return BAG[b] and BAG[b][s] end }
+local st = QLM.Starters()
+check(#st == 1 and st[1].quest == 123 and st[1].xp > 0, "objet 1307 dans le sac : lance la quête 123 (+" .. tostring(st[1] and st[1].xp) .. " XP)")
+QLM:Update()
+local sbtn = _G.QuestweaverStarterButton
+check(sbtn.itemID == 1307, "bouton « lancer la quête » prêt")
+-- quête prise et terminée (simple livraison) : où la rendre
+BAG[0][1] = nil
+QLOG[123] = { complete = true }
+local ti = QLM.TurnIns()
+check(#ti == 1 and ti[1].quest == 123 and ti[1].dist, "quête lancée par l'objet : lieu de rendu connu (" .. tostring(ti[1] and ti[1].dist) .. " yards)")
+QLM:Update()
+check(QLM.detourTarget and QLM.detourTarget.quest == 123, "assez près : détour proposé")
+QLM.Detour(QLM.detourTarget)
+check(E.Detour() and E.Detour().kind == "questlinks", "détour vers le PNJ qui reçoit la quête")
+E.SetDetour(nil)
+QLM:SetOpt("detour", 0)
+QLM:Update()
+check(QLM.detourTarget == nil, "détour max à 0 : plus proposé")
+QLM:SetOpt("detour", 600)
+QLOG = {}
+print("objets de quête OK")

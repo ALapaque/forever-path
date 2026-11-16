@@ -2,6 +2,7 @@ local _, ns = ...
 
 -- Traduction deDE (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.DE = {
+    ["Tue ce monstre : son butin lance la quête"] = "Töte dieses Monster: seine Beute startet die Quest",
     ["Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."] = "In dieser Zone gibt es auf deiner Stufe nichts mehr zu tun: zurück zur empfohlenen Route.",
     ["son PNJ"] = "seinem NSC",
     ["Rendre « %s »"] = "'%s' abgeben",

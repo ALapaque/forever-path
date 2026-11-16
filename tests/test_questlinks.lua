@@ -200,3 +200,14 @@ check(QLM.detourTarget == nil, "détour max à 0 : plus proposé")
 QLM:SetOpt("detour", 600)
 QLOG = {}
 print("objets de quête OK")
+
+-- 7) routes : quêtes lancées par l'objet d'un monstre nommé (étape « prendre » sur le monstre)
+local found
+for _, id in ipairs(ns.GuideOrder) do
+    for _, s in ipairs(ns.Guides[id].steps) do
+        if s.type == "accept" and s.text and s.text:find("son butin", 1, true) then found = s break end
+    end
+    if found then break end
+end
+check(found and found.mobs and next(found.mobs) and not found.npcID and found.quest, "étape « tue ce monstre : son butin lance la quête » dans les routes (quête " .. tostring(found and found.quest) .. ")")
+print("butin OK")

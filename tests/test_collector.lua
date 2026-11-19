@@ -55,6 +55,18 @@ check(C.ScanMap(1411) == 1 and ns.db.collect.quests[20010].giver.x == 40, "quêt
 -- export puis relecture par l'outil de fusion
 local out = C.Export()
 check(out:match("^FPC1;") and out:find("Q;20001;Les sangliers;8;") and out:find("O;20001;1411,55,48"), "export FPC1")
+check(out:find("R;20001;%d+"), "niveau de prise exporté (niveau requis réel)")
+-- niveau de prise d'une quête de Forever (même connue des routes) : pour corriger le niveau requis
+ns.KnownQuests = ns.KnownQuests or {}; ns.KnownQuests[95141] = true    -- dans les routes
+PLAYER.level = 37
+FireEvent("QUEST_ACCEPTED", 95141)
+PLAYER.level = 39
+FireEvent("QUEST_ACCEPTED", 95141)
+check(ns.db.collect.acc[95141] == 37 and not ns.db.collect.quests[95141], "plus bas niveau de prise gardé, sans collecter la quête connue")
+FireEvent("QUEST_ACCEPTED", 783)
+check(not ns.db.collect.acc[783], "quête Classic : pas de relevé")
+PLAYER.level = 1
+out = C.Export()
 local n, done = C.Count()
 check(n == 2 and done == 1, "compteur : 2 quêtes, 1 rendue")
 local f = io.open("/tmp/fp_collect_export.txt", "w"); f:write(out); f:close()

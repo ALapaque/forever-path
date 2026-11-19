@@ -15,6 +15,7 @@ assert d["quests"]["20002"]["elite"] is True
 assert d["pre"]["20002"] == [20001], "ordre de déblocage relevé en jeu"
 assert 79192 in d["seen"] and 20001 in d["seen"], "quêtes vues en jeu (confirme les IDs partagés avec d'autres versions)"
 if len(files) == 3:
+    assert d["acc"]["95141"] == 37, "plus bas niveau de prise relevé en jeu"
     assert q["reports"] == 3, "l'export du jeu est relu par l'outil"
     assert "20010" in d["quests"]
 print("ok - fusion des collectes (%d fichiers)" % len(files))

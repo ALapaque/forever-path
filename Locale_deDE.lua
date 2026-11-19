@@ -2,6 +2,8 @@ local _, ns = ...
 
 -- Traduction deDE (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.DE = {
+    ["Quête de niveau %d requis : mise de côté, le guide y reviendra à ce niveau."] = "Quest erfordert Stufe %d: zurückgestellt, der Guide kommt auf dieser Stufe darauf zurück.",
+    ["Niveau atteint : retour à une quête mise de côté."] = "Stufe erreicht: zurück zu einer zurückgestellten Quest.",
     ["Quête maintenant proposée : retour à sa prise."] = "Quest wird jetzt angeboten: zurück zur Annahme.",
     ["De près, se placer sur le PNJ (barre de nom)"] = "Aus der Nähe auf den NSC setzen (Namensplakette)",
     ["Tue ce monstre : son butin lance la quête"] = "Töte dieses Monster: seine Beute startet die Quest",

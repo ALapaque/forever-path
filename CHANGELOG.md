@@ -1,5 +1,11 @@
 # Questweaver
 
+## v1.10.3
+
+- **Plus de quêtes au-dessus de ton niveau.** À Grom'gol (Vallée de Strangleronce), la route faisait prendre « Rapport à Rog'mar » à un joueur de niveau 35 : il faut le niveau 36, et Aggro'gosh ne montrait qu'un point d'exclamation gris. La route suppose un niveau ; si tu es en retard sur elle, ce genre de cas arrivait. Maintenant, chaque prise connaît le niveau requis de sa quête : en dessous, elle est mise de côté (avec un message qui donne le niveau), la route continue, et dès que tu atteins ce niveau le guide revient à sa prise, sans te refaire les étapes « aller à » déjà passées. Si le rendu de la quête est déjà derrière toi, il ne revient pas en arrière pour rien.
+- **Niveaux requis plus sûrs.** Pour près de 300 quêtes de Forever, la base de quêtes ne donne pas de niveau requis. Il était estimé à 3 niveaux sous celui de la quête, ce qui était trop tôt pour une quête sur trois (mesuré sur les quêtes dont le niveau requis est connu). Il est maintenant pris égal au niveau de la quête : jamais trop tôt. Les routes sont régénérées avec la dernière version de la base ; le temps jusqu'au 60 ne change presque pas (environ 79 h).
+- **Le Collecteur note le niveau auquel tu prends chaque quête de Forever** (même celles déjà dans les routes). Ces relevés, partagés avec `/qw collecte export`, remplaceront l'estimation par le vrai niveau requis : les quêtes concernées pourront être proposées plus tôt, sans risque.
+
 ## v1.10.2
 
 - **Suite d'une chaîne passée à tort.** Juste après avoir rendu une quête, le PNJ met parfois un instant à proposer la suite : sa fenêtre se rouvre sans elle. Le garde-fou « quête pas proposée » concluait trop vite et passait la suite (par exemple « Les Veilleurs », partie 2). Il attend maintenant quelques secondes après un rendu avant de conclure.

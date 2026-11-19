@@ -28,10 +28,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 COLLECTED_PATH = os.environ.get("FP_COLLECTED") or os.path.join(HERE, "collected.json")
 _collected_doc = json.load(open(COLLECTED_PATH, encoding="utf-8")) if os.path.exists(COLLECTED_PATH) else {}
 COLLECTED = _collected_doc.get("quests", {})
+COLLECTED_ACC = {int(k): v for k, v in _collected_doc.get("acc", {}).items()}   # plus bas niveau de prise vu en jeu
 COLLECTED_PRE = _collected_doc.get("pre", {})        # { "quête": [quêtes rendues juste avant, vues en jeu] }
 OVERRIDES_PATH = os.path.join(HERE, "overrides.json")
 OVERRIDES = json.load(open(OVERRIDES_PATH, encoding="utf-8")).get("quests", {}) if os.path.exists(OVERRIDES_PATH) else {}
 SAN = Counter()
+# Niveau requis inconnu : estimé à niveau de quête - EST_GAP. Mesuré sur les quêtes Forever dont le
+# niveau requis est connu (19/11/2026) : écart < 3 pour 32 %, < 1 pour 13 %. Avec -3, une quête sur
+# trois était proposée trop tôt (point d'exclamation gris). On prend 0 : jamais trop tôt.
+EST_GAP = int(os.environ.get("FP_EST_GAP", "0"))
 FOREVER_MIN = 90000         # premiers IDs de quêtes propres à Forever
 MAX_DROPPERS = 2            # quête lancée par un objet : seulement s'il ne tombe que sur 1-2 monstres
 import re as _re_bring
@@ -74,9 +79,13 @@ def sanitize():
     for qid, q in Q.items():
         lvl, req = g(q, 5), g(q, 4)
         if qid >= FOREVER_MIN and isinstance(lvl, int) and lvl > 1 and (not req or req <= 1) and not q.get("fixed"):
-            q[4] = max(1, lvl - 3)
-            q["estimated"] = True
-            SAN["niveau requis estimé"] += 1
+            if qid in COLLECTED_ACC and COLLECTED_ACC[qid] <= lvl:
+                q[4] = COLLECTED_ACC[qid]         # prise vue en jeu à ce niveau : il suffit
+                SAN["niveau requis vu en jeu"] += 1
+            else:
+                q[4] = max(1, lvl - EST_GAP)
+                q["estimated"] = True
+                SAN["niveau requis estimé"] += 1
     # ordre souple : suite donnée par le PNJ à qui on rend la quête d'ID voisin (1 à 3 avant)
     enders = defaultdict(set)
     for qid, q in Q.items():
@@ -699,6 +708,10 @@ def render(zone, steps, stop):
                 text = ' "Tue ce monstre : son butin lance la quête"'
             if kind == "A":
                 opts.append("lvl=%d" % info["lvl"])
+                # niveau requis : l'addon met la prise de côté si le joueur est en dessous (point
+                # d'exclamation gris), puis la reprend une fois le niveau atteint
+                if info["req"] > 1:
+                    opts.append("req=%d" % info["req"])
             lines.append("%s %d%s %s %s" % (kind, info["id"], text, fmt(p), " ".join(opts)))
         elif kind == "C":
             if info["mobs"]:

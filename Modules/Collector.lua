@@ -125,6 +125,17 @@ M:On("QUEST_COMPLETE", function()
     if npc then e.ender = { npc = npc, map = p and p.map, x = p and p.x, y = p and p.y } end
 end)
 
+-- Niveau auquel une quête de Forever a été prise (même connue des routes) : le niveau requis vaut
+-- au plus ce niveau. La base n'en donne pas pour beaucoup de quêtes : le générateur les estime au
+-- niveau de la quête (prudent), et ces relevés lui permettent de les proposer plus tôt sans risque.
+M:On("QUEST_ACCEPTED", function(q)
+    if not (M.enabled and type(q) == "number" and not ns.IsSecret(q) and q > KNOWN_MAX) then return end
+    local d = db()
+    d.acc = d.acc or {}
+    local lvl = ns.PlayerLevel()
+    if not d.acc[q] or lvl < d.acc[q] then d.acc[q] = lvl end
+end)
+
 M:On("QUEST_ACCEPTED", function(q)
     if not (M.enabled and M.Wanted(q)) then return end
     local e = quest(q)
@@ -239,6 +250,7 @@ function M.Export()
     end
     for id, n in pairs(d.npcs) do out[#out + 1] = ("N;%d;%s;%s"):format(id, clean(n.name), pt(n)) end
     for q, prev in pairs(d.pre or {}) do out[#out + 1] = ("P;%d;%d"):format(q, prev) end
+    for q, lvl in pairs(d.acc or {}) do out[#out + 1] = ("R;%d;%d"):format(q, lvl) end
     return table.concat(out, "\n")
 end
 

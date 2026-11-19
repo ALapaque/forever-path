@@ -139,4 +139,63 @@ C_GossipInfo.GetAvailableQuests = function() return { { questID = 622 } } end
 FireEvent("GOSSIP_SHOW")
 check(not ns.cdb.notOffered[622] and select(3, E.Current()) == 3, "proposée plus tard : retour à la prise de la partie 2")
 GetTime = oldT
+
+-- 7) quête au-dessus du niveau du joueur (point d'exclamation gris, « Rapport à Rog'mar » à 35
+-- alors qu'il faut 36) : prise mise de côté, puis reprise dès que le niveau est atteint
+ns.RegisterGuide({ id = "test-req", name = "Niveau requis", faction = "Alliance", minLevel = 1, maxLevel = 40, text = [[
+M elwynn
+A 631 @40.0,60.0 id=88 lvl=36
+A 632 @40.0,60.0 id=88 lvl=38 req=36
+G "Va plus loin" @60.0,60.0 r=10
+A 633 @50.0,60.0 id=89 lvl=36 req=34
+C 633 @52.0,62.0
+C 632 @55.0,62.0
+T 633 @50.0,60.0 id=89
+T 632 @40.0,60.0 id=88
+A 634 @40.0,60.0 id=88 lvl=40 req=39
+N "Fin"
+]] })
+check(ns.Guides["test-req"].steps[2].req == 36, "req= lu par l'analyseur")
+GetMoney = function() return 0 end   -- module Monture (actif à partir du niveau 30)
+local toasts = {}
+local oldToast = ns.Toast
+ns.Toast = function(msg) toasts[#toasts + 1] = msg end
+PLAYER.level = 35
+QLOG = { [631] = { complete = false } }; DONE = {}; ns.cdb.notOffered = {}; ns.cdb.levelWait = {}
+E.Load("test-req")
+check(select(3, E.Current()) == 3, "niveau 35, quête de niveau 36 requis : prise mise de côté (étape " .. tostring(select(3, E.Current())) .. ")")
+check(ns.cdb.levelWait[632] == 36, "mise de côté notée avec son niveau requis")
+check(toasts[1] and toasts[1]:find("36"), "le joueur est prévenu (niveau requis affiché)")
+-- il avance : aller plus loin (validé), prend la quête suivante
+ns.cdb.skipped["test-req"][3] = true
+QLOG[633] = { complete = false }
+E.Refresh()
+check(select(3, E.Current()) == 5, "il avance dans la route sans la quête mise de côté")
+-- niveau 36 : retour à la prise, et l'étape « aller à » déjà faite n'est pas redemandée
+PLAYER.level = 36
+FireEvent("PLAYER_LEVEL_UP", 36)
+RunTimers()
+check(select(3, E.Current()) == 2 and not ns.cdb.levelWait[632], "niveau atteint : retour à la prise mise de côté")
+local told = false
+for _, m in ipairs(toasts) do if m:find("Niveau atteint") then told = true end end
+check(told, "le joueur est prévenu du retour")
+QLOG[632] = { complete = false }
+E.Refresh()
+check(select(3, E.Current()) == 5, "quête prise : la route reprend là où il en était (étape " .. tostring(select(3, E.Current())) .. ")")
+-- déjà prise ou faite : jamais mise de côté, même sous le niveau
+PLAYER.level = 30
+E.Refresh()
+check(not ns.cdb.levelWait[632], "quête déjà dans le journal : pas concernée par le niveau requis")
+-- rendu déjà derrière : pas de retour en arrière pour rien
+PLAYER.level = 38
+QLOG = {}; DONE = { [631] = true, [632] = true, [633] = true }
+ns.cdb.stepIndex = 9; E.Refresh()
+check(select(3, E.Current()) == 10 and ns.cdb.levelWait[634] == 39, "fin de segment : quête de niveau 39 requis mise de côté")
+-- le PNJ la propose quand même (niveau requis surestimé) : on y revient
+UnitGUID = function(u) if u == "npc" then return "Creature-0-1-2-3-88-0000" end end
+C_GossipInfo.GetAvailableQuests = function() return { { questID = 634 } } end
+FireEvent("GOSSIP_SHOW")
+check(select(3, E.Current()) == 10, "toujours sous le niveau requis indiqué : pas de retour (la route dit 39)")
+ns.Toast = oldToast
+PLAYER.level = 1
 print("ALL TESTS PASSED")

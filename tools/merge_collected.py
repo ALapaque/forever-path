@@ -56,6 +56,7 @@ Q = defaultdict(lambda: {"titles": Counter(), "lvl": [], "lvlAcc": [], "xp": [],
                          "elite": 0, "group": 0, "reports": 0})
 NPCS = {}
 SEEN = set()                    # toutes les quêtes vues en jeu (confirme les IDs 9666-89999 partagés avec d'autres versions)
+ACC = {}                        # quête -> plus bas niveau auquel un joueur l'a prise (niveau requis <= ce niveau)
 PRE = defaultdict(Counter)      # quête -> quêtes rendues juste avant qu'elle n'apparaisse chez le même PNJ
 runs = 0
 for f in files:
@@ -105,6 +106,10 @@ for f in files:
             q, prev = num(p[1], int), num(p[2], int)
             if q and prev:
                 PRE[q][prev] += 1
+        elif p[0] == "R" and len(p) >= 3:
+            q, lvl = num(p[1], int), num(p[2], int)
+            if q and lvl and 0 < lvl <= 60:
+                ACC[q] = min(ACC.get(q, 99), lvl)
         elif p[0] == "N" and len(p) >= 4:
             nid = num(p[1], int)
             if nid:
@@ -127,7 +132,8 @@ for q, e in sorted(Q.items()):
         "elite": e["elite"] > 0, "group": e["group"], "reports": e["reports"],
     }
 pre = {str(q): [c.most_common(1)[0][0]] for q, c in sorted(PRE.items())}
-json.dump({"runs": runs, "quests": out, "npcs": NPCS, "pre": pre, "seen": sorted(SEEN)}, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+acc = {str(q): v for q, v in sorted(ACC.items())}
+json.dump({"runs": runs, "quests": out, "npcs": NPCS, "pre": pre, "acc": acc, "seen": sorted(SEEN | set(ACC))}, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 complete = sum(1 for v in out.values() if v["giver"] and v["ender"] and v["lvl"])
 print("collectes : %d, quêtes nouvelles : %d (dont %d complètes : donneur, rendu, niveau), PNJ : %d"
       % (runs, len(out), complete, len(NPCS)))

@@ -56,6 +56,14 @@ function E.Distance(step)
     return d
 end
 
+-- Prise d'une quête au-dessus du niveau du joueur : le PNJ ne la propose pas encore (point
+-- d'exclamation gris). Le niveau requis vient de la route (req=) ; une quête déjà prise ou faite
+-- n'est jamais concernée.
+function E.TooLow(step)
+    return step.type == "accept" and step.req ~= nil and step.quest ~= nil and ns.PlayerLevel() < step.req
+        and not questInLog(step.quest) and not questDone(step.quest)
+end
+
 function E.IsDone(step, idx, guideId)
     if step.removed then return true end          -- retirée avec l'éditeur
     local skipped = ns.cdb.skipped[guideId or ns.cdb.guideId]
@@ -73,6 +81,12 @@ function E.IsDone(step, idx, guideId)
     -- quête de métier (ex. Cuisine 50) que le personnage ne peut pas faire : passée, sauf si déjà prise
     local pq = ns.Modules.profquests
     if step.quest and pq and pq.Skip and not questInLog(step.quest) and pq.Skip(step) then return true end
+    -- niveau requis pas atteint (point d'exclamation gris) : prise mise de côté, reprise au bon niveau
+    if E.TooLow(step) then
+        ns.cdb.levelWait = ns.cdb.levelWait or {}
+        ns.cdb.levelWait[step.quest] = step.req
+        return true
+    end
     -- quête que son PNJ ne proposait pas (prérequis manquant, donnée fausse) : prise passée
     if step.type == "accept" and step.quest and ns.cdb.notOffered and ns.cdb.notOffered[step.quest] then return true end
     -- rattrapage : quête devenue grise et pas encore prise
@@ -136,14 +150,15 @@ end
 -- (niveau atteint, prérequis fait, ou fausse alerte) : on revient à sa prise.
 function E.Reoffered(ids)
     local g, _, cur = E.Current()
-    local no = ns.cdb.notOffered
-    if not (g and no and next(no)) then return end
+    local no, lw = ns.cdb.notOffered or {}, ns.cdb.levelWait or {}
+    if not (g and (next(no) or next(lw))) then return end
     for _, q in ipairs(ids) do
-        if no[q] then
+        if no[q] or lw[q] then
             for j = 1, (cur or 1) - 1 do
                 local s = g.steps[j]
-                if s.type == "accept" and s.quest == q and E.Applies(s) then
-                    no[q] = nil
+                if s.type == "accept" and s.quest == q and E.Applies(s) and not E.TooLow(s) then
+                    no[q], lw[q] = nil, nil
+                    E.KeepPassed(g, j, cur)
                     ns.cdb.stepIndex = j
                     ns.Toast(ns.Tr("Quête maintenant proposée : retour à sa prise."), "Interface\\GossipFrame\\AvailableQuestIcon", 0.4, 0.9, 0.5, 4)
                     E.Refresh()
@@ -154,6 +169,56 @@ function E.Reoffered(ids)
         end
     end
 end
+
+-- Retour en arrière vers une prise : les étapes sans quête déjà passées entre les deux (aller à,
+-- notes, vols...) restent passées, sinon le guide renverrait le joueur sur ses pas.
+function E.KeepPassed(g, from, to)
+    ns.cdb.skipped[g.id] = ns.cdb.skipped[g.id] or {}
+    to = to or from
+    for k = from + 1, to - 1 do
+        local s = g.steps[k]
+        if s and not s.quest then
+            ns.cdb.skipped[g.id][k] = true
+        elseif s and s.type == "accept" and not questInLog(s.quest) then
+            -- autre prise passée dont le rendu est déjà derrière : on ne la reprend pas en chemin
+            local ahead = false
+            for m = to, #g.steps do
+                local t = g.steps[m]
+                if t.quest == s.quest and t.type ~= "accept" then ahead = true break end
+            end
+            if not ahead then ns.cdb.skipped[g.id][k] = true end
+        end
+    end
+end
+
+-- Niveau atteint : une prise mise de côté plus tôt dans ce guide, dont la quête est encore à faire
+-- plus loin (son rendu n'est pas encore passé), redevient l'étape en cours.
+function E.ResumeLevelWait()
+    local g, _, cur = E.Current()
+    local lw = ns.cdb.levelWait
+    if not (g and cur and lw and next(lw)) then return end
+    for j = 1, cur - 1 do
+        local s = g.steps[j]
+        if s.type == "accept" and s.quest and lw[s.quest] and E.Applies(s) and not E.TooLow(s)
+            and not questInLog(s.quest) and not questDone(s.quest) then
+            local ahead = false
+            for k = cur, #g.steps do
+                local t = g.steps[k]
+                if t.quest == s.quest and (t.type == "turnin" or t.type == "complete") then ahead = true break end
+            end
+            lw[s.quest] = nil
+            if ahead then
+                E.KeepPassed(g, j, cur)
+                ns.cdb.stepIndex = j
+                ns.Toast(ns.Tr("Niveau atteint : retour à une quête mise de côté."), "Interface\\GossipFrame\\AvailableQuestIcon", 0.4, 0.9, 0.5, 4)
+                E.Refresh()
+                ns.Fire("FP_STEP_CHANGED", true)
+                return true
+            end
+        end
+    end
+end
+ns.On("PLAYER_LEVEL_UP", function() C_Timer.After(1.5, E.ResumeLevelWait) end)
 
 function E.CheckOffered()
     if C_GossipInfo and C_GossipInfo.GetAvailableQuests then
@@ -236,8 +301,18 @@ function E.Refresh()
     if not g then ns.Fire("FP_STEP_CHANGED", false) return end
     local start = math.max(1, ns.cdb.stepIndex or 1)
     local i = start
-    while g.steps[i] and E.IsDone(g.steps[i], i) do i = i + 1 end
+    local waiting
+    while g.steps[i] and E.IsDone(g.steps[i], i) do
+        local s = g.steps[i]
+        if E.TooLow(s) and E.Applies(s) and not (ns.cdb.skipped[g.id] or {})[i] then waiting = waiting or s end
+        i = i + 1
+    end
     local changed = i ~= start
+    if waiting and changed and waiting.quest ~= E.lastWaitToast then
+        E.lastWaitToast = waiting.quest
+        ns.Toast(ns.Tr("Quête de niveau %d requis : mise de côté, le guide y reviendra à ce niveau."):format(waiting.req),
+            "Interface\\GossipFrame\\AvailableQuestIcon", 0.7, 0.7, 0.7, 4)
+    end
     ns.cdb.stepIndex = i
     if not g.steps[i] and changed then
         local nextId = g.next

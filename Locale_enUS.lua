@@ -3,6 +3,8 @@ local _, ns = ...
 -- Traduction anglaise (clients non francophones). Clés : textes français exacts du code ;
 -- les textes avec %d / %s servent aussi de modèles pour les textes déjà formatés (voir ns.Tr).
 ns.EN = {
+    ["Quête de niveau %d requis : mise de côté, le guide y reviendra à ce niveau."] = "Quest requires level %d: set aside, the guide will come back to it at that level.",
+    ["Niveau atteint : retour à une quête mise de côté."] = "Level reached: back to a quest set aside earlier.",
     ["Quête maintenant proposée : retour à sa prise."] = "Quest now offered: back to picking it up.",
     ["De près, se placer sur le PNJ (barre de nom)"] = "Up close, snap onto the NPC (nameplate)",
     ["Tue ce monstre : son butin lance la quête"] = "Kill this monster: its loot starts the quest",

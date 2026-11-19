@@ -2,6 +2,8 @@ local _, ns = ...
 
 -- Traduction esES (textes courts ; les longues descriptions retombent sur l'anglais).
 ns.ES = {
+    ["Quête de niveau %d requis : mise de côté, le guide y reviendra à ce niveau."] = "La misión requiere nivel %d: apartada, la guía volverá a ella en ese nivel.",
+    ["Niveau atteint : retour à une quête mise de côté."] = "Nivel alcanzado: vuelta a una misión apartada.",
     ["Quête maintenant proposée : retour à sa prise."] = "Misión ya disponible: vuelta a aceptarla.",
     ["De près, se placer sur le PNJ (barre de nom)"] = "De cerca, colocarse sobre el PNJ (placa de nombre)",
     ["Tue ce monstre : son butin lance la quête"] = "Mata a este monstruo: su botín empieza la misión",

@@ -24,6 +24,11 @@ for f in files:
     name = os.path.basename(f)[6:-4]
     s = open(f, encoding="utf-8").read()
     acc, turned, order_bad, foreign, banned = set(), set(), 0, 0, 0
+    # chaque prise d'une quête de Forever (au-delà du niveau 1) dit son niveau requis : l'addon la met de côté en dessous
+    no_req = [l for l in re.findall(r"^A \d+[^\n]*$", s, re.M) if int(l.split()[1]) >= 90000 and " req=" not in l and " lvl=1 " not in l + " "]
+    bad_req = [(r, l) for l, r in re.findall(r"^A \d+[^\n]* lvl=(\d+) req=(\d+)", s, re.M) if int(r) > int(l)]
+    check(not no_req, "%s : niveau requis indiqué pour chaque prise de quête Forever (%d sans)" % (name, len(no_req)))
+    check(not bad_req, "%s : niveau requis jamais au-dessus du niveau de la quête" % name)
     for kind, q in re.findall(r"^([ACT]) (\d+)", s, re.M):
         q = int(q)
         if 9665 < q < 90000 and q not in confirmed:

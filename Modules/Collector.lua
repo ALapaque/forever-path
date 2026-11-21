@@ -165,6 +165,45 @@ M:On("QUEST_TURNED_IN", function(q, xp)
     e.done = true
 end)
 
+-- Quêtes que le PNJ de la route ne proposait pas (prérequis manquant dans la base, quête retirée du
+-- jeu, mauvaise race ou classe) : on note à quel niveau, avec quel personnage, et ce qui a fini par
+-- la débloquer (niveau atteint, quête rendue juste avant). Avec plusieurs joueurs, le générateur de
+-- routes en déduit seul la correction : quête retirée, niveau requis relevé ou prérequis ajouté.
+local nudged
+function M.NoteNotOffered(q, npc)
+    if not (M.enabled and type(q) == "number") then return end
+    local d = db()
+    d.no = d.no or {}
+    local e = d.no[q]
+    if not e then
+        e = { n = 0, lvl = ns.PlayerLevel(), race = ns.PlayerRace(), class = ns.PlayerClass(), npc = npc }
+        d.no[q] = e
+    end
+    e.n = e.n + 1
+    e.max = ns.PlayerLevel()            -- dernier niveau où elle n'était toujours pas proposée
+    local n = 0
+    for _ in pairs(d.no) do n = n + 1 end
+    if not nudged and n - (d.noSent or 0) >= 3 then
+        nudged = true
+        ns.Toast(ns.Tr("%d quêtes de ta route n'étaient pas proposées. /qw collecte export : ton relevé corrige les routes pour tout le monde."):format(n - (d.noSent or 0)),
+            "Interface\\Icons\\INV_Misc_Note_01", 0.4, 0.8, 1, 8)
+    end
+end
+function M.NoteOffered(q)
+    local e = M.enabled and db().no and db().no[q]
+    if not e or e.ok then return end
+    e.ok = ns.PlayerLevel()
+    if lastTurnin and GetTime() - lastTurnin.time < 90 then e.after = lastTurnin.quest end
+end
+M:On("QUEST_ACCEPTED", function(q)
+    if type(q) == "number" and not ns.IsSecret(q) then M.NoteOffered(q) end
+end)
+function M.NotOfferedCount()
+    local n = 0
+    for _ in pairs(db().no or {}) do n = n + 1 end
+    return n
+end
+
 -- objectifs : à chaque progression, on note la position (et le monstre ciblé juste avant)
 local progress, lastTarget, lastTargetTime = {}, nil, 0
 M:On("PLAYER_TARGET_CHANGED", function()
@@ -251,6 +290,11 @@ function M.Export()
     for id, n in pairs(d.npcs) do out[#out + 1] = ("N;%d;%s;%s"):format(id, clean(n.name), pt(n)) end
     for q, prev in pairs(d.pre or {}) do out[#out + 1] = ("P;%d;%d"):format(q, prev) end
     for q, lvl in pairs(d.acc or {}) do out[#out + 1] = ("R;%d;%d"):format(q, lvl) end
+    -- X;quête;PNJ;niveau au premier refus;dernier niveau refusé;race;classe;niveau où elle a été proposée;quête rendue juste avant;fois
+    for q, e in pairs(d.no or {}) do
+        out[#out + 1] = ("X;%d;%s;%d;%d;%s;%s;%s;%s;%d"):format(q, e.npc or "", e.lvl or 0, e.max or e.lvl or 0,
+            clean(e.race), clean(e.class), e.ok or "", e.after or "", e.n or 1)
+    end
     return table.concat(out, "\n")
 end
 
@@ -262,6 +306,7 @@ end
 
 ns.SlashExt.collecte = function(arg)
     if arg == "export" then
+        db().noSent = M.NotOfferedCount()
         ns.ShowExport(M.Export(), ns.Tr("Quêtes collectées (Ctrl+A, Ctrl+C) — à envoyer sur GitHub ou Discord"))
     elseif arg == "reset" then
         ns.db.collect = nil
@@ -269,6 +314,9 @@ ns.SlashExt.collecte = function(arg)
     else
         local n, done = M.Count()
         ns.Print(ns.Tr("Collecte : %d quête(s) notée(s), dont %d rendue(s). /qw collecte export pour partager."):format(n, done))
+        if M.NotOfferedCount() > 0 then
+            ns.Print(ns.Tr("Quêtes de la route que leur PNJ ne proposait pas : %d."):format(M.NotOfferedCount()))
+        end
     end
 end
 ns.SlashExt.collect = ns.SlashExt.collecte

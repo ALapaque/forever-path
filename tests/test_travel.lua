@@ -106,5 +106,24 @@ C_QuestLog.SetAbandonQuest = function() end
 C_QuestLog.AbandonQuest = function() end
 QL:AbandonFirst()
 check(abandoned == 7001, "abandon de la première suggestion")
+-- prochaines prises : 3 quêtes à prendre, 1 place libre -> 2 places à libérer, annoncé avant le PNJ ;
+-- une quête rendue dans un segment suivant n'est pas proposée à l'abandon
+ns.Guides.tA = { id = "tA", name = "A", next = "tB", steps = {
+    { type = "accept", quest = 8001 }, { type = "goto", x = 1, y = 1, map = 1 }, { type = "accept", quest = 8002 },
+    { type = "accept", quest = 8003 }, { type = "complete", quest = 8001 }, { type = "accept", quest = 8004 } } }
+ns.Guides.tB = { id = "tB", name = "B", steps = { { type = "turnin", quest = 7005 }, { type = "turnin", quest = 7001 } } }
+ns.cdb.guideId, ns.cdb.stepIndex = "tA", 1
+ns.cdb.skipped.tA, ns.cdb.skipped.tB = {}, {}
+check(QL.Needed() == 3, "3 prises à venir avant la première quête à faire (" .. QL.Needed() .. ")")
+s = QL.Suggestions()
+local has = {}
+for _, e in ipairs(s) do has[e.id] = true end
+check(not has[7005] and not has[7001] and has[7002] and s[1].id == 7002, "quête rendue dans un segment suivant : gardée")
+local shown
+local oldSet = ns.Guide.SetSection
+ns.Guide.SetSection = function(self, key, order, text) if key == "questlog" then shown = text end return oldSet(self, key, order, text) end
+QL:Update()
+check(shown and shown:find("2 place") and shown:find("3 prochaines"), "annonce : 2 places à libérer pour les 3 prochaines quêtes")
+ns.Guide.SetSection = oldSet
 C_QuestLog.GetInfo = oldInfo
 print("ALL TESTS PASSED")

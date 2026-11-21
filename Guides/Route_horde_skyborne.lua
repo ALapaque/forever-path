@@ -2106,14 +2106,16 @@ M wpl
 G "Rejoins Maleterres de l'Ouest" @53.7,64.7 r=40 upto=58
 A 4985 @53.7,64.7 id=10739 lvl=56 req=51
 C 4985 @64.5,48.1 mobs=1816
-T 4985 @53.7,64.7 id=10739
-T 5050 @38.4,54.0 id=10778
+A 7790 @70.1,44.1 id=270191 lvl=57 req=53
+T 7790 @70.1,44.1
 A 6004 @51.9,28.1 id=11610 lvl=56 req=50
 C 6004 @51.2,42.7 mobs=1833,1831,10605,1826
 T 6004 @51.9,28.1 id=11610
 A 6023 @51.9,28.1 id=11610 lvl=57 req=50
 C 6023 @57.8,36.1 mobs=11613,11611
 T 6023 @51.9,28.1 id=11610
+T 5050 @38.4,54.0 id=10778
+T 4985 @53.7,64.7 id=10739
 ]],
 })
 
@@ -2122,10 +2124,10 @@ ns.RegisterGuide({
     name = "Mont Hyjal 56-57",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 56, maxLevel = 57,
-    next = "horde-skyborne-56-felwood-4",
+    next = "horde-skyborne-57-winterspring-2",
     text = [[
 M hyjal
-G "Rejoins Mont Hyjal" @21.1,78.5 r=40 upto=58
+G "Rejoins Mont Hyjal" @21.1,78.5 r=40 upto=59
 A 93833 @21.8,79.2 id=256650 lvl=57 req=54
 A 93834 @21.1,78.5 id=256629 lvl=57 req=54
 C 93834 @21.6,78.6 mobs=256714
@@ -2173,45 +2175,31 @@ A 96622 @12.9,52.9 id=244512 lvl=57 req=54
 T 96622 @12.9,52.9 id=244512
 T 96321 @48.3,85.7 id=257753
 A 96131 @48.3,85.7 id=257753 lvl=58 req=54
-]],
-})
-
-ns.RegisterGuide({
-    id = "horde-skyborne-56-felwood-4",
-    name = "Gangrebois 56-57",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 56, maxLevel = 57,
-    next = "horde-skyborne-57-hyjal-3",
-    text = [[
-M felwood
-G "Rejoins Gangrebois" @51.2,82.2 r=40 upto=59
-T 95568 @51.2,82.2 id=256222
-T 96131 @51.2,82.2 id=256222
-A 93747 @51.2,82.2 id=256222 lvl=56 req=54
-T 93747 @51.2,82.2 id=256222
-T 4521 @34.7,52.8 id=10306
-T 6605 @34.2,52.3 id=9996
-]],
-})
-
-ns.RegisterGuide({
-    id = "horde-skyborne-57-hyjal-3",
-    name = "Mont Hyjal 57-58",
-    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
-    minLevel = 57, maxLevel = 58,
-    next = "horde-skyborne-57-winterspring-2",
-    text = [[
-M hyjal
-H "Utilise ta pierre de foyer" @12.9,52.9 id=244512
-A 95026 @13.8,54.8 id=244511 lvl=58 req=54
-A 90865 @18.8,62.0 id=264089 lvl=58 req=54
-C 95026 @24.7,53.3 mobs=249228,249247
-C 90865 @24.5,53.8 mobs=249237
+A 92147 @54.5,63.9 id=260825 lvl=58 req=55 danger=1
+A 96252 @54.5,63.9 id=260825 lvl=58 req=55
+C 92147 @52.6,58.8 mobs=249220,249221,249222,249223,260826 danger=1
+T 92147 @54.5,63.9 id=260825 danger=1
+A 92011 @60.1,61.2 id=249235 lvl=58 req=54
+A 96296 @48.5,56.3 lvl=58 req=55
+C 96252 @47.3,58.2
+C 96296 @48.5,56.3
+T 96252 @54.5,63.9 id=260825
+T 96296 @54.5,63.9 id=260825
+A 96959 @49.3,32.6 id=267121 lvl=59 req=56
+C 92011 @49.8,35.8
+T 96959 @49.3,32.6 id=267121
+T 92011 @60.1,61.2 id=249235
+A 92328 @60.1,61.2 id=249235 lvl=56 req=54
+T 92328 @60.1,61.2 id=249235
 A 91698 @31.5,58.6 id=244425 lvl=58 req=54
 A 96991 @32.9,54.4 id=267109 lvl=59 req=56
 C 91698 @30.7,57.9 mobs=259874
 T 91698 @31.5,58.6 id=244425
 A 91696 @31.5,58.6 id=244425 lvl=58 req=54
+A 90865 @18.8,62.0 id=264089 lvl=58 req=54
+A 95026 @13.8,54.8 id=244511 lvl=58 req=54
+C 90865 @24.5,53.8 mobs=249237
+C 95026 @24.7,53.3 mobs=249228,249247
 T 90865 @18.8,62.0 id=264089
 T 91696 @20.6,71.7 id=256978
 A 93827 @18.5,78.6 id=256660 lvl=58 req=54 danger=1
@@ -2226,24 +2214,8 @@ T 93832 @21.8,79.0 id=256627
 T 95107 @21.8,79.2 id=256650
 A 95108 @21.8,79.2 id=256650 lvl=58 req=54
 T 95108 @21.8,79.0 id=256627
-A 96296 @48.5,56.3 lvl=58 req=55
-C 96296 @48.5,56.3
 C 93827 @52.2,58.7 mobs=249220,249221,249222,260826 danger=1
-T 96296 @54.5,63.9 id=260825
-A 92147 @54.5,63.9 id=260825 lvl=58 req=55 danger=1
-A 96252 @54.5,63.9 id=260825 lvl=58 req=55
-C 92147 @52.6,58.8 mobs=249220,249221,249222,249223,260826 danger=1
-T 92147 @54.5,63.9 id=260825 danger=1
-A 92011 @60.1,61.2 id=249235 lvl=58 req=54
 T 96991 @68.3,46.7 id=264795
-A 96959 @49.3,32.6 id=267121 lvl=59 req=56
-C 92011 @49.8,35.8
-T 96959 @49.3,32.6 id=267121
-C 96252 @47.3,58.2
-T 96252 @54.5,63.9 id=260825
-T 92011 @60.1,61.2 id=249235
-A 92328 @60.1,61.2 id=249235 lvl=56 req=54
-T 92328 @60.1,61.2 id=249235
 T 93827 @18.5,78.6 id=256660 danger=1
 ]],
 })
@@ -2253,7 +2225,7 @@ ns.RegisterGuide({
     name = "Berceau-de-l'Hiver 57-58",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 57, maxLevel = 58,
-    next = "horde-skyborne-58-hyjal-4",
+    next = "horde-skyborne-58-hyjal-3",
     text = [[
 M winterspring
 G "Rejoins Berceau-de-l'Hiver" @60.9,37.6 r=40 upto=60
@@ -2266,9 +2238,9 @@ T 977 @60.9,37.6 id=10305
 T 93406 @61.4,38.8 id=11118
 A 93269 @61.4,38.8 id=11118 lvl=58 req=56
 A 97264 @58.3,12.8 id=11718 lvl=58 req=55
-A 97403 @58.3,12.9 id=11751 lvl=59 req=55
 C 97264 @59.3,14.9 mobs=7445
 T 97264 @58.3,12.8 id=11718
+A 97403 @58.3,12.9 id=11751 lvl=59 req=55
 A 97404 @58.3,12.8 id=11718 lvl=59 req=55
 C 97404 @59.6,11.7 mobs=269275,269276
 T 97404 @58.3,12.8 id=11718
@@ -2281,7 +2253,7 @@ T 8464 @27.7,34.5 id=11556
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-58-hyjal-4",
+    id = "horde-skyborne-58-hyjal-3",
     name = "Mont Hyjal 58-59",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 58, maxLevel = 59,
@@ -2290,7 +2262,7 @@ ns.RegisterGuide({
 M hyjal
 H "Utilise ta pierre de foyer" @12.9,52.9 id=244512
 A 92592 @13.8,54.8 id=244511 lvl=59 req=57 danger=1
-A 95769 @13.8,53.1 id=265788 lvl=57 req=54
+A 95769 @13.8,53.1 id=265788 lvl=57 req=54 danger=1
 C 92592 @25.8,54.3 mobs=260148 danger=1
 T 92592 @13.8,54.8 id=244511 danger=1
 A 92960 @43.8,32.2 id=263406 lvl=59 req=54
@@ -2324,7 +2296,7 @@ ns.RegisterGuide({
     name = "Silithus 58-59",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 58, maxLevel = 59,
-    next = "horde-skyborne-59-hyjal-5",
+    next = "horde-skyborne-59-hyjal-4",
     text = [[
 M silithus
 G "Rejoins Silithus" @51.6,38.6 r=40 upto=61
@@ -2339,19 +2311,19 @@ T 8277 @51.6,38.6 id=15189
 T 8280 @51.1,38.3 id=15191
 A 8278 @51.6,38.6 id=15189 lvl=57 req=54
 A 8281 @51.1,38.3 id=15191 lvl=57 req=54
+T 9416 @50.8,69.5 id=17079
+C 8278 @33.6,75.5 mobs=11736,11737,11739
+C 95769 @18.3,85.8 mobs=14479 danger=1
+A 9422 @50.8,69.5 id=17079 lvl=60 req=55
+C 9422 @50.9,69.3 mobs=18199
+T 9422 @50.8,69.5 id=17079
 A 8318 @48.6,37.8 id=15306 lvl=60 req=57 danger=1
+T 8278 @51.6,38.6 id=15189
+A 8282 @51.6,38.5 id=15190 lvl=58 req=54
 C 8318 @39.4,44.5 mobs=11880,11881,11882,15213,15201 danger=1
 C 8281 @30.2,42.8 mobs=11741
 T 8281 @51.1,38.3 id=15191
 T 8318 @48.6,37.8 id=15306 danger=1
-T 9416 @50.8,69.5 id=17079
-A 9422 @50.8,69.5 id=17079 lvl=60 req=55
-C 9422 @50.9,69.3 mobs=18199
-T 9422 @50.8,69.5 id=17079
-C 8278 @33.6,75.5 mobs=11736,11737,11739
-C 95769 @18.3,85.8 mobs=14479
-T 8278 @51.6,38.6 id=15189
-A 8282 @51.6,38.5 id=15190 lvl=58 req=54
 C 8284 @22.1,10.4 mobs=14455
 T 8284 @49.7,37.5 id=15183
 A 8285 @49.7,37.5 id=15183 lvl=59 req=54
@@ -2372,14 +2344,15 @@ T 8323 @67.2,69.8 id=15194 danger=1
 })
 
 ns.RegisterGuide({
-    id = "horde-skyborne-59-hyjal-5",
+    id = "horde-skyborne-59-hyjal-4",
     name = "Mont Hyjal 59-60",
     faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
     minLevel = 59, maxLevel = 60,
+    next = "horde-skyborne-59-felwood-4",
     text = [[
 M hyjal
 H "Utilise ta pierre de foyer" @12.9,52.9 id=244512
-T 95769 @13.8,53.1 id=265788
+T 95769 @13.8,53.1 id=265788 danger=1
 A 91794 @13.8,53.1 id=265788 lvl=59 req=54 danger=1
 C 91794 @52.4,34.2 mobs=249229,249236,267439,255183,252457 danger=1
 A 92016 @68.3,46.7 id=264795 lvl=60 req=56
@@ -2406,5 +2379,22 @@ T 93444 @68.7,46.8 id=41861
 T 93547 @68.8,50.6 id=40833
 T 96303 @69.0,50.0 id=254915
 T 91794 @13.8,53.1 id=265788 danger=1
+]],
+})
+
+ns.RegisterGuide({
+    id = "horde-skyborne-59-felwood-4",
+    name = "Gangrebois 59-60",
+    faction = "Horde", race = { Skyborne = true, SkyborneElf = true, Eolid = true }, path = "horde-skyborne",
+    minLevel = 59, maxLevel = 60,
+    text = [[
+M felwood
+G "Rejoins Gangrebois" @51.2,82.2 r=40 upto=62
+T 95568 @51.2,82.2 id=256222
+T 96131 @51.2,82.2 id=256222
+A 93747 @51.2,82.2 id=256222 lvl=56 req=54
+T 93747 @51.2,82.2 id=256222
+T 4521 @34.7,52.8 id=10306
+T 6605 @34.2,52.3 id=9996
 ]],
 })

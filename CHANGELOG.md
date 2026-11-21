@@ -1,5 +1,13 @@
 # Questweaver
 
+## v1.11.0
+
+- **Nouveau : quêtes de classe.** Les routes sont les mêmes pour toutes les classes et laissaient de côté les quêtes de classe (sorts, familiers, totems, formes). Dès que tu peux en prendre une (niveau, race, prérequis rendus), le guide l'indique et un bouton t'amène au PNJ, puis là où la rendre. Une alerte te prévient quand une nouvelle se débloque. 733 quêtes pour les 9 classes ; `/qw classe` pour la liste : à rendre, à prendre, bientôt.
+- **Donjons : la tournée des quêtes.** Le rappel « Donjon » dit maintenant ce que rapportent les quêtes à prendre avant d'y aller (en part de ton niveau). Son bouton lance une tournée : chaque quête, la plus proche d'abord, puis l'entrée du donjon ; la route reprend ensuite. Les quêtes dont le prérequis n'est pas rendu ne sont plus comptées, une alerte te prévient quand un donjon arrive à ton niveau, et une option limite le rappel aux moments où tu es en groupe.
+- **Journal de quêtes : prévenu avant d'être bloqué.** Si les prochaines quêtes de la route ne tiennent pas dans ton journal, le guide le dit avant que tu arrives au PNJ, avec le nombre de places à libérer. Les quêtes proposées à l'abandon sont celles que ta route ne rend plus : une quête prise ici pour être rendue dans une zone suivante n'est plus proposée.
+- **Les quêtes « pas proposées » corrigent les routes de tout le monde.** Quand un PNJ ne propose pas la quête de la route, le Collecteur note la quête, le PNJ, ton niveau, ta race et ta classe, puis ce qui l'a débloquée (niveau atteint, quête rendue juste avant). Tout part avec `/qw collecte export`. Avec trois joueurs, la quête sort des routes ; avec deux, son niveau requis est relevé ou son prérequis ajouté.
+- **Données mises à jour chaque semaine.** Les quatre sources (QuestieDB, Questie, EG Link, Polestar) et les collectes des joueurs sont relues chaque semaine, et les routes régénérées et publiées si tous les tests passent.
+
 ## v1.10.5
 
 - **Fini les quêtes que le PNJ ne propose pas.** Chaque parcours t'envoyait encore prendre 14 à 20 quêtes impossibles à prendre : 10 quêtes qui ne sont pas dans Forever (par exemple « Un peu de chance » et « River Ends », présentes dans les 8 parcours, ou « Les secrets du Colosse »), et 23 quêtes proposées avant leur prérequis (par exemple « Martek l'Exilé », « Béni soit ce bras », « Des primes pour les murlocs »). Elles sont retirées ou remises à leur place dans la chaîne.

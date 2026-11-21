@@ -31,7 +31,7 @@ Les routes sont générées à partir de **QuestieDB (données Forever, nouveau 
 
 La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées, et le bon segment se charge tout seul si tu montes plus vite. Les paliers « Monte au niveau X » se valident d'eux-mêmes si tu as déjà le niveau. `tests/test_routes.py` bloque toute régression (quête prise trop haut, part de farm, quêtes d'autres versions, quête absente du jeu, niveau requis sous celui du serveur, prérequis pas encore rendu).
 
-Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/qw collecte`, dossier `Collected/`).
+Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/qw collecte`, dossier `Collected/`). Il note aussi chaque quête de la route que son PNJ ne proposait pas : niveau, race et classe du personnage, puis ce qui l'a débloquée (niveau atteint, quête rendue juste avant). Avec les relevés de trois joueurs, le générateur retire la quête ; avec deux, il relève son niveau requis ou ajoute le prérequis.
 
 ## Apparence
 Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin officiel : couleurs et police de Daylight UI en direct, si installé), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
@@ -54,6 +54,10 @@ Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin offici
 | Conseil de récompense (amélioration via Pawn ou niveau d'objet, meilleure revente, choix automatique en option) | ✔ |
 | Compteur d'XP (XP/h, temps avant le niveau) | ✔ |
 | Maître de classe : rappel et détour vers le plus proche | ✔ |
+| Quêtes de classe : proposées dès que tu peux les prendre, détour vers le PNJ, puis où les rendre | ✔ |
+| Quêtes de donjon : ce qu'elles rapportent, tournée de toutes les quêtes puis entrée du donjon | ✔ |
+| Journal de quêtes : prévient avant un PNJ si ses quêtes ne tiennent pas, propose celles que la route ne rend plus | ✔ |
+| Collecteur : quêtes nouvelles et quêtes que leur PNJ ne proposait pas, à partager pour corriger les routes | ✔ |
 | Session de jeu : point d'arrêt conseillé, puis auberge la plus proche | ✔ |
 | Marchand automatique (camelote, réparation) | ✔ |
 | Récolte sur la route (mineurs, herboristes) | ✔ |
@@ -97,7 +101,10 @@ python3 -I gen_routes.py <QuestieDB>/data/Forever/ ../Guides     # --dry : mesur
 python3 -I gen_world.py ../Data/World.lua                        # maîtres, auberges, récolte
 python3 -I gen_items.py ../Data/QuestItems.lua ../Data/World.lua ../Data/RareLoot.lua
 python3 -I gen_links.py ../Data/QuestLinks.lua
+python3 -I gen_class.py ../Data/ClassQuests.lua                  # quêtes de classe
 ```
+Tout en une commande : `tools/update_data.sh` récupère les quatre sources dans `.sources/` et régénère les routes et les fichiers `Data/` ; `tools/run_tests.sh` lance les tests de la CI ; `python3 -I tools/data_release.py` dit s'il y a quelque chose à publier et écrit la note de version (il refuse si un parcours n'atteint plus le niveau 60, perd plus de 5 % de ses quêtes ou en remplace plus de 12 %). Une tâche planifiée lance cette chaîne chaque semaine.
+
 Chaque génération affiche ses mesures (temps estimé jusqu'au 60, XP/h, distance, farm) et l'écart avec `tools/route_metrics.json`. Des réglages peuvent être testés sans rien écrire : `gen_routes.py … --dry GREY=7 FAR_EDGE=2`. Diagnostics : `--order` (ordre des zones), `--unused` (quêtes non faites par zone), `--why` (quêtes écartées et pourquoi).
 
 Les rapports des joueurs (`/qw rapport`) s'analysent avec `python3 -I tools/analyze_reports.py rapports/*.txt`.

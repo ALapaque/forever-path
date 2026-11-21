@@ -14,6 +14,11 @@ assert q["mobs"][0] == 3098
 assert d["quests"]["20002"]["elite"] is True
 assert d["pre"]["20002"] == [20001], "ordre de déblocage relevé en jeu"
 assert 79192 in d["seen"] and 20001 in d["seen"], "quêtes vues en jeu (confirme les IDs partagés avec d'autres versions)"
+no = d["notOffered"]
+assert no["30001"]["reports"] == 2 and not no["30001"]["offered"] and no["30001"]["maxLvl"] == 25, no["30001"]
+assert no["30001"]["races"] == ["Orc", "Troll"], "races des personnages à qui la quête n'était pas proposée"
+assert no["30002"]["offeredAt"] == 33, "niveau auquel la quête a fini par être proposée"
+assert no["30003"]["after"] == 30004 and no["30003"]["afterReports"] == 2, "quête rendue juste avant : prérequis probable"
 if len(files) == 3:
     assert d["acc"]["95141"] == 37, "plus bas niveau de prise relevé en jeu"
     assert q["reports"] == 3, "l'export du jeu est relu par l'outil"

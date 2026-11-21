@@ -58,6 +58,8 @@ NPCS = {}
 SEEN = set()                    # toutes les quêtes vues en jeu (confirme les IDs 9666-89999 partagés avec d'autres versions)
 ACC = {}                        # quête -> plus bas niveau auquel un joueur l'a prise (niveau requis <= ce niveau)
 PRE = defaultdict(Counter)      # quête -> quêtes rendues juste avant qu'elle n'apparaisse chez le même PNJ
+# quête de la route que son PNJ ne proposait pas : joueurs, niveaux, races, classes, et ce qui l'a débloquée
+NO = defaultdict(lambda: {"runs": set(), "lvls": [], "races": Counter(), "classes": Counter(), "ok": [], "after": Counter()})
 runs = 0
 for f in files:
     for line in open(f, encoding="utf-8", errors="replace"):
@@ -110,6 +112,17 @@ for f in files:
             q, lvl = num(p[1], int), num(p[2], int)
             if q and lvl and 0 < lvl <= 60:
                 ACC[q] = min(ACC.get(q, 99), lvl)
+        elif p[0] == "X" and len(p) >= 9:
+            q, lvl, top = num(p[1], int), num(p[3], int), num(p[4], int)
+            if q and lvl:
+                e = NO[q]
+                e["runs"].add(runs)
+                e["lvls"] += [lvl, top or lvl]
+                if p[5].strip(): e["races"][p[5].strip()] += 1
+                if p[6].strip(): e["classes"][p[6].strip()] += 1
+                ok, after = num(p[7], int), num(p[8], int)
+                if ok: e["ok"].append(ok)
+                if ok and after: e["after"][after] += 1
         elif p[0] == "N" and len(p) >= 4:
             nid = num(p[1], int)
             if nid:
@@ -133,7 +146,17 @@ for q, e in sorted(Q.items()):
     }
 pre = {str(q): [c.most_common(1)[0][0]] for q, c in sorted(PRE.items())}
 acc = {str(q): v for q, v in sorted(ACC.items())}
-json.dump({"runs": runs, "quests": out, "npcs": NPCS, "pre": pre, "acc": acc, "seen": sorted(SEEN | set(ACC))}, open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+no = {str(q): {"reports": len(e["runs"]), "minLvl": min(e["lvls"]), "maxLvl": max(e["lvls"]),
+               "races": sorted(e["races"]), "classes": sorted(e["classes"]),
+               "offered": len(e["ok"]), "offeredAt": min(e["ok"]) if e["ok"] else None,
+               "after": e["after"].most_common(1)[0][0] if e["after"] else None,
+               "afterReports": e["after"].most_common(1)[0][1] if e["after"] else 0}
+      for q, e in sorted(NO.items())}
+json.dump({"runs": runs, "quests": out, "npcs": NPCS, "pre": pre, "acc": acc, "seen": sorted(SEEN | set(ACC)), "notOffered": no},
+          open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+if no:
+    never = sum(1 for v in no.values() if not v["offered"])
+    print("quêtes pas proposées par leur PNJ : %d (dont %d jamais proposées ensuite)" % (len(no), never))
 complete = sum(1 for v in out.values() if v["giver"] and v["ender"] and v["lvl"])
 print("collectes : %d, quêtes nouvelles : %d (dont %d complètes : donneur, rendu, niveau), PNJ : %d"
       % (runs, len(out), complete, len(NPCS)))

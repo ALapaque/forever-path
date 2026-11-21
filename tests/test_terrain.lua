@@ -62,4 +62,33 @@ check(#j.legs[1].pts > 2, "itinéraire affiné par le terrain ("..#j.legs[1].pts
 local terrainPts = 0
 for _, p in ipairs(j.legs[1].pts) do if p.terrain then terrainPts = terrainPts + 1 end end
 check(terrainPts > 0, "points marqués « terrain » (tracé vert d'eau)")
+-- budget en temps : une recherche rend la main dès que le budget (ms) de l'image est dépassé,
+-- même sous le plafond de nœuds (l'ancien budget de 2 500 nœuds prenait environ 50 ms par image)
+local fakeClock = 0
+debugprofilestop = function() fakeClock = fakeClock + 2; return fakeClock end   -- 2 ms entre deux contrôles
+T.Cancel()
+local a2x, a2y = T.ToWorld(base + 45, base + 5)
+local b2x, b2y = T.ToWorld(base + 15, base + 20)
+local got2, frames2 = nil, 0
+T.PathAsync(1, { c = 1, x = a2x, y = a2y }, { c = 1, x = b2x, y = b2y }, function(p) got2 = p end)
+while not got2 and frames2 < 5000 do T._runner._scripts.OnUpdate(T._runner); frames2 = frames2 + 1 end
+check(got2 and frames2 > 1, "budget en millisecondes respecté ("..frames2.." images)")
+debugprofilestop = nil
+-- même tronçon redemandé (nouveau calcul d'itinéraire) : réponse immédiate, sans nouvelle recherche
+local got3, frames3 = nil, 0
+T.PathAsync(1, { c = 1, x = a2x, y = a2y }, { c = 1, x = b2x, y = b2y }, function(p, n) got3 = p; check(n == 0, "tronçon repris du cache") end)
+while not got3 and frames3 < 10 do T._runner._scripts.OnUpdate(T._runner); frames3 = frames3 + 1 end
+check(got3 and frames3 == 1 and #got3 == #got2, "tronçon déjà calculé rendu en une image")
+
+-- destination lointaine : la ligne droite est découpée en tronçons courts (calculés un par un)
+local fx, fy = T.ToWorld(base + 40 - 600, base + 10)     -- 5 000 yards au nord environ
+local _, gx, gy = Nav.ToMap(1, fx, fy, 1411)
+ns.Guides["test-far"] = { id = "test-far", name = "Loin", steps = { { type = "goto", map = 1411, x = gx * 100, y = gy * 100, radius = 5 } } }
+ns.Engine.Load("test-far")
+ns.Journeys:Replan("test")
+local jf = ns.Journeys:Journey()
+check(jf and jf.legs[1].mode == "walk", "itinéraire lointain calculé")
+local longest = 0
+for k = 2, #jf.legs[1].pts do longest = math.max(longest, Nav.Dist(jf.legs[1].pts[k - 1], jf.legs[1].pts[k])) end
+check(#jf.legs[1].pts >= 5 and longest <= 1201, "ligne droite découpée ("..#jf.legs[1].pts.." points, tronçon max "..math.floor(longest).." yards)")
 print("ALL TESTS PASSED")

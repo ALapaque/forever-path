@@ -25,6 +25,9 @@ ns.Journeys = M
 
 local ARRIVE = 12          -- yards : virage atteint
 local DEVIATE = 60         -- yards : trop loin du chemin -> nouveau calcul
+local DEVIATE_RISKY = 150  -- yards : idem sur une ligne droite « à risque » (on suit les routes)
+local CHUNK = 1200         -- yards : longueur max d'un tronçon affiné par le terrain
+local MAX_CHUNKS = 12      -- au-delà (14 km environ), le reste de la ligne droite n'est pas affiné
 local ARRIVE_TRANSPORT = 30
 
 M.COLORS = {
@@ -120,11 +123,32 @@ local function refine(j)
     refineToken = refineToken + 1
     local token = refineToken
     Terrain.Cancel()
+    local queued = 0
     for li, l in ipairs(j.legs) do
         if l.mode == "walk" then
-            for si = 2, #l.pts do
+            -- les longues lignes droites sont découpées en tronçons de CHUNK yards, comptés depuis
+            -- l'arrivée : un nouveau calcul (le joueur a bougé) retrouve les mêmes tronçons, déjà
+            -- calculés, et seul le premier est refait. Un seul calcul géant gelait le jeu.
+            local si = 2
+            while si <= #l.pts do
                 local a, b = l.pts[si - 1], l.pts[si]
-                if b.risky and a.c == b.c and Nav.Dist(a, b) > 25 and Terrain.Has(b.c) then
+                local d = a.c == b.c and Nav.Dist(a, b) or 0
+                if b.risky and d > CHUNK then
+                    local k = math.floor(d / CHUNK)
+                    for n = k, 1, -1 do
+                        local f = 1 - n * CHUNK / d
+                        if f * d > 25 then
+                            table.insert(l.pts, si, { c = b.c, x = a.x + (b.x - a.x) * f, y = a.y + (b.y - a.y) * f, risky = true })
+                            si = si + 1
+                        end
+                    end
+                end
+                si = si + 1
+            end
+            for si2 = 2, #l.pts do
+                local a, b = l.pts[si2 - 1], l.pts[si2]
+                if b.risky and a.c == b.c and Nav.Dist(a, b) > 25 and queued < MAX_CHUNKS and Terrain.Has(b.c) then
+                    queued = queued + 1
                     Terrain.PathAsync(b.c, a, b, function(pts)
                         if token ~= refineToken or journey ~= j or not pts then return end
                         -- retrouve le segment (les indices ont pu bouger)
@@ -178,8 +202,8 @@ function M:Replan(reason)
     leg, corner = 1, 2
     self.reason = reason
     if journey then
+        refine(journey)     -- (peut insérer des points de découpe : le virage est posé après)
         drive()
-        refine(journey)
     elseif ns.Waypoint and ns.Waypoint.enabled then
         ns.Waypoint:Place(false)     -- pas d'itinéraire : point directement sur l'étape
     end
@@ -205,7 +229,8 @@ local function advance(p)
         end
         -- trop loin du segment en cours : on recalcule
         local a = l.pts[corner - 1]
-        if a and a.c == p.c and Nav.SegDist(p, a, c) > DEVIATE and GetTime() - lastPlan > 4 then
+        local tol = c.risky and DEVIATE_RISKY or DEVIATE
+        if a and a.c == p.c and Nav.SegDist(p, a, c) > tol and GetTime() - lastPlan > 4 then
             M:Replan(ns.Tr("écart"))
         end
     else
@@ -252,6 +277,11 @@ function M:Render()
     local lines = { (ns.Tr("|cffffd100Itinéraire|r  ~%s")):format(fmtTime(journey.total)) }
     if external and self:Opt("yield") then
         lines[#lines + 1] = ns.Tr("|cff888888Un autre addon guide le point (Naowh ?)|r")
+    end
+    -- long trajet à pied sans aucun vol enregistré : les vols ne sont connus qu'après avoir
+    -- ouvert la carte d'un maître de vol avec ce personnage
+    if self:Opt("flights") and journey.total > 300 and #Nav.Transport.Flights() == 0 then
+        lines[#lines + 1] = ns.Tr("|cff888888Aucun vol enregistré : ouvre la carte d'un maître de vol pour que l'itinéraire les utilise.|r")
     end
     for i = leg, math.min(#journey.legs, leg + 3) do
         local l = journey.legs[i]

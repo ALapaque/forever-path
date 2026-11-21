@@ -1,5 +1,12 @@
 # Questweaver
 
+## v1.10.4
+
+- **Fini les chutes d'images sur les longs trajets.** En choisissant une zone lointaine à la main (par exemple la Vallée de Strangleronce depuis les Rives Claires, à plus de 8 000 mètres), le jeu ramait tant que l'itinéraire était affiché. En cause : le contournement des falaises et des lacs calculait toute la ligne droite d'un coup, en prenant environ 50 ms par image, et recommençait de zéro à chaque nouveau calcul d'itinéraire (toutes les 4 secondes dès qu'on s'écartait de la ligne). Maintenant, ce calcul s'arrête au bout de 3 ms par image (1,5 ms en mode Économie), les longues lignes droites sont découpées en tronçons de 1 200 yards calculés un par un en partant de toi, et un tronçon déjà calculé est réutilisé tout de suite. On peut aussi s'écarter de 150 yards d'une ligne droite (pour suivre une route) sans relancer le calcul.
+- **Calcul d'itinéraire plus rapide.** Avec beaucoup de chemins appris, chaque calcul pouvait figer le jeu un instant (0,2 s). Il est 2 fois plus rapide sans vol connu, et presque instantané quand des vols sont connus, pour le même résultat.
+- **Bateau Tanaris - Rives Claires.** Le bateau gobelin entre le port de Gentepression (Tanaris) et le port de Poudremèche (Rives Claires) est maintenant pris en compte par les itinéraires.
+- **Vols mieux enregistrés.** Les itinéraires n'utilisent que les vols enregistrés en ouvrant la carte d'un maître de vol. Le point de vol où tu te trouves est maintenant enregistré à ta position exacte, et si la carte des vols ne donne pas de position, celle du continent est utilisée. Si aucun vol n'est enregistré, l'itinéraire le dit (« ouvre la carte d'un maître de vol ») au lieu de t'envoyer à pied sans explication.
+
 ## v1.10.3
 
 - **Plus de quêtes au-dessus de ton niveau.** À Grom'gol (Vallée de Strangleronce), la route faisait prendre « Rapport à Rog'mar » à un joueur de niveau 35 : il faut le niveau 36, et Aggro'gosh ne montrait qu'un point d'exclamation gris. La route suppose un niveau ; si tu es en retard sur elle, ce genre de cas arrivait. Maintenant, chaque prise connaît le niveau requis de sa quête : en dessous, elle est mise de côté (avec un message qui donne le niveau), la route continue, et dès que tu atteins ce niveau le guide revient à sa prise, sans te refaire les étapes « aller à » déjà passées. Si le rendu de la quête est déjà derrière toi, il ne revient pas en arrière pour rien.

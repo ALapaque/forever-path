@@ -116,6 +116,10 @@ out.append("}")
 
 # --- quêtes de donjon (donjons Classic présents dans QuestieDB) : à prendre avant d'y aller
 Q, QFR = db["Quest"], db["questFR"]
+# quêtes qui ne sont pas dans le jeu, niveaux requis et factions : recoupés avec tools/cross.json
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import crosscheck  # noqa: E402
+crosscheck.apply(Q, crosscheck.load(os.environ.get("FP_CROSS"), optional="--no-cross" in sys.argv))
 DUNGEONS = {  # zone Questie : (fr, en, min, max)
     1581: ("Les Mortemines", "The Deadmines", 17, 26), 718: ("Cavernes des Lamentations", "Wailing Caverns", 17, 24),
     209: ("Donjon d'Ombrecroc", "Shadowfang Keep", 22, 30), 717: ("La Prison", "The Stockade", 24, 32),

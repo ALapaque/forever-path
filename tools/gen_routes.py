@@ -3,6 +3,8 @@
 Simulation d'un personnage : niveau/XP, journal de 20 quêtes, prérequis, et choix glouton
 de l'action la plus proche (prendre / faire / rendre) pour minimiser les trajets.
 Usage : python3 -I gen_routes.py <QuestieDB/data/Forever/> <sortie Guides/>
+Demande tools/cross.json (python3 -I tools/load_cross.py ...) : le recoupement de QuestieDB avec la
+liste de quêtes masquées de Questie, les réponses du serveur (EG Link) et la base de Polestar.
 """
 import json, math, os, pickle, sys
 from collections import defaultdict
@@ -33,6 +35,12 @@ COLLECTED_PRE = _collected_doc.get("pre", {})        # { "quête": [quêtes rend
 OVERRIDES_PATH = os.path.join(HERE, "overrides.json")
 OVERRIDES = json.load(open(OVERRIDES_PATH, encoding="utf-8")).get("quests", {}) if os.path.exists(OVERRIDES_PATH) else {}
 SAN = Counter()
+# Recoupement avec d'autres bases (tools/load_cross.py, appliqué par tools/crosscheck.py) : sans lui, des
+# quêtes qui ne sont pas dans le jeu ou dont le prérequis manque dans QuestieDB reviennent dans les
+# routes. Obligatoire, sauf --no-cross.
+sys.path.insert(0, HERE)
+import crosscheck  # noqa: E402
+CROSS = crosscheck.load(os.environ.get("FP_CROSS"), optional="--no-cross" in sys.argv)
 # Niveau requis inconnu : estimé à niveau de quête - EST_GAP. Mesuré sur les quêtes Forever dont le
 # niveau requis est connu (19/11/2026) : écart < 3 pour 32 %, < 1 pour 13 %. Avec -3, une quête sur
 # trois était proposée trop tôt (point d'exclamation gris). On prend 0 : jamais trop tôt.
@@ -50,6 +58,7 @@ def sanitize():
         if ERA_MAX < qid < FOREVER_MIN and qid not in seen:
             del Q[qid]
             SAN["autres versions (écartées)"] += 1
+    crosscheck.apply(Q, CROSS, seen, SAN)
     for key, o in OVERRIDES.items():
         qid = int(key)
         q = Q.get(qid)
@@ -78,7 +87,8 @@ def sanitize():
             SAN["prérequis vus en jeu"] += 1
     for qid, q in Q.items():
         lvl, req = g(q, 5), g(q, 4)
-        if qid >= FOREVER_MIN and isinstance(lvl, int) and lvl > 1 and (not req or req <= 1) and not q.get("fixed"):
+        if (qid >= FOREVER_MIN and isinstance(lvl, int) and lvl > 1 and (not req or req <= 1) and not q.get("fixed")
+                and not q.get("req_known")):
             if qid in COLLECTED_ACC and COLLECTED_ACC[qid] <= lvl:
                 q[4] = COLLECTED_ACC[qid]         # prise vue en jeu à ce niveau : il suffit
                 SAN["niveau requis vu en jeu"] += 1
@@ -321,6 +331,9 @@ def analyse(qid, faction, maps_order):
     if g(q, 7):
         DROP["métier, réputation, événement ou classe"] += 1
         return None                       # quêtes de classe : hors route générique
+    if g(q, 25) or lst(g(q, 20)):
+        DROP["sous-quête ou réputation maximale"] += 1
+        return None                       # proposée seulement avec la quête mère dans le journal
     start, finish = g(q, 2, {}), g(q, 3, {})
     # objets à apporter, mais aucun objectif dans la base, au même PNJ : souvent un objet fabriqué
     # (métier) ou acheté, introuvable sur le chemin. La route dirait « prendre » puis « rendre » tout de
@@ -426,6 +439,7 @@ def analyse(qid, faction, maps_order):
         "req": req, "lvl": lvl, "xp": xp, "races": races, "scales": scales,
         "preSingle": lst(g(q, 13)), "preGroup": lst(g(q, 12)), "exclusive": lst(g(q, 16)),
         "kill": bool(mobs), "group": group, "soft": q.get("soft"), "estimated": bool(q.get("estimated")),
+        "intro_for": g(q, 27), "off_after": [x for x in (g(q, 33), g(q, 36)) if isinstance(x, int) and x > 0],
         "moblvl": max([g(N.get(m), 5, 0) or 0 for m in mobs + ([gv[0][1]] if drop else [])] or [0]),
         "drop": (gv[0][1], drop) if drop else None,
     }
@@ -483,6 +497,11 @@ def available(info, ch, inlog, ignore_pre=False):
         return False
     if info["req"] > ch.level:
         return False
+    intro = info.get("intro_for")
+    if intro and (intro in ch.done or intro in inlog):
+        return False                      # quête d'introduction : plus proposée une fois la suite prise
+    if any(x in ch.done for x in info.get("off_after", ())):
+        return False                      # désactivée par une quête déjà rendue
     if not info.get("scales"):
         if info["lvl"] > ch.level + (MAX_AHEAD if not info["opos"] else OBJ_AHEAD):
             return False                  # quête trop haute : on attend
@@ -913,8 +932,17 @@ def main():
                     rate /= FAR_EDGE
                 if best is None or rate > best[0]:
                     best = (rate, zone, n)
-            if not best or (cur is not None and best[0] < grind_rate * GRIND_PREF):
+            full = len(ch.log) >= MAX_LOG - 2
+            if full and not best and ch.log:
+                # journal plein et aucune zone où avancer : les plus vieilles quêtes sont abandonnées
+                for qid in sorted(ch.log, key=lambda x: ch.logage.get(x, 0))[:max(1, len(ch.log) // 4)]:
+                    del ch.log[qid]
+                    ch.blocked.add(qid)
+                empty.clear()
+                continue
+            if (not best or (cur is not None and best[0] < grind_rate * GRIND_PREF)) and not (full and best):
                 # rien d'intéressant à ce niveau : un niveau de farm, puis on regarde à nouveau
+                # (journal plein : on va d'abord rendre ce qu'on porte, sinon il ne se vide jamais)
                 if ch.level >= 60:
                     break
                 ch.grindat.append(ch.level + 1)

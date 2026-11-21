@@ -18,6 +18,10 @@ if os.path.exists(collected_path):
     doc = json.load(open(collected_path, encoding="utf-8"))
     confirmed |= set(doc.get("seen", [])) | {int(k) for k in doc.get("quests", {})}
 
+# recoupement avec les autres bases (tools/cross.json) : quêtes qui ne sont pas dans le jeu, niveau requis
+# selon le serveur, prérequis connus de Polestar
+cross = {int(k): v for k, v in json.load(open(os.path.join(ROOT, "tools", "cross.json"), encoding="utf-8"))["quests"].items()}
+
 files = sorted(glob.glob(os.path.join(ROOT, "Guides", "Route_*.lua")))
 check(len(files) == 8, "8 parcours générés")
 for f in files:
@@ -25,7 +29,9 @@ for f in files:
     s = open(f, encoding="utf-8").read()
     acc, turned, order_bad, foreign, banned = set(), set(), 0, 0, 0
     # chaque prise d'une quête de Forever (au-delà du niveau 1) dit son niveau requis : l'addon la met de côté en dessous
-    no_req = [l for l in re.findall(r"^A \d+[^\n]*$", s, re.M) if int(l.split()[1]) >= 90000 and " req=" not in l and " lvl=1 " not in l + " "]
+    # (sauf si le serveur dit qu'elle se prend dès le niveau 1)
+    no_req = [l for l in re.findall(r"^A \d+[^\n]*$", s, re.M) if int(l.split()[1]) >= 90000 and " req=" not in l and " lvl=1 " not in l + " "
+              and (cross.get(int(l.split()[1]), {}).get("m") or cross.get(int(l.split()[1]), {}).get("pm")) != 1]
     bad_req = [(r, l) for l, r in re.findall(r"^A \d+[^\n]* lvl=(\d+) req=(\d+)", s, re.M) if int(r) > int(l)]
     check(not no_req, "%s : niveau requis indiqué pour chaque prise de quête Forever (%d sans)" % (name, len(no_req)))
     check(not bad_req, "%s : niveau requis jamais au-dessus du niveau de la quête" % name)
@@ -43,6 +49,23 @@ for f in files:
             if kind == "T":
                 turned.add(q)
     check(order_bad == 0, "%s : chaque quête est prise une fois, avant d'être faite et rendue" % name)
+    gone, low, pre_bad, done = [], [], [], set()
+    for line in re.findall(r"^[AT] \d+[^\n]*$", s, re.M):
+        q = int(line.split()[1])
+        if line[0] == "T":
+            done.add(q)
+            continue
+        c = cross.get(q, {})
+        if c.get("x") and q not in confirmed:
+            gone.append(q)
+        m = re.search(r" req=(\d+)", line)
+        if c.get("m") and (int(m.group(1)) if m else 1) < min(c["m"], c.get("l") or 60):
+            low.append(q)
+        if not set(c.get("pa", ())) <= done or (c.get("pn") and not set(c["pn"]) & done):
+            pre_bad.append(q)
+    check(not gone, "%s : aucune quête absente du jeu selon Questie, le serveur ou Polestar %s" % (name, gone[:5]))
+    check(not low, "%s : niveau requis jamais sous celui du serveur %s" % (name, low[:5]))
+    check(not pre_bad, "%s : prérequis connus rendus avant chaque prise %s" % (name, pre_bad[:5]))
     check(acc == turned, "%s : toute quête prise est rendue (%d prises, %d rendues)" % (name, len(acc), len(turned)))
     check(foreign == 0, "%s : aucune quête d'une autre version du jeu (IDs 9666-89999 non confirmés)" % name)
     check(banned == 0, "%s : aucune quête exclue à la main" % name)

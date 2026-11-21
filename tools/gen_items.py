@@ -12,6 +12,10 @@ from collections import defaultdict
 
 db = pickle.load(open(os.environ.get("FP_DB") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.pkl"), "rb"))
 Q, XP, QFR = db["Quest"], db["xp"], db["questFR"]
+# quêtes qui ne sont pas dans le jeu, niveaux requis et factions : recoupés avec tools/cross.json
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import crosscheck  # noqa: E402
+crosscheck.apply(Q, crosscheck.load(os.environ.get("FP_CROSS"), optional="--no-cross" in sys.argv))
 
 # bits de race (QuestieDB) : Alliance / Horde (Éolides : 2^32 Alliance, 2^33 Horde)
 ALLI = 1 | 4 | 8 | 64 | (1 << 32)

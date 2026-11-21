@@ -1,5 +1,15 @@
 # Questweaver
 
+## v1.10.5
+
+- **Fini les quêtes que le PNJ ne propose pas.** Chaque parcours t'envoyait encore prendre 14 à 20 quêtes impossibles à prendre : 10 quêtes qui ne sont pas dans Forever (par exemple « Un peu de chance » et « River Ends », présentes dans les 8 parcours, ou « Les secrets du Colosse »), et 23 quêtes proposées avant leur prérequis (par exemple « Martek l'Exilé », « Béni soit ce bras », « Des primes pour les murlocs »). Elles sont retirées ou remises à leur place dans la chaîne.
+- **La base de quêtes est maintenant recoupée avec trois autres sources.** Les routes restent bâties sur QuestieDB, mais chaque quête est comparée à la liste des quêtes masquées de Questie, aux réponses du serveur du jeu relevées par EG Link (Efficient Games) et à la base ouverte de Polestar. En cas de désaccord, la valeur la plus prudente gagne : quête retirée si une source vérifiée en jeu dit qu'elle n'existe pas, niveau requis le plus haut, prérequis ajouté s'il manque.
+- **Niveaux requis lus sur le serveur.** Pour près de 300 quêtes de Forever, le niveau requis était estimé faute de mieux. Il vient maintenant de la réponse du serveur : il ne reste qu'une quête au niveau estimé, et 125 niveaux requis sont corrigés. Aucune prise de la route n'est sous le niveau demandé par le serveur.
+- **Factions et classes.** 315 quêtes sans faction dans la base en reçoivent une (certaines quêtes de la Horde apparaissaient dans les parcours de l'Alliance, par exemple « Parts and Pieces »), et 18 quêtes de classe que la base ne signalait pas sont écartées.
+- **Quêtes d'introduction.** Une quête qui ne sert qu'à t'envoyer vers une autre n'est plus proposée une fois cette autre quête prise, et les quêtes qui demandent d'en avoir une autre dans le journal sortent des routes.
+- **Routes régénérées avec la QuestieDB du 21 novembre** : 626 quêtes en moyenne par parcours (609 avant), environ 73 h jusqu'au 60 (79 h avant), part du farm de 17 % (18 à 21 % avant).
+- **Mêmes corrections en jeu** pour les objets qui lancent une quête, les quêtes de donjon et les quêtes liées du journal : ils n'annoncent plus de quêtes absentes du jeu.
+
 ## v1.10.4
 
 - **Fini les chutes d'images sur les longs trajets.** En choisissant une zone lointaine à la main (par exemple la Vallée de Strangleronce depuis les Rives Claires, à plus de 8 000 mètres), le jeu ramait tant que l'itinéraire était affiché. En cause : le contournement des falaises et des lacs calculait toute la ligne droite d'un coup, en prenant environ 50 ms par image, et recommençait de zéro à chaque nouveau calcul d'itinéraire (toutes les 4 secondes dès qu'on s'écartait de la ligne). Maintenant, ce calcul s'arrête au bout de 3 ms par image (1,5 ms en mode Économie), les longues lignes droites sont découpées en tronçons de 1 200 yards calculés un par un en partant de toi, et un tronçon déjà calculé est réutilisé tout de suite. On peut aussi s'écarter de 150 yards d'une ligne droite (pour suivre une route) sans relancer le calcul.

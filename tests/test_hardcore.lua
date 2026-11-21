@@ -53,6 +53,42 @@ end
 check(not hasDM, "quêtes de faction filtrées")
 PLAYER.faction = "Alliance"
 check(ns.Modules.dungeons.List():find("Mortemines"), "/qw donjons")
+-- tournée : toutes les quêtes du donjon dans un guide, la plus proche d'abord, puis l'entrée
+local D = ns.Modules.dungeons
+local first = D.ForLevel(20)[1]
+check(first.xp > 0 and D.Share(first) and D.Share(first) > 0, "XP des quêtes du donjon : " .. tostring(D.Share(first)) .. " % d'un niveau")
+PLAYER.level = 20
+local before = ns.cdb.guideId
+local tour = D:Tour()
+check(tour and ns.cdb.guideId == tour.id and ns.cdb.pinned == tour.id and tour.chosen, "tournée chargée et épinglée (" .. tostring(tour and tour.name) .. ")")
+local nAcc, last = 0, tour.steps[#tour.steps]
+for _, st in ipairs(tour.steps) do if st.type == "accept" then nAcc = nAcc + 1 end end
+check(nAcc == #first.quests and last.type == "goto" and last.map == first.entrance.map, "une prise par quête, puis l'entrée du donjon")
+-- /reload : la tournée est reconstruite à l'identique
+local tid, tsteps = tour.id, #tour.steps
+ns.Guides[tid] = nil
+check(ns.RebuildGuide(tid) and #ns.Guides[tid].steps == tsteps, "après /reload : même tournée")
+-- quête dont le prérequis n'est pas rendu : pas dans la liste
+local dd = ns.World.dungeons[first.key]
+local q1 = dd[5][1]
+local savedAll = q1[12]
+q1[12] = "424242"
+local found = false
+for _, q in ipairs(D.ForLevel(20)[1].quests) do if q.id == q1[1] then found = true end end
+check(not found, "prérequis pas rendu : quête de donjon pas proposée")
+q1[12] = savedAll
+-- option « seulement en groupe »
+D:SetOpt("grouponly", true)
+local shownD
+local oldSetD = ns.Guide.SetSection
+ns.Guide.SetSection = function(self, key, order, text) if key == "dungeons" then shownD = text end return oldSetD(self, key, order, text) end
+ns.Engine.Load(before)
+D:Update()
+check(shownD == nil, "seul et option « en groupe » : pas de rappel")
+D:SetOpt("grouponly", false)
+D:Update()
+check(shownD and shownD:find("d'un niveau"), "rappel avec la part d'un niveau : " .. tostring(shownD))
+ns.Guide.SetSection = oldSetD
 
 -- splits
 local S = ns.Modules.splits

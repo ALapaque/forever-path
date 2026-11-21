@@ -28,6 +28,7 @@ Data\World.lua
 Data\QuestItems.lua
 Data\QuestLinks.lua
 Data\RareLoot.lua
+Data\ClassQuests.lua
 Parser.lua
 Geo.lua
 Engine.lua
@@ -79,6 +80,7 @@ Modules\QuestItems.lua
 Modules\Hardcore.lua
 Modules\CatchUp.lua
 Modules\Dungeons.lua
+Modules\ClassQuests.lua
 Modules\Splits.lua
 Modules\Library.lua
 Modules\Editor.lua

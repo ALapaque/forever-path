@@ -32,6 +32,9 @@ _collected_doc = json.load(open(COLLECTED_PATH, encoding="utf-8")) if os.path.ex
 COLLECTED = _collected_doc.get("quests", {})
 COLLECTED_ACC = {int(k): v for k, v in _collected_doc.get("acc", {}).items()}   # plus bas niveau de prise vu en jeu
 COLLECTED_PRE = _collected_doc.get("pre", {})        # { "quête": [quêtes rendues juste avant, vues en jeu] }
+# quêtes de la route que leur PNJ ne proposait pas (relevés des joueurs, /qw collecte export)
+COLLECTED_NO = {int(k): v for k, v in _collected_doc.get("notOffered", {}).items()}
+NO_MIN = int(os.environ.get("FP_NO_MIN", "3"))     # joueurs différents qu'il faut pour retirer une quête
 OVERRIDES_PATH = os.path.join(HERE, "overrides.json")
 OVERRIDES = json.load(open(OVERRIDES_PATH, encoding="utf-8")).get("quests", {}) if os.path.exists(OVERRIDES_PATH) else {}
 SAN = Counter()
@@ -59,6 +62,28 @@ def sanitize():
             del Q[qid]
             SAN["autres versions (écartées)"] += 1
     crosscheck.apply(Q, CROSS, seen, SAN)
+    # Relevés des joueurs. Jamais proposée, pour NO_MIN joueurs : quête retirée. Proposée plus tard :
+    # juste après le rendu d'une autre quête (2 relevés) -> prérequis ; sinon à un niveau plus haut
+    # que le niveau requis de la base -> niveau requis relevé.
+    for qid, r in COLLECTED_NO.items():
+        q = Q.get(qid)
+        if not q or OVERRIDES.get(str(qid), {}).get("confirm"):
+            continue
+        if not r.get("offered"):
+            if r.get("reports", 0) >= NO_MIN:
+                del Q[qid]
+                SAN["pas proposée en jeu (relevés des joueurs)"] += 1
+            continue
+        after = r.get("after")
+        if after and after in Q and after != qid and r.get("afterReports", 0) >= 2:
+            if after not in lst(g(q, 12)) and after not in lst(g(q, 13)):
+                q[12] = {i + 1: v for i, v in enumerate(sorted(set(lst(g(q, 12))) | {after}))}
+                SAN["prérequis relevé en jeu"] += 1
+        elif r.get("offeredAt") and r.get("reports", 0) >= 2 and r["offeredAt"] > (g(q, 4) or 0) and r["offeredAt"] > r.get("maxLvl", 0) - 1:
+            lvl = g(q, 5)
+            q[4] = min(r["offeredAt"], lvl) if isinstance(lvl, int) and lvl > 0 else r["offeredAt"]
+            q["req_known"] = True
+            SAN["niveau requis relevé en jeu"] += 1
     for key, o in OVERRIDES.items():
         qid = int(key)
         q = Q.get(qid)

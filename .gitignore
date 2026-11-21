@@ -10,3 +10,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 site/data.json
+
+# Sources de données (tools/update_data.sh)
+.sources/

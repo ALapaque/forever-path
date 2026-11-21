@@ -7,7 +7,7 @@ from collections import defaultdict
 
 OUT = sys.argv[1]
 db = pickle.load(open(os.environ.get("FP_DB") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.pkl"), "rb"))
-N, O, A2M, NPCFR = db["Npc"], db["Object"], db["area2map"], db["npcFR"]
+N, O, A2M, NPCFR, XPDB = db["Npc"], db["Object"], db["area2map"], db["npcFR"], db.get("xp", {})
 
 # Cartes gardées : continents classiques (uiMapID 1411..1458)
 def keep(m):
@@ -152,8 +152,28 @@ for qid, q in Q.items():
         continue
     m, pts = max(sp.items(), key=lambda kv: len(kv[1]))
     title = g(QFR.get(qid), 1) or g(q, 1) or ""
-    dq[z].append((qid, g(q, 5, 0) or 0, g(q, 4, 1) or 1, fac, starters[0], m, pts[0][0], pts[0][1], title, g(q, 1) or title))
-out2 = ["", "-- [zone] = { fr, en, min, max, quêtes = { { id, niveau, niveau requis, faction, PNJ, carte, x, y, titre fr, titre en } } }",
+    xp = g(XPDB.get(qid), 2, 0) or 0
+    pre_all = ",".join(str(v) for v in crosscheck.lst(g(q, 12)))
+    pre_any = ",".join(str(v) for v in crosscheck.lst(g(q, 13)))
+    dq[z].append((qid, g(q, 5, 0) or 0, g(q, 4, 1) or 1, fac, starters[0], m, pts[0][0], pts[0][1], title, g(q, 1) or title,
+                  xp if isinstance(xp, int) else 0, pre_all, pre_any))
+
+# entrées des donjons (support/Forever/Zones/dungeons.lua de QuestieDB, lu comme un texte) : zone -> (carte, x, y)
+import re
+ENTRANCE = {}
+_dpath = os.path.join(os.environ.get("FP_QUESTIEDB", ""), "support", "Forever", "Zones", "dungeons.lua")
+if os.path.exists(_dpath):
+    for mm in re.finditer(r"\[(\d+)\]\s*=\s*\{\"[^\"]*\",\s*(nil|\{[\d,\s]*\}),\s*\d+,\s*\{\{\s*(\d+),\s*([\d.]+),\s*([\d.]+)\s*\}",
+                          open(_dpath, encoding="utf-8").read()):
+        mp = A2M.get(int(mm.group(3)))
+        if keep(mp):
+            for zid in [int(mm.group(1))] + [int(v) for v in re.findall(r"\d+", mm.group(2))]:
+                ENTRANCE.setdefault(zid, (mp, float(mm.group(4)), float(mm.group(5))))
+else:
+    print("FP_QUESTIEDB absent : entrées des donjons non générées")
+
+out2 = ["", "-- { fr, en, min, max, quêtes, entrée { carte, x, y } ou false }",
+        "-- quêtes = { { id, niveau, niveau requis, faction, PNJ, carte, x, y, titre fr, titre en, XP, \"prérequis tous\", \"prérequis au moins un\" } }",
         "ns.World.dungeons = {"]
 nq = 0
 for z, (fr, en, lo, hi) in sorted(DUNGEONS.items(), key=lambda kv: kv[1][2]):
@@ -163,8 +183,10 @@ for z, (fr, en, lo, hi) in sorted(DUNGEONS.items(), key=lambda kv: kv[1][2]):
     out2.append("    { %s, %s, %d, %d, {" % (lua_str(fr), lua_str(en), lo, hi))
     for t in qs:
         nq += 1
-        out2.append("        { %d, %d, %d, %s, %d, %d, %.1f, %.1f, %s, %s }," % (t[0], t[1], t[2], lua_str(t[3]), t[4], t[5], t[6], t[7], lua_str(t[8]), lua_str(t[9])))
-    out2.append("    } },")
+        out2.append("        { %d, %d, %d, %s, %d, %d, %.1f, %.1f, %s, %s, %d, %s, %s }," % (
+            t[0], t[1], t[2], lua_str(t[3]), t[4], t[5], t[6], t[7], lua_str(t[8]), lua_str(t[9]), t[10], lua_str(t[11]), lua_str(t[12])))
+    en_pt = ENTRANCE.get(z)
+    out2.append("    }, %s }," % ("{ %d, %.1f, %.1f }" % en_pt if en_pt else "false"))
 out2.append("}")
 out += out2
 

@@ -48,6 +48,10 @@ check(select(3, E.Current()) == 4 and not (ns.cdb.notOffered or {})[602], "quêt
 C_GossipInfo.GetAvailableQuests = function() return { { questID = 999, title = "Autre" } } end
 FireEvent("GOSSIP_SHOW")
 check(ns.cdb.notOffered[602] ~= nil, "quête pas proposée : notée")
+local no602 = ns.db.collect and ns.db.collect.no and ns.db.collect.no[602]
+check(no602 and no602.lvl == ns.PlayerLevel() and no602.class == ns.PlayerClass() and no602.race == ns.PlayerRace(),
+    "relevé pour la collecte : niveau, race et classe du personnage")
+check(ns.Modules.collector.Export():find("\nX;602;"), "relevé exporté avec /qw collecte export (ligne X)")
 check(select(3, E.Current()) == 7, "prise passée, et « faire » / « rendre » avec (étape " .. tostring(select(3, E.Current())) .. ")")
 -- un autre PNJ que celui de l'étape : on ne conclut rien
 FireEvent("GOSSIP_SHOW")
@@ -138,6 +142,7 @@ check(ns.cdb.notOffered[622] and select(3, E.Current()) == 6, "toujours pas prop
 C_GossipInfo.GetAvailableQuests = function() return { { questID = 622 } } end
 FireEvent("GOSSIP_SHOW")
 check(not ns.cdb.notOffered[622] and select(3, E.Current()) == 3, "proposée plus tard : retour à la prise de la partie 2")
+check(ns.db.collect.no[622] and ns.db.collect.no[622].ok == ns.PlayerLevel(), "relevé : niveau auquel elle a fini par être proposée")
 GetTime = oldT
 
 -- 7) quête au-dessus du niveau du joueur (point d'exclamation gris, « Rapport à Rog'mar » à 35

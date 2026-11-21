@@ -124,6 +124,9 @@ function E.MarkNotOffered(silentReport)
     if not (g and step and step.type == "accept" and step.quest) then return end
     ns.cdb.notOffered = ns.cdb.notOffered or {}
     ns.cdb.notOffered[step.quest] = ns.PlayerLevel()
+    -- relevé partagé avec /qw collecte export : il corrige les routes pour tout le monde
+    local col = ns.Modules.collector
+    if col and col.NoteNotOffered then col.NoteNotOffered(step.quest, step.npcID) end
     if ns.StepReport and silentReport ~= false then ns.StepReport.Add("notoffered", g, step, i, true) end
     ns.Toast(ns.Tr("Ce PNJ ne propose pas cette quête pour l'instant : étape passée."), "Interface\\Icons\\INV_Misc_QuestionMark", 1, 0.8, 0.3, 4)
     E.Refresh()
@@ -157,6 +160,8 @@ function E.Reoffered(ids)
             for j = 1, (cur or 1) - 1 do
                 local s = g.steps[j]
                 if s.type == "accept" and s.quest == q and E.Applies(s) and not E.TooLow(s) then
+                    local col = ns.Modules.collector
+                    if no[q] and col and col.NoteOffered then col.NoteOffered(q) end
                     no[q], lw[q] = nil, nil
                     E.KeepPassed(g, j, cur)
                     ns.cdb.stepIndex = j
@@ -319,7 +324,7 @@ function E.Refresh()
         if g.chosen then
             -- zone choisie à la main, terminée : retour à la route conseillée
             ns.cdb.pinned, ns.cdb.zoneChoice = nil, nil
-            ns.Toast(ns.Tr("Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."), "Interface\\Icons\\INV_Misc_Map_01", 1, 0.85, 0.3)
+            ns.Toast(g.doneText or ns.Tr("Plus rien à faire dans cette zone à ton niveau : retour à la route conseillée."), "Interface\\Icons\\INV_Misc_Map_01", 1, 0.85, 0.3)
             nextId = E.PickDefault()
         elseif not (nextId and ns.Guides[nextId]) then
             local pick = E.PickDefault()

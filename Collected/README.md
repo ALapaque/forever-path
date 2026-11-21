@@ -4,6 +4,10 @@ QuestieDB intègre déjà une bonne partie du nouveau contenu de WoW Forever (en
 
 **Partager ta collecte** : en jeu, `/qw collecte export`, copie le texte, puis propose-le ici dans un fichier `pseudo-date.txt` (pull request) ou dans une issue GitHub.
 
+**Quêtes pas proposées** : l'export contient aussi les quêtes de ta route que leur PNJ ne proposait pas (lignes `X` : quête, PNJ, niveau, race, classe, et ce qui a fini par la débloquer). Trois joueurs qui signalent la même quête la font retirer des routes ; deux suffisent pour relever son niveau requis ou ajouter un prérequis.
+
+**Fusion automatique** : chaque semaine, une tâche planifiée fusionne les fichiers de ce dossier, met à jour les sources et régénère les routes (`tools/update_data.sh`).
+
 **Fusionner** (mainteneurs) :
 ```
 FP_DB=<db.pkl> python3 -I tools/merge_collected.py Collected/*.txt --out tools/collected.json

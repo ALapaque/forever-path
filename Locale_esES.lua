@@ -537,4 +537,11 @@ ns.ES = {
     ["Alerte quand un donjon arrive à ton niveau"] = "Aviso cuando una mazmorra llega a tu nivel",
     ["|cffff7f3fJournal trop plein|r : %d place(s) à libérer pour les %d prochaines quêtes"] = "|cffff7f3fRegistro demasiado lleno|r: libera %d hueco(s) para las próximas %d misiones",
     ["Prévenir avant un PNJ si ses quêtes ne tiennent pas"] = "Avisar antes de un PNJ si sus misiones no caben",
+    ["Modern : préréglage"] = "Modern: ajuste predefinido",
+    ["Modern : couleur d'accent"] = "Modern: color de acento",
+    ["Modern : lignes surlignées (prendre, faire, rendre)"] = "Modern: líneas resaltadas (aceptar, hacer, entregar)",
+    ["Modern : barre de progression en dégradé"] = "Modern: barra de progreso en degradado",
+    ["Modern : texte en majuscules"] = "Modern: texto en mayúsculas",
+    ["Ensuite"] = "Después",
+    ["À côté de la route"] = "Junto a la ruta",
 }

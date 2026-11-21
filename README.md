@@ -34,7 +34,7 @@ La route s'adapte : les étapes déjà dépassées par ton niveau sont sautées,
 Les quêtes que QuestieDB n'a pas encore sont notées en jeu par le Collecteur (`/qw collecte`, dossier `Collected/`). Il note aussi chaque quête de la route que son PNJ ne proposait pas : niveau, race et classe du personnage, puis ce qui l'a débloquée (niveau atteint, quête rendue juste avant). Avec les relevés de trois joueurs, le générateur retire la quête ; avec deux, il relève son niveau requis ou ajoute le prérequis.
 
 ## Apparence
-Thèmes Sombre doré, Doux, Blizzard, Minimal, et **Daylight UI** (plugin officiel : couleurs et police de Daylight UI en direct, si installé), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
+Thèmes **Modern** (réglable : préréglages dont Néon, couleur d'accent, lignes surlignées, dégradé, majuscules), **Classic** (allure Vanilla, guide sur parchemin) et **Classic Forever** (allure de l'interface du jeu), plus les anciens thèmes Sombre doré, Doux, Blizzard, Néon, Minimal, et **Daylight UI** (plugin officiel : couleurs et police de Daylight UI en direct, si installé), choix de la police (y compris LibSharedMedia) et de la taille du texte. Fenêtre du guide redimensionnable, boutons d'action regroupés dans une barre déplaçable.
 
 ## Modules (tous désactivables)
 | Module | Par défaut |

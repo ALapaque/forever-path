@@ -7,12 +7,29 @@ local function themeNames()
     return out
 end
 
+local function names(list)
+    local out = {}
+    for _, e in ipairs(list) do out[#out + 1] = e.name end
+    return out
+end
+local function presetName()
+    local key = ns.ModernSettings().preset
+    for _, p in ipairs(ns.MODERN_PRESETS) do if p.key == key then return p.name end end
+    return ns.MODERN_PRESETS[1].name
+end
+
 local M = ns.RegisterModule({
     id = "appearance", category = "look", default = true, locked = true,
     name = ns.Tr("Apparence"),
-    desc = ns.Tr("Le style des fenêtres et la police. Avec Daylight UI installé, le thème « Daylight UI » reprend ses couleurs et sa police en direct. Les polices LibSharedMedia sont proposées aussi."),
+    desc = ns.Tr("Trois thèmes : Modern (réglable : préréglages dont Néon, couleur d'accent, lignes surlignées, dégradé, majuscules), Classic (l'allure Vanilla) et Classic Forever (l'allure de l'interface du jeu). Les anciens thèmes restent disponibles. Le style des fenêtres et la police. Avec Daylight UI installé, le thème « Daylight UI » reprend ses couleurs et sa police en direct. Les polices LibSharedMedia sont proposées aussi."),
     options = {
         { key = "theme", label = ns.Tr("Thème"), type = "select", values = themeNames, store = "value", width = 150 },
+        -- réglages du thème Modern (sans effet sur les autres thèmes)
+        { key = "modernPreset", label = ns.Tr("Modern : préréglage"), type = "select", values = function() return names(ns.MODERN_PRESETS) end, store = "value", width = 150 },
+        { key = "modernAccent", label = ns.Tr("Modern : couleur d'accent"), type = "select", values = function() return names(ns.MODERN_ACCENTS) end, store = "value", width = 150 },
+        { key = "modernRows", label = ns.Tr("Modern : lignes surlignées (prendre, faire, rendre)"), type = "check", default = false },
+        { key = "modernGradient", label = ns.Tr("Modern : barre de progression en dégradé"), type = "check", default = false },
+        { key = "modernCaps", label = ns.Tr("Modern : texte en majuscules"), type = "check", default = false },
         { key = "font", label = ns.Tr("Police"), type = "select", values = function() return ns.FontList() end, store = "value", width = 150 },
         { key = "fontScale", label = ns.Tr("Taille du texte"), type = "slider", min = 0.8, max = 1.8, step = 0.05, default = 1 },
         { key = "colorblind", label = ns.Tr("Couleurs adaptées aux daltoniens"), type = "check", default = false },
@@ -23,6 +40,11 @@ local M = ns.RegisterModule({
 -- Ces réglages vivent à la racine de la base (lus très tôt par UI/Widgets.lua)
 function M:Opt(key)
     if key == "theme" then return ns.Theme().name end
+    if key == "modernPreset" then return presetName() end
+    if key == "modernAccent" then return ns.ModernSettings().accent end
+    if key == "modernRows" then return ns.ModernSettings().rows and true or false end
+    if key == "modernGradient" then return ns.ModernSettings().gradient and true or false end
+    if key == "modernCaps" then return ns.ModernSettings().caps and true or false end
     if key == "font" then return ns.db.font end
     if key == "fontScale" then return ns.db.fontScale end
     if key == "locked" then return ns.db.locked end
@@ -32,6 +54,16 @@ end
 function M:SetOpt(key, value)
     if key == "theme" then
         for _, t in ipairs(ns.Themes) do if t.name == value then ns.db.theme = t.key end end
+    elseif key == "modernPreset" then
+        for _, p in ipairs(ns.MODERN_PRESETS) do if p.name == value then ns.ModernPreset(p.key) end end
+    elseif key == "modernAccent" then
+        ns.ModernSettings().accent = value
+    elseif key == "modernRows" then
+        ns.ModernSettings().rows = value and true or false
+    elseif key == "modernGradient" then
+        ns.ModernSettings().gradient = value and true or false
+    elseif key == "modernCaps" then
+        ns.ModernSettings().caps = value and true or false
     elseif key == "font" then
         ns.db.font = value
     elseif key == "fontScale" then
@@ -50,7 +82,7 @@ end
 
 function M.preview(p)
     local x = -48
-    for _, key in ipairs({ "dark", "soft", "blizzard", "minimal" }) do
+    for _, key in ipairs({ "modern", "classic", "forever", "neon" }) do
         local t = ns.ThemeByKey[key]
         local sw = CreateFrame("Frame", nil, p, "BackdropTemplate")
         sw:SetSize(30, 44)

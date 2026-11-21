@@ -15,6 +15,10 @@ db = pickle.load(open(os.environ.get("FP_DB") or os.path.join(HERE, "db.pkl"), "
 Q, N, I = db["Quest"], db["Npc"], db["Item"]
 A2M = db.get("area2map", {})            # zone (areaID) -> carte (uiMapID) ; absent d'un db_full partiel
 OVERRIDES = json.load(open(os.path.join(HERE, "overrides.json"), encoding="utf-8")).get("quests", {})
+# quêtes qui ne sont pas dans le jeu, niveaux requis et factions : recoupés avec tools/cross.json
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import crosscheck  # noqa: E402
+crosscheck.apply(Q, crosscheck.load(os.environ.get("FP_CROSS"), optional="--no-cross" in sys.argv))
 
 ERA_MAX, FOREVER_MIN = 9665, 90000     # mêmes bornes que gen_routes.py (IDs d'autres versions écartés)
 MAX_MOBS = 12

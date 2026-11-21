@@ -108,9 +108,14 @@ local start = ns.cdb.guideId
 local R = ns.Recommend
 local segs = R.Segments()
 check(#segs >= 2, "plusieurs zones proposées au niveau 26 (" .. #segs .. ")")
-local zsegs = R.ZoneSegments("duskwood")
-check(#zsegs >= 2, "Bois de la Pénombre : " .. #zsegs .. " passages de la route à ce niveau")
-local zg = R.Choose("duskwood")
+-- une zone où la route passe au moins deux fois autour de ce niveau (elle change quand les routes sont régénérées)
+local zkey, zsegs = "duskwood", {}
+for _, sg in ipairs(segs) do
+    local list = R.ZoneSegments(sg.key)
+    if #list > #zsegs then zkey, zsegs = sg.key, list end
+end
+check(#zsegs >= 2, zkey .. " : " .. #zsegs .. " passages de la route à ce niveau")
+local zg = R.Choose(zkey)
 check(zg and ns.cdb.guideId == zg.id and ns.cdb.pinned == zg.id, "zone choisie : guide « zone » chargé (" .. tostring(zg and zg.name) .. ")")
 local total = 0
 for _, sg in ipairs(zsegs) do total = total + #sg.steps end
@@ -120,7 +125,7 @@ local firstLen = #zsegs[1].steps
 ns.cdb.stepIndex = firstLen
 for k = 1, firstLen do ns.cdb.skipped[zg.id][k] = true end
 E.Refresh()
-check(ns.cdb.guideId == zg.id and select(3, E.Current()) > firstLen, "premier passage fini : toujours dans Bois de la Pénombre (étape " .. select(3, E.Current()) .. ")")
+check(ns.cdb.guideId == zg.id and select(3, E.Current()) > firstLen, "premier passage fini : toujours dans la zone choisie (étape " .. select(3, E.Current()) .. ")")
 -- niveau qui monte : la zone choisie reste
 PLAYER.level = 40
 E.CheckLevel()

@@ -258,4 +258,115 @@ do
   UnitGUID, UnitName, UnitExists, UnitCanAttack, UnitIsDead, UnitClassification, UnitLevel = oldGUID, oldName, oldExists, oldAttack, oldDead, oldClassif, oldLvl
   issecretvalue = oldSecret
 end
+
+-- v1.12 : thèmes Modern / Classic / Classic Forever, objectifs en barres, zone cliquable, rappels groupés
+do
+  local A, G = ns.Modules.appearance, ns.Guide
+  local f = G.frame
+  -- le banc de test ne retient pas l'état des cadres : on l'observe ici
+  local function spy(o)
+    rawset(o, "Show", function(self) rawset(self, "_shown", true) end)
+    rawset(o, "Hide", function(self) rawset(self, "_shown", false) end)
+    rawset(o, "SetText", function(self, t) rawset(self, "_text", t) end)
+    return o
+  end
+  spy(f.hSide); spy(f.hNext); spy(f.header)
+  -- trois nouveaux thèmes en tête de liste, les anciens toujours là
+  local names = {}
+  for _, t in ipairs(ns.Themes) do names[t.key] = t.name end
+  check(names.modern == "Modern" and names.classic == "Classic" and names.forever == "Classic Forever", "thèmes Modern, Classic et Classic Forever")
+  check(names.dark and names.neon and names.minimal, "anciens thèmes toujours disponibles")
+
+  -- Modern : préréglage Néon = les couleurs du thème Néon
+  A:SetOpt("theme", "Modern")
+  check(ns.db.theme == "modern", "thème Modern choisi")
+  local t, neon = ns.Theme(), ns.ThemeByKey.neon
+  check(not t.rows and not t.gradient and not t.caps, "Modern par défaut : sobre")
+  A:SetOpt("modernPreset", "Néon")
+  check(A:Opt("modernPreset") == "Néon" and ns.db.modern.preset == "neon", "préréglage Néon enregistré")
+  check(t == ns.Theme(), "le thème Modern garde la même table (reconstruite sur place)")
+  check(t.accent[1] == neon.accent[1] and t.accent[2] == neon.accent[2] and t.rows == neon.rows and t.gradient == neon.gradient and t.caps,
+    "préréglage Néon : accent vert, lignes violettes, dégradé, majuscules")
+  check(t.bg == neon.bg and t.edgeSize == neon.edgeSize, "préréglage Néon : fond et bordure du thème Néon")
+  -- réglages un par un
+  A:SetOpt("modernCaps", false)
+  A:SetOpt("modernAccent", "Orange")
+  check(not ns.Theme().caps and ns.Theme().rows and math.abs(ns.Theme().accent[1] - 1) < 0.01, "réglages changés un par un (majuscules, accent)")
+  A:SetOpt("modernPreset", "Défaut")
+  check(not ns.Theme().rows and A:Opt("modernAccent") == "Bleu", "retour au préréglage par défaut")
+  PLAYER.class = "SHAMAN"
+  RAID_CLASS_COLORS = { SHAMAN = { r = 0, g = 0.44, b = 0.87 } }
+  A:SetOpt("modernAccent", "Couleur de classe")
+  check(math.abs(ns.Theme().accent[3] - 0.87) < 0.01, "accent : couleur de la classe")
+  A:SetOpt("modernPreset", "Défaut")
+
+  -- objectifs : une barre par objectif, libellé sans le compteur
+  local g = ns.Guides[ns.cdb.guideId]
+  local idx, step
+  for k, st in ipairs(g.steps) do if st.type == "complete" and st.quest then idx, step = k, st break end end
+  check(step ~= nil, "une étape « faire » dans le guide")
+  local oldObj, oldIdx, oldLog = C_QuestLog.GetQuestObjectives, ns.cdb.stepIndex, QLOG[step.quest]
+  QLOG[step.quest] = { complete = false }
+  C_QuestLog.GetQuestObjectives = function(q)
+    if q ~= step.quest then return {} end
+    return { { text = "Sangliers tachetés tués : 3/8", numFulfilled = 3, numRequired = 8, finished = false },
+             { text = "4/4 Peaux ramassées", numFulfilled = 4, numRequired = 4, finished = true },
+             { text = "Parler au chef", finished = false } }
+  end
+  local rows = ns.Modules.objectives.Rows(step.quest)
+  check(#rows == 3 and rows[1].label == "Sangliers tachetés tués" and rows[1].have == 3 and rows[1].need == 8, "objectif : libellé sans compteur, 3 sur 8 (" .. tostring(rows[1].label) .. ")")
+  check(rows[2].label == "Peaux ramassées" and rows[2].done, "compteur en tête de texte retiré aussi, objectif fini")
+  check(rows[3].label == "Parler au chef" and rows[3].need == nil, "objectif sans compteur : texte seul")
+  ns.cdb.stepIndex = idx
+  for k = 1, idx do (ns.cdb.skipped[g.id] or {})[k] = nil end
+  ns.Modules.objectives:Update()
+  check(#G.objData == 3 and #f.objRows == 3, "fenêtre du guide : une ligne par objectif")
+  local values = {}
+  for k = 1, 3 do
+    spy(f.objRows[k].bar); spy(f.objRows[k].count); spy(f.objRows[k].label)
+    rawset(f.objRows[k].bar, "SetValue", function(self, v) values[k] = v end)
+  end
+  G:Layout()
+  check(f.objRows[1].bar._shown and f.objRows[1].count._text == "3 / 8" and values[1] == 3, "une barre par objectif, compteur « 3 / 8 »")
+  check(f.objRows[2].bar._shown and values[2] == 4 and f.objRows[3].bar._shown == false, "barre pour l'objectif compté, pas pour l'objectif sans compteur")
+  check(f.objRows[1].label._text == "Sangliers tachetés tués", "libellé de l'objectif affiché")
+  ns.SetModuleEnabled("objectives", false)
+  check(#G.objData == 0 and f.objRows[1].bar._shown == false, "module Objectifs désactivé : plus de barres")
+  ns.SetModuleEnabled("objectives", true)
+  C_QuestLog.GetQuestObjectives, QLOG[step.quest] = oldObj, oldLog
+  ns.cdb.stepIndex = oldIdx
+  ns.Engine.Refresh()
+
+  -- rappels groupés sous « À côté de la route », étapes suivantes sous « Ensuite »
+  ns.Modules.guide:SetOpt("upcoming", 2)
+  G:SetSection("testside", 85, "Rappel de test")
+  G:Update()
+  check(f.hSide._shown and f.hSide._text == ns.Upper("À côté de la route"), "titre « À côté de la route » au-dessus des rappels")
+  check(#G.upData >= 1 and f.hNext._shown and f.hNext._text == ns.Upper("Ensuite"), "titre « Ensuite » au-dessus des étapes suivantes")
+  G:SetSection("testside", 85, nil)
+
+  -- le titre est un bouton qui ouvre la liste des zones
+  check(f.zone and f.zone._scripts.OnClick ~= nil and f.zoneArrow ~= nil, "titre cliquable avec sa flèche")
+  local toggled = 0
+  local oldToggle = ns.ZonePanel.Toggle
+  ns.ZonePanel.Toggle = function() toggled = toggled + 1 end
+  f.zone._scripts.OnClick(f.zone)
+  check(toggled == 1, "clic sur le titre : la liste des zones s'ouvre")
+  ns.ZonePanel.Toggle = oldToggle
+
+  -- Classic : parchemin pour le guide, texte sombre, codes couleur assombris
+  A:SetOpt("theme", "Classic")
+  check(ns.db.theme == "classic" and ns.Theme().guide and ns.Theme().header, "thème Classic : fond propre au guide et bandeau")
+  local r = ns.GuideColor("text")
+  check(r < 0.3, "Classic : texte sombre sur le parchemin")
+  local inked = ns.Ink("|cffffd100Prendre|r : |cffffffffSarkoth|r")
+  check(not inked:find("ffd100") and not inked:find("ffffff") and inked:find("Prendre"), "Classic : jaune et blanc assombris (" .. inked .. ")")
+  check(f.header._shown, "Classic : bandeau du titre affiché")
+  A:SetOpt("theme", "Classic Forever")
+  check(ns.db.theme == "forever" and f.header._shown and not ns.Theme().guide, "thème Classic Forever : bandeau, pas de parchemin")
+  check(ns.Ink("|cffffd100x|r") == "|cffffd100x|r", "hors Classic : couleurs inchangées")
+  A:SetOpt("theme", "Sombre doré")
+  check(f.header._shown == false, "retour à un ancien thème : pas de bandeau")
+end
+
 print("ALL TESTS PASSED")

@@ -537,4 +537,11 @@ ns.DE = {
     ["Alerte quand un donjon arrive à ton niveau"] = "Hinweis, wenn ein Dungeon zu deiner Stufe passt",
     ["|cffff7f3fJournal trop plein|r : %d place(s) à libérer pour les %d prochaines quêtes"] = "|cffff7f3fQuestlog zu voll|r: %d Platz/Plätze für die nächsten %d Quests freimachen",
     ["Prévenir avant un PNJ si ses quêtes ne tiennent pas"] = "Vor einem NSC warnen, wenn seine Quests nicht passen",
+    ["Modern : préréglage"] = "Modern: Voreinstellung",
+    ["Modern : couleur d'accent"] = "Modern: Akzentfarbe",
+    ["Modern : lignes surlignées (prendre, faire, rendre)"] = "Modern: hervorgehobene Zeilen (annehmen, erledigen, abgeben)",
+    ["Modern : barre de progression en dégradé"] = "Modern: Fortschrittsbalken mit Verlauf",
+    ["Modern : texte en majuscules"] = "Modern: Text in Großbuchstaben",
+    ["Ensuite"] = "Danach",
+    ["À côté de la route"] = "Neben der Route",
 }

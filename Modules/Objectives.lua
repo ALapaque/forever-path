@@ -21,13 +21,37 @@ local function objectiveLines(questID)
     return out
 end
 
+-- Objectifs d'une quête pour la fenêtre du guide : libellé sans le compteur, compteur à part
+-- (« Sangliers tachetés tués : 3/8 » ou « 3/8 Mottled Boar slain » -> libellé, 3, 8).
+function M.Rows(questID)
+    local out = {}
+    for _, o in ipairs(C_QuestLog.GetQuestObjectives(questID) or {}) do
+        if o.text and o.text ~= "" then
+            local have, need = o.numFulfilled, o.numRequired
+            if type(have) ~= "number" or type(need) ~= "number" or ns.IsSecret(have) or ns.IsSecret(need) then
+                have, need = nil, nil
+            end
+            local label = o.text
+            if need and need > 0 then
+                label = label:gsub("%s*:?%s*%d+%s*/%s*%d+%s*:?%s*", " "):gsub("^%s+", ""):gsub("%s+$", "")
+                if label == "" then label = o.text end
+            end
+            out[#out + 1] = { label = label, have = have, need = need, done = o.finished and true or false }
+        end
+    end
+    return out
+end
+
 function M:Update()
     if not ns.Guide then return end
     local _, step = ns.Engine.Current()
     local lines = {}
+    -- l'étape en cours : une barre par objectif, dessinée par la fenêtre du guide
+    local rows
     if step and step.quest and C_QuestLog.GetLogIndexForQuestID(step.quest) then
-        for _, l in ipairs(objectiveLines(step.quest)) do lines[#lines + 1] = l end
+        rows = M.Rows(step.quest)
     end
+    ns.Guide:SetObjectives(rows)
     if self:Opt("allLog") then
         for i = 1, C_QuestLog.GetNumQuestLogEntries() do
             local info = C_QuestLog.GetInfo(i)
@@ -43,7 +67,7 @@ function M:Update()
     ns.Guide:SetSection("objectives", 10, table.concat(lines, "\n"))
 end
 
-function M:OnDisable() if ns.Guide then ns.Guide:SetSection("objectives", 10, nil) end end
+function M:OnDisable() if ns.Guide then ns.Guide:SetObjectives(nil); ns.Guide:SetSection("objectives", 10, nil) end end
 function M:OnEnable() self:Update() end
 M:On("FP_STEP_CHANGED", function() M:Update() end)
 M:On("QUEST_LOG_UPDATE", function() M:Update() end)

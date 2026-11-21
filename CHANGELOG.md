@@ -1,5 +1,16 @@
 # Questweaver
 
+## v1.12.0
+
+- **Trois nouveaux thèmes** (Options > Apparence) :
+  - **Modern** : plat et sobre, avec une couleur d'accent. Il se règle : préréglages (Défaut, Néon, Doré, Pastel, Couleur de classe), couleur d'accent, lignes surlignées, barre de progression en dégradé, texte en majuscules. Le préréglage Néon reprend exactement les couleurs du thème Néon.
+  - **Classic** : l'allure Vanilla. Cadre doré, bandeau sombre, boutons rouges, et le guide sur fond de parchemin avec un texte sombre.
+  - **Classic Forever** : l'allure de l'interface du jeu. Panneaux sombres, bord métallique, titres dorés.
+  - Les anciens thèmes (Sombre doré, Doux, Blizzard, Néon, Minimal, Daylight UI) restent disponibles, et ton thème actuel ne change pas. Modern est le thème des nouvelles installations.
+- **Objectifs bien visibles.** Pour l'étape en cours, chaque objectif a sa ligne : son nom, son compteur (« 3 / 8 ») et sa barre de progression. Un objectif fini passe au vert.
+- **Changer de zone d'un clic.** Le nom de la zone, en haut du guide, est maintenant un bouton avec une petite flèche : il ouvre la liste des zones. Le bouton « Zones » du bas reste là.
+- **Fenêtre du guide mieux rangée.** Les étapes suivantes sont sous le titre « Ensuite ». Les rappels qui ne sont pas l'étape en cours (groupe, quête de classe, donjon, métiers, talents, XP, chrono, or) sont regroupés en bas, sous « À côté de la route ».
+
 ## v1.11.0
 
 - **Nouveau : quêtes de classe.** Les routes sont les mêmes pour toutes les classes et laissaient de côté les quêtes de classe (sorts, familiers, totems, formes). Dès que tu peux en prendre une (niveau, race, prérequis rendus), le guide l'indique et un bouton t'amène au PNJ, puis là où la rendre. Une alerte te prévient quand une nouvelle se débloque. 733 quêtes pour les 9 classes ; `/qw classe` pour la liste : à rendre, à prendre, bientôt.

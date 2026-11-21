@@ -125,11 +125,53 @@ local function neighbors(ctx, id, speed)
     return out
 end
 
+-- Heuristique : borne basse (cohérente) du temps restant. Un trajet vers le but est :
+--   1) une marche directe (au mieux 0,9 fois la distance / vitesse : bonus des chemins souvent pris) ;
+--   2) ou se termine par un saut « téléport » (bateau, zeppelin, tram, foyer) vers t, puis marche ;
+--   3) ou se termine par un vol qui pose en f, atteint d'une traite depuis ici (marche + vols :
+--      au mieux KF s/yard) ;
+--   4) ou un téléport vers t, puis d'une traite jusqu'au vol qui pose en f.
+-- Seules comptent les sorties du continent du but. L'ancienne borne (distance / vitesse de vol,
+-- même sans aucun vol connu) était si faible que l'A* explorait tout le réseau appris avant de
+-- conclure (0,2 s d'image gelée à chaque nouveau calcul).
+local WALK_BONUS = 0.9
+local function prepareHeuristic(ctx, speed)
+    local g = ctx.goal
+    local walkK = WALK_BONUS / speed
+    local KF = math.min(walkK, 1.25 / Nav.SPEED.flight)
+    local tele, fl = {}, {}
+    for id, k in pairs(ctx.key) do
+        local q = ctx.pos[id]
+        if q.c == g.c then
+            if k.kind == "flight" then
+                fl[#fl + 1] = { q = q, rest = FLIGHT_OVERHEAD + d2(q, g) * walkK }
+            elseif k.kind == "dock" then
+                tele[#tele + 1] = { q = q, jmin = k.data.cost }
+            elseif k.kind == "hearth" then
+                tele[#tele + 1] = { q = q, jmin = HEARTH_COST }
+            end
+        end
+    end
+    local const = math.huge
+    for _, t in ipairs(tele) do
+        const = math.min(const, t.jmin + d2(t.q, g) * walkK)                       -- cas 2
+        for _, f in ipairs(fl) do const = math.min(const, t.jmin + d2(t.q, f.q) * KF + f.rest) end  -- cas 4
+    end
+    ctx.h = { walkK = walkK, KF = KF, fl = fl, const = const }
+end
+
 local function heuristic(ctx, id)
     local p = nodePos(ctx, id)
     local g = ctx.goal
-    if p and p.c == g.c then return d2(p, g) / Nav.SPEED.flight end
-    return 0
+    if not (p and p.c == g.c) then return 0 end
+    local H = ctx.h
+    local best = d2(p, g) * H.walkK                                                 -- cas 1
+    if H.const < best then best = H.const end
+    for _, f in ipairs(H.fl) do                                                     -- cas 3
+        local v = d2(p, f.q) * H.KF + f.rest
+        if v < best then best = v end
+    end
+    return best
 end
 
 -- Découpe le chemin trouvé en étapes lisibles
@@ -184,6 +226,7 @@ function P.Plan(start, goal, opts)
     if not (start and goal) then return end
     local speed = opts.speed or Nav.SPEED.run
     local ctx = buildContext(start, goal, opts)
+    prepareHeuristic(ctx, speed)
     local heap = Nav.Heap()
     local best, prev, closed = { S = 0 }, {}, {}
     heap:push(heuristic(ctx, "S"), "S")

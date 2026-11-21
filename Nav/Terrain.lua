@@ -17,8 +17,11 @@ for i = 1, #B62 do B62V[B62:byte(i)] = i - 1 end
 local VAL = { [97] = "0", [98] = "1", [99] = "2" }       -- a / b / c
 
 T.COST = { [1] = 1, [2] = 2.2 }                           -- sol, eau
-T.BUDGET = 2500                                            -- nœuds explorés par image
-T.MAX_EXPAND = 150000
+-- Budget par image : en millisecondes (debugprofilestop), avec un plafond en nœuds.
+-- Un nœud coûte environ 20 microsecondes en Lua : 2 500 nœuds prenaient environ 50 ms par image.
+T.BUDGET = 2500                                            -- nœuds explorés par image (plafond)
+T.BUDGET_MS = 3                                            -- ms par image (1,5 en mode Économie)
+T.MAX_EXPAND = 40000                                       -- par tronçon (les longs trajets sont découpés)
 
 ---------------------------------------------------------------------------
 -- Données
@@ -42,6 +45,7 @@ function T.Has(cont)
 end
 
 local cache, cacheOrder = {}, {}
+local CACHE_TILES = 256
 local function decode(enc)
     local parts, n = {}, 0
     for i = 1, #enc, 3 do
@@ -53,8 +57,10 @@ local function decode(enc)
     return table.concat(parts)
 end
 
+-- clé numérique (pas de chaîne créée à chaque case : c'était des dizaines de milliers
+-- de chaînes par image pendant une recherche)
 local function tile(cont, tr, tc)
-    local key = cont .. ":" .. tr .. ":" .. tc
+    local key = (cont + 1) * 1048576 + tr * 1024 + tc
     local t = cache[key]
     if t ~= nil then return t end
     local data = QuestweaverTerrainData and QuestweaverTerrainData[cont]
@@ -62,7 +68,7 @@ local function tile(cont, tr, tc)
     t = enc and decode(enc) or false
     cache[key] = t
     cacheOrder[#cacheOrder + 1] = key
-    if #cacheOrder > 96 then cache[table.remove(cacheOrder, 1)] = nil end
+    if #cacheOrder > CACHE_TILES then cache[table.remove(cacheOrder, 1)] = nil end
     return t
 end
 
@@ -120,6 +126,11 @@ local SQ2 = math.sqrt(2)
 local DIRS = { { 1, 0, 1 }, { -1, 0, 1 }, { 0, 1, 1 }, { 0, -1, 1 }, { 1, 1, SQ2 }, { 1, -1, SQ2 }, { -1, 1, SQ2 }, { -1, -1, SQ2 } }
 local KEY = 100000
 
+local function clock() return debugprofilestop and debugprofilestop() end
+local function budgetMs()
+    return (ns.Eco and ns.Eco()) and T.BUDGET_MS / 2 or T.BUDGET_MS
+end
+
 local function search(cont, a, b, yieldEvery)
     local sr, sc = T.ToCell(a.x, a.y)
     local gr, gc = T.ToCell(b.x, b.y)
@@ -141,6 +152,8 @@ local function search(cont, a, b, yieldEvery)
     local g, prev, closed = { [start] = 0 }, {}, {}
     heap:push(h(sr, sc), start)
     local expanded, sinceYield = 0, 0
+    local t0 = yieldEvery and clock()
+    local ms = yieldEvery and budgetMs()
     while heap.n > 0 do
         local k = heap:pop()
         if k == goal then break end
@@ -149,7 +162,17 @@ local function search(cont, a, b, yieldEvery)
             expanded = expanded + 1
             if expanded > T.MAX_EXPAND then return end
             sinceYield = sinceYield + 1
-            if yieldEvery and sinceYield >= yieldEvery then sinceYield = 0; coroutine.yield() end
+            if yieldEvery then
+                -- rend la main à l'image suivante : budget de temps dépassé (vérifié tous les
+                -- 64 nœuds) ou plafond de nœuds atteint
+                local over = sinceYield >= yieldEvery
+                if not over and t0 and sinceYield % 64 == 0 and clock() - t0 >= ms then over = true end
+                if over then
+                    sinceYield = 0
+                    coroutine.yield()
+                    if t0 then t0, ms = clock(), budgetMs() end
+                end
+            end
             local r, c = math.floor(k / KEY), k % KEY
             local base = g[k]
             for _, d in ipairs(DIRS) do
@@ -201,6 +224,29 @@ local function search(cont, a, b, yieldEvery)
     return pts, expanded
 end
 
+-- Résultats déjà calculés (un nouveau calcul d'itinéraire redemande souvent les mêmes tronçons)
+local results, resultOrder = {}, {}
+local function resultKey(cont, a, b)
+    local ar, ac = T.ToCell(a.x, a.y)
+    local br, bc = T.ToCell(b.x, b.y)
+    return cont .. ":" .. ar .. ":" .. ac .. ":" .. br .. ":" .. bc
+end
+local function remember(key, pts)
+    if results[key] == nil then
+        resultOrder[#resultOrder + 1] = key
+        if #resultOrder > 64 then results[table.remove(resultOrder, 1)] = nil end
+    end
+    results[key] = pts or false
+end
+local function copyPts(pts, a, b)
+    if not pts then return end
+    local out = {}
+    for i, p in ipairs(pts) do out[i] = { c = p.c, x = p.x, y = p.y } end
+    out[1].x, out[1].y = a.x, a.y
+    out[#out].x, out[#out].y = b.x, b.y
+    return out
+end
+
 -- Synchrone (tests, petits trajets)
 function T.Path(cont, a, b) return search(cont, a, b, nil) end
 
@@ -221,9 +267,16 @@ end)
 
 function T.PathAsync(cont, a, b, callback)
     local job = {}
+    local key = resultKey(cont, a, b)
     job.co = coroutine.create(function()
+        local known = results[key]
+        if known ~= nil then
+            callback(copyPts(known or nil, a, b), 0)
+            return
+        end
         local pts, n = search(cont, a, b, T.BUDGET)
-        callback(pts, n)
+        remember(key, pts)
+        callback(copyPts(pts, a, b), n)
     end)
     jobs[#jobs + 1] = job
     runner:Show()

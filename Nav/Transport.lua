@@ -18,6 +18,8 @@ T.LINKS = {
     { kind = "zeppelin", a = { "durotar", 50.8, 13.7, "Orgrimmar" }, b = { "tirisfal", 60.7, 58.8, "Fossoyeuse" }, wait = 60, ride = 90, faction = "Horde" },
     { kind = "zeppelin", a = { "durotar", 50.6, 12.6, "Orgrimmar" }, b = { "stv", 31.6, 29.1, "Grom'gol" }, wait = 60, ride = 90, faction = "Horde" },
     { kind = "zeppelin", a = { "tirisfal", 61.9, 59.0, "Fossoyeuse" }, b = { "stv", 31.4, 30.2, "Grom'gol" }, wait = 60, ride = 90, faction = "Horde" },
+    -- WoW Forever : bateau gobelin neutre Tanaris <-> Rives Claires (quais relevés en jeu)
+    { kind = "boat", a = { "tanaris", 68.6, 23.0, ns.Tr("Port de Gentepression") }, b = { "riverglades", 80.6, 54.6, ns.Tr("Port de Poudremèche") }, wait = 60, ride = 90 },
     { kind = "tram", a = { "stormwind", 69.9, 31.0, "Hurlevent" }, b = { "ironforge", 76.6, 51.2, "Forgefer" }, wait = 20, ride = 60, faction = "Alliance" },
 }
 
@@ -61,21 +63,41 @@ function T.Flights()
     return out
 end
 
+-- carte du continent du joueur (repli si la carte des vols n'a pas de position monde)
+local function playerContinentMap()
+    local mapID = C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player")
+    local info = mapID and C_Map.GetMapInfo(mapID)
+    local guard = 10
+    while info and guard > 0 do
+        if info.mapType == (Enum.UIMapType and Enum.UIMapType.Continent or 2) then return mapID end
+        if not info.parentMapID or info.parentMapID == 0 then return end
+        mapID = info.parentMapID
+        info = C_Map.GetMapInfo(mapID)
+        guard = guard - 1
+    end
+end
+
 local function learnTaxi()
     if not (C_TaxiMap and C_TaxiMap.GetAllTaxiNodes) then return end
-    local mapID = GetTaxiMapID and GetTaxiMapID()
+    local mapID = (GetTaxiMapID and GetTaxiMapID()) or playerContinentMap()
     if not mapID then return end
     local ok, nodes = pcall(C_TaxiMap.GetAllTaxiNodes, mapID)
     if not ok or type(nodes) ~= "table" then return end
     Nav.db.flights[faction()] = Nav.db.flights[faction()] or {}
     local store = Nav.db.flights[faction()]
     local learned = 0
+    local fallback = playerContinentMap()
+    local current = (Enum.FlightPathState and Enum.FlightPathState.Current) or 0
+    local here = Nav.Player()
     for _, n in ipairs(nodes) do
         local pos = n.position
         if pos and n.nodeID then
             local px, py
             if pos.GetXY then px, py = pos:GetXY() else px, py = pos.x, pos.y end
             local cont, wx, wy = Nav.ToWorld(mapID, px, py)
+            if not cont and fallback and fallback ~= mapID then cont, wx, wy = Nav.ToWorld(fallback, px, py) end
+            -- le point où l'on se trouve : la position du joueur est la plus sûre
+            if n.state == current and here then cont, wx, wy = here.c, here.x, here.y end
             if cont then
                 local key = tostring(n.nodeID)
                 store[key] = { key = key, c = cont, x = wx, y = wy, name = n.name }
